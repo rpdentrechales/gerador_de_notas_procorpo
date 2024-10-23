@@ -25,11 +25,8 @@ data_final = data_seletor[1].strftime('%Y-%m-%d')
 # Get all names in the current global scope
 imported_names = dir()
 
-# Filter out non-function names
-imported_functions = [name for name in imported_names if isinstance(globals()[name], types.FunctionType)]
-
 # Print the imported function names
-st.write(imported_functions)
+st.write(imported_names)
 
 
 # teste("teste teste")
