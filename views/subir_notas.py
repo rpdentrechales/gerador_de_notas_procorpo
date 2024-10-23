@@ -11,11 +11,25 @@ st.title("Subir Notas - Selecionar datas")
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
 
-date = st.date_input(
+data_seletor = st.date_input(
     "Select your vacation for next year",
     (three_days_ago, today),
     format="DD/MM/YYYY",
 )
 
-st.write(date[0].strftime('%Y-%m-%d'))
-st.write(date[1].strftime('%Y-%m-%d'))
+data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+data_final = data_seletor[1].strftime('%Y-%m-%d')
+
+
+teste_1 = gerar_obj_api()
+teste_2 = gerar_obj_aliquota()
+teste_3 = gerar_obj_cc()
+teste_4 = gerar_obj_tipo_pagamento()
+teste_5 = gerar_obj_unidades()
+
+st.write(teste_1)
+st.write(teste_2)
+st.write(teste_3)
+st.write(teste_4)
+st.write(teste_5)
+
