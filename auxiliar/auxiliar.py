@@ -102,8 +102,6 @@ def query_BillCharges(current_page, start_date, end_date):
         # Return the error if any occurs
         return str(err)
 
-# teste
-
 def gerar_obj_api():
     api_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
     
