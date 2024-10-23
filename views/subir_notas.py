@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import teste
+import types
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
@@ -20,17 +21,28 @@ data_seletor = st.date_input(
 data_inicial = data_seletor[0].strftime('%Y-%m-%d')
 data_final = data_seletor[1].strftime('%Y-%m-%d')
 
-teste("teste teste")
 
-teste_1 = gerar_obj_api()
-teste_2 = gerar_obj_aliquota()
-teste_3 = gerar_obj_cc()
-teste_4 = gerar_obj_tipo_pagamento()
-teste_5 = gerar_obj_unidades()
+# Get all names in the current global scope
+imported_names = dir()
 
-st.write(teste_1)
-st.write(teste_2)
-st.write(teste_3)
-st.write(teste_4)
-st.write(teste_5)
+# Filter out non-function names
+imported_functions = [name for name in imported_names if isinstance(globals()[name], types.FunctionType)]
+
+# Print the imported function names
+st.write(imported_functions)
+
+
+# teste("teste teste")
+
+# teste_1 = gerar_obj_api()
+# teste_2 = gerar_obj_aliquota()
+# teste_3 = gerar_obj_cc()
+# teste_4 = gerar_obj_tipo_pagamento()
+# teste_5 = gerar_obj_unidades()
+
+# st.write(teste_1)
+# st.write(teste_2)
+# st.write(teste_3)
+# st.write(teste_4)
+# st.write(teste_5)
 
