@@ -330,14 +330,11 @@ def paste_billcharges_with_json(start_date, end_date):
         results = query_BillCharges(current_page, start_date, end_date)
         billcharges_data = results['data']['fetchBillCharges']['data']
         billcharges_data_length = len(billcharges_data)
-        print(f"billcharges_data_length: {billcharges_data_length}")
 
+    billcharges_df = pd.DataFrame(billcharges_df[1:], columns=billcharges_df[0])
     # Update the Google Sheets with the processed data
     update_sheet("CRM - Billcharges (Json)", sheet_array)
 
-    # Clear customer log in the "Criar Cliente" sheet
-    update_sheet("Criar Cliente", [[''] * 2] * (len(sheet_array) - 1))
-
-    return sheet_array
+    return billcharges_df
 
 
