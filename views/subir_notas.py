@@ -16,7 +16,7 @@ col_data_1, col_data_2, blank_3 = st.columns([1.5,1,2])
 
 with col_data_1:
   data_seletor = st.date_input(
-      "Select your vacation for next year",
+      "Selecione a data",
       (three_days_ago, today),
       format="DD/MM/YYYY",
   )
@@ -29,6 +29,7 @@ with col_data_1:
     data_final = data_inicial
 
 with col_data_2:
+  st.write("Pegar dados do CRM")
   pegar_dados = st.button("Executar")
 
 if pegar_dados:
