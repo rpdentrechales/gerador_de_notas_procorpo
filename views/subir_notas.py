@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import *
-import types
+
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
