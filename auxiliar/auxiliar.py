@@ -203,7 +203,7 @@ def gerar_obj_unidades():
 
     return unidades_obj
 
-def paste_billcharges_with_json(start_date,end_date):
+def paste_billcharges_with_json(start_date, end_date):
     # Fetch dates and initialize variables
     current_page = 1
 
@@ -307,17 +307,17 @@ def paste_billcharges_with_json(start_date,end_date):
             # Process recurring payments and service order ID
             regex_recorrente = r".*Recorrente.*"
             if re.search(regex_recorrente, paymentMethod_name, re.IGNORECASE):
-                os_id = quote_id
+                os_id = str(quote_id)  # Convert to string
                 tipo_de_pagamento = "Recorrente"
             else:
-                os_id = quote_id
+                os_id = str(quote_id)  # Convert to string
                 regex_pagamentos_em_dinheiro = r".*PIX.*|.*Dinheiro.*|.*Transferência.*"
                 if re.search(regex_pagamentos_em_dinheiro, paymentMethod_name):
                     tipo_de_pagamento = "Pontual - Dinheiro"
-                    os_id += "-00"
+                    os_id += "-00"  # Concatenate strings
                 else:
                     tipo_de_pagamento = "Pontual - Cartão"
-                    os_id += "-01"
+                    os_id += "-01"  # Concatenate strings
 
             # Add processed row to sheet array
             sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
@@ -339,4 +339,5 @@ def paste_billcharges_with_json(start_date,end_date):
     update_sheet("Criar Cliente", [[''] * 2] * (len(sheet_array) - 1))
 
     return sheet_array
+
 
