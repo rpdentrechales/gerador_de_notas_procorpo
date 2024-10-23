@@ -6,7 +6,7 @@ from auxiliar.auxiliar import *
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-st.title("Subir Notas - Selecionar datas")
+st.title("Subir Notas - testar funções")
 
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
