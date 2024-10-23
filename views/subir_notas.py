@@ -20,7 +20,6 @@ data_seletor = st.date_input(
 data_inicial = data_seletor[0].strftime('%Y-%m-%d')
 data_final = data_seletor[1].strftime('%Y-%m-%d')
 
-
 teste_1 = gerar_obj_api()
 teste_2 = gerar_obj_aliquota()
 teste_3 = gerar_obj_cc()
