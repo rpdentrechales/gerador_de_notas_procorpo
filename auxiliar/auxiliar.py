@@ -6,22 +6,12 @@ import requests
 import json
 
 @st.cache_data
-def load_main_dataframe(worksheet):
-
-  conn = st.connection("gsheets", type=GSheetsConnection)
-  df = conn.read(worksheet=worksheet,dtype={"Ad ID": str})
-
-  return df
-
-@st.cache_data
-def load_aux_dataframe(worksheet,duplicates_subset):
+def load_dataframe(worksheet):
 
   conn = st.connection("gsheets", type=GSheetsConnection)
   df = conn.read(worksheet=worksheet)
-  df = df.drop_duplicates(subset=duplicates_subset)
 
   return df
-
 
 def query_BillCharges(current_page, start_date, end_date):
     # Log message
@@ -112,3 +102,95 @@ def query_BillCharges(current_page, start_date, end_date):
         # Return the error if any occurs
         return str(err)
 
+def gerar_obj_api():
+    api_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    
+    api_data_por_unidade = {}
+
+    for _, row in api_data.iterrows():
+        unidade = row[0]
+        api_secret = row[2]
+        api_key = row[3]
+
+        api_data_obj = {"api_secret": api_secret, "api_key": api_key}
+
+        api_data_por_unidade[unidade] = api_data_obj
+
+    return api_data_por_unidade
+
+def gerar_obj_aliquota():
+    aliquota_data = load_dataframe("Auxiliar - Alíquotas")
+    
+    aliquota_data_por_cidade = {}
+
+    for _, row in aliquota_data.iterrows():
+        codigo_municipio = row[0]
+        aliquota = row[1]
+        cidade = row[2]
+
+        aliquota_data_obj = {"codigo_municipio": codigo_municipio, "aliquota": aliquota}
+
+        aliquota_data_por_cidade[cidade] = aliquota_data_obj
+
+    return aliquota_data_por_cidade
+
+def gerar_obj_cc():
+    dados_conta_corrente = load_dataframe("Auxiliar - Contas Correntes")
+
+    cc_obj_array = []
+
+    for _, row in dados_conta_corrente.iterrows():
+        id_cc = row[0]
+        unidade = row[2]
+        tipo_pagamento = row[4]
+
+        cc_obj = {
+            "unidade": unidade,
+            "id_conta": id_cc,
+            "tipo_pagamento": tipo_pagamento
+        }
+
+        cc_obj_array.append(cc_obj)
+
+    return cc_obj_array
+
+def gerar_obj_tipo_pagamento():
+    dados_tipo_de_pagamento = load_dataframe("Auxiliar - Tipo de Pagamento")
+
+    tipo_pagamento_obj = {}
+
+    for _, row in dados_tipo_de_pagamento.iterrows():
+        tipo_de_pagamento = row[0]
+        conta_corrente = row[1]
+
+        tipo_pagamento_obj[tipo_de_pagamento] = conta_corrente
+
+    return tipo_pagamento_obj
+
+def find_cc_id(cc_obj_array, tipo_pagamento_obj, unidade_planilha, forma_pagamento_planilha):
+    tipo_pagamento_planilha = tipo_pagamento_obj.get(forma_pagamento_planilha)
+
+    for row in cc_obj_array:
+        unidade = row['unidade']
+        id_conta = row['id_conta']
+        tipo_pagamento = row['tipo_pagamento']
+        
+        if unidade_planilha == unidade:
+            if tipo_pagamento_planilha == tipo_pagamento:
+                return id_conta
+
+    return "Tipo de Pagamento inválido"
+
+def gerar_obj_unidades():
+    unidades_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+
+    unidades_obj = {}
+
+    for _, row in unidades_data.iterrows():
+        unidade_crm = row[0]
+        unidade_omie = row[1]
+        cidade = row[4]
+
+        unidades_obj[unidade_crm] = {"unidade_omie": unidade_omie, "cidade": cidade}
+
+    return unidades_obj
