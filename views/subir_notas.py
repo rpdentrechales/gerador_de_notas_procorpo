@@ -29,9 +29,16 @@ with col_data_1:
     data_final = data_inicial
 
 with col_data_2:
-  st.write("Pegar dados do CRM")
+  st.write("**Pegar dados do CRM**")
   pegar_dados = st.button("Executar",type="primary")
 
 if pegar_dados:
-  teste = paste_billcharges_with_json(data_inicial,data_final)
-  st.write(teste)
+  dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
+  filtro_pagamento = st.selectbox(
+    "Selecionar tipo de pagamento",
+    dados_crm_df["Tipo de Pagamento"].unique(),
+    index=None
+    )
+  filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+  if filtro_pagamento:
+    st.write(filtered_df)
