@@ -22,24 +22,17 @@ data_inicial = data_seletor[0].strftime('%Y-%m-%d')
 data_final = data_seletor[1].strftime('%Y-%m-%d')
 
 
-# Get all names in the current global scope
-imported_names = dir()
+teste("teste teste")
 
-# Print the imported function names
-st.write(imported_names)
+teste_1 = gerar_obj_api()
+teste_2 = gerar_obj_aliquota()
+teste_3 = gerar_obj_cc()
+teste_4 = gerar_obj_tipo_pagamento()
+teste_5 = gerar_obj_unidades()
 
-
-# teste("teste teste")
-
-# teste_1 = gerar_obj_api()
-# teste_2 = gerar_obj_aliquota()
-# teste_3 = gerar_obj_cc()
-# teste_4 = gerar_obj_tipo_pagamento()
-# teste_5 = gerar_obj_unidades()
-
-# st.write(teste_1)
-# st.write(teste_2)
-# st.write(teste_3)
-# st.write(teste_4)
-# st.write(teste_5)
+st.write(teste_1)
+st.write(teste_2)
+st.write(teste_3)
+st.write(teste_4)
+st.write(teste_5)
 
