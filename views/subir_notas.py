@@ -21,6 +21,7 @@ data_seletor = st.date_input(
 data_inicial = data_seletor[0].strftime('%Y-%m-%d')
 data_final = data_seletor[1].strftime('%Y-%m-%d')
 
-teste = paste_billcharges_with_json(data_inicial,data_final)
+if st.button("Executar"):
+  teste = paste_billcharges_with_json(data_inicial,data_final)
 
-st.write(teste)
+  st.write(teste)
