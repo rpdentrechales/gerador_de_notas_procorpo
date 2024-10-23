@@ -12,20 +12,25 @@ st.title("Subir Notas - Testar Billcharge")
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
 
-data_seletor = st.date_input(
-    "Select your vacation for next year",
-    (three_days_ago, today),
-    format="DD/MM/YYYY",
-)
+col_data_1, col_data_2, blank_3 = st.columns([1.5,1,2])
 
-if len(data_seletor) == 2:
-  data_inicial = data_seletor[0].strftime('%Y-%m-%d')
-  data_final = data_seletor[1].strftime('%Y-%m-%d')
-else:
-  data_inicial = data_seletor[0].strftime('%Y-%m-%d')
-  data_final = data_inicial
+with col_data_1:
+  data_seletor = st.date_input(
+      "Select your vacation for next year",
+      (three_days_ago, today),
+      format="DD/MM/YYYY",
+  )
 
-if st.button("Executar"):
+  if len(data_seletor) == 2:
+    data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+    data_final = data_seletor[1].strftime('%Y-%m-%d')
+  else:
+    data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+    data_final = data_inicial
+
+with col_data_2:
+  pegar_dados = st.button("Executar")
+
+if pegar_dados:
   teste = paste_billcharges_with_json(data_inicial,data_final)
-
   st.write(teste)
