@@ -30,7 +30,7 @@ with col_data_1:
 
 with col_data_2:
   st.write("Pegar dados do CRM")
-  pegar_dados = st.button("Executar")
+  pegar_dados = st.button("Executar",type="primary")
 
 if pegar_dados:
   teste = paste_billcharges_with_json(data_inicial,data_final)
