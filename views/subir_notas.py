@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import datetime
 from streamlit_gsheets import GSheetsConnection
-from auxiliar import load_main_dataframe
+from auxiliar.auxiliar import load_main_dataframe
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
