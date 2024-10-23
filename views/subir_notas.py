@@ -32,8 +32,12 @@ with col_data_2:
   st.write("**Pegar dados do CRM**")
   pegar_dados = st.button("Executar",type="primary")
 
-if pegar_dados:
+if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
+  st.session_state["dados_crm_df"] = dados_crm_df
+
+if "dados_crm_df" in st.session_state:
+  dados_crm_df = st.session_state["dados_crm_df"]
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
     dados_crm_df["Tipo de Pagamento"].unique(),
