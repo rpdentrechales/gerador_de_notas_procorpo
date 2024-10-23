@@ -103,8 +103,8 @@ def query_BillCharges(current_page, start_date, end_date):
         return str(err)
 
 
-def teste():
-  st.write("teste")
+def teste(variavel):
+  st.write(f"teste: {variavel}")
 
 def gerar_obj_api():
     api_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
