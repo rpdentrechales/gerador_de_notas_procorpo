@@ -8,5 +8,5 @@ st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
 st.title("Subir Notas - Teste")
 
-df = load_main_dataframe("CRM - Billcharges (Json)")
-st.dataframe(df)
+teste = query_BillCharges(1,"2024-10-23","2024-10-23")
+st.dataframe(teste)
