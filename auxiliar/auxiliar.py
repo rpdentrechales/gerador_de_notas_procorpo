@@ -13,9 +13,9 @@ def load_dataframe(worksheet):
 
   return df
 
-def update_sheet(sheet_name, df):
+def update_sheet(worksheet, df):
     conn = st.connection("gsheets", type=GSheetsConnection)
-    conn.update(worksheet=sheet_name, values=df)
+    conn.update(data=df,worksheet=worksheet)
     return df
 
 def query_BillCharges(current_page, start_date, end_date):
