@@ -8,7 +8,7 @@ st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
 st.title("Subir Notas - Selecionar datas")
 
-today = datetime.now()
+today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
 
 date = st.date_input(
