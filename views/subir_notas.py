@@ -17,4 +17,5 @@ date = st.date_input(
     format="DD/MM/YYYY",
 )
 
-st.write(date)
+st.write(date[0])
+st.write(date[1])
