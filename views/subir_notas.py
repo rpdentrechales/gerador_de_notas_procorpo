@@ -23,7 +23,7 @@ if len(data_seletor) == 2:
   data_final = data_seletor[1].strftime('%Y-%m-%d')
 else:
   data_inicial = data_seletor[0].strftime('%Y-%m-%d')
-  data_final = data_final
+  data_final = data_inicial
 
 if st.button("Executar"):
   teste = paste_billcharges_with_json(data_inicial,data_final)
