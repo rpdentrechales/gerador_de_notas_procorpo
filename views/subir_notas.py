@@ -18,8 +18,12 @@ data_seletor = st.date_input(
     format="DD/MM/YYYY",
 )
 
-data_inicial = data_seletor[0].strftime('%Y-%m-%d')
-data_final = data_seletor[1].strftime('%Y-%m-%d')
+if len(data_seletor) == 2:
+  data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+  data_final = data_seletor[1].strftime('%Y-%m-%d')
+else:
+  data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+  data_final = data_final
 
 if st.button("Executar"):
   teste = paste_billcharges_with_json(data_inicial,data_final)
