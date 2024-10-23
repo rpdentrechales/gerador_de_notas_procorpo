@@ -8,5 +8,12 @@ st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
 st.title("Subir Notas - Teste")
 
-teste = query_BillCharges(1,"2024-10-23","2024-10-23")
-st.dataframe(teste)
+today = datetime.datetime.now()
+
+
+date = st.date_input(
+    "Select your vacation for next year",
+    (today, today),
+    format="DD-MM-YYYY",
+)
+st.write(date)
