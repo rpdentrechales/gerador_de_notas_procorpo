@@ -1,9 +1,9 @@
 import streamlit as st
 
 # --- PAGE SETUP ---
-sample_page = st.Page(
-    "views/page_1.py",
-    title="Sample Page 1",
+subir_notas_page = st.Page(
+    "views/subir_notas.py",
+    title="Subir Notas",
     icon=":material/thumb_up:",
     default=True,
 )
@@ -14,7 +14,7 @@ sample_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Pages": [sample_page]
+        "Omie": [subir_notas_page]
     }
 )
 
