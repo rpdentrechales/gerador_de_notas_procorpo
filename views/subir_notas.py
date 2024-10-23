@@ -6,10 +6,6 @@ from auxiliar import load_main_dataframe
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-df = load_main_dataframe("CRM - Billcharges (Json)")
-
-
-
 # @st.cache_data
 # def load_main_dataframe(worksheet):
 
@@ -29,4 +25,6 @@ df = load_main_dataframe("CRM - Billcharges (Json)")
 
 st.title("Subir Notas - Teste")
 
+
+df = load_main_dataframe("CRM - Billcharges (Json)")
 st.dataframe(df)
