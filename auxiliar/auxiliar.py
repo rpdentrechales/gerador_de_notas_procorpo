@@ -5,7 +5,6 @@ from streamlit_gsheets import GSheetsConnection
 import requests
 import json
 
-@st.cache_data
 def load_dataframe(worksheet):
 
   conn = st.connection("gsheets", type=GSheetsConnection)
@@ -101,7 +100,6 @@ def query_BillCharges(current_page, start_date, end_date):
     except requests.exceptions.RequestException as err:
         # Return the error if any occurs
         return str(err)
-
 
 def teste(variavel):
   st.write(f"teste: {variavel}")
