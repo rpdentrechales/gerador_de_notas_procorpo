@@ -37,6 +37,7 @@ if (pegar_dados):
   st.session_state["dados_crm_df"] = dados_crm_df
 
 if "dados_crm_df" in st.session_state:
+  st.write("**Selecione notas para subir**")
   dados_crm_df = st.session_state["dados_crm_df"]
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
