@@ -98,4 +98,8 @@ if "dados_crm_df" in st.session_state:
                    disabled=columns_to_disable
                    )
     
-    st.write(selected_df.loc[selected_df["Selecionar notas para subir"] == True])
+  subir_clientes_botao = st.button("Subir Clientes",type="primary")
+
+  if subir_clientes_botao:
+    resultados = criar_clientes_selecionados(selected_df)
+    st.write(resultados)

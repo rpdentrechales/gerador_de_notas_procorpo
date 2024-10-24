@@ -4,7 +4,8 @@ import datetime
 from streamlit_gsheets import GSheetsConnection
 import requests
 import json
-import re 
+import re
+import time
 
 def load_dataframe(worksheet):
 
@@ -31,7 +32,7 @@ def query_BillCharges(current_page, start_date, end_date):
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {token}'
     }
-    
+
     payload = {
         'query': '''
             query ($filters: BillChargeFiltersInput, $pagination: PaginationInput) {
@@ -102,7 +103,7 @@ def query_BillCharges(current_page, start_date, end_date):
 
         # Return the response JSON
         return response.json()
-    
+
     except requests.exceptions.RequestException as err:
         # Return the error if any occurs
         return str(err)
@@ -112,7 +113,7 @@ def teste(variavel):
 
 def gerar_obj_api():
     api_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
-    
+
     api_data_por_unidade = {}
 
     for _, row in api_data.iterrows():
@@ -128,7 +129,7 @@ def gerar_obj_api():
 
 def gerar_obj_aliquota():
     aliquota_data = load_dataframe("Auxiliar - Alíquotas")
-    
+
     aliquota_data_por_cidade = {}
 
     for _, row in aliquota_data.iterrows():
@@ -182,7 +183,7 @@ def find_cc_id(cc_obj_array, tipo_pagamento_obj, unidade_planilha, forma_pagamen
         unidade = row['unidade']
         id_conta = row['id_conta']
         tipo_pagamento = row['tipo_pagamento']
-        
+
         if unidade_planilha == unidade:
             if tipo_pagamento_planilha == tipo_pagamento:
                 return id_conta
@@ -220,9 +221,9 @@ def paste_billcharges_with_json(start_date, end_date):
     print(f"billcharges_data_length: {billcharges_data_length}")
 
     # Initialize sheet data array
-    sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status", 
-                    "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount", 
-                    "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento", 
+    sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
+                    "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
+                    "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
                     "billcharge_dueAt", "amount"]]
 
     # Main loop to process data
@@ -337,4 +338,236 @@ def paste_billcharges_with_json(start_date, end_date):
 
     return billcharges_df
 
+def criar_os(api_secret, api_key, dados_ordem):
+    # Requisição da API do Omie para criar Ordem de Serviço
+    request = {
+        "call": "IncluirOS",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [dados_ordem]
+    }
+
+    request_body = json.dumps(request)
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get("https://app.omie.com.br/api/v1/servicos/os/", headers=headers, data=request_body)
+
+    data = response.json()
+    return data
+
+def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
+    now = datetime.now()
+
+    for index, linha in linhas_selecionadas.iterrows():
+        id_orcamento = linha[0]
+        tipo_de_pagamento = linha[15]
+
+        if pd.isnull(linha[0]):  # Verifica se é uma linha em branco
+            continue
+        else:
+            resposta = subir_linha(linha)
+            if 'faultstring' in resposta:
+                resposta = resposta['faultstring']
+
+            # Adiciona os dados ao array de logs
+            logs.append([id_orcamento, tipo_de_pagamento, resposta, now])
+
+            # Adiciona os dados na aba "Resultados - Notas"
+            resultados_notas_sheet = resultados_notas_sheet.append(
+                pd.DataFrame([[id_orcamento, tipo_de_pagamento, resposta, now]])
+            )
+
+    # Adiciona os dados na aba "log"
+    if len(linhas_selecionadas) > 1:
+        log_sheet = log_sheet.append(linhas_selecionadas[1:])
+        log_sheet.to_excel("log.xlsx", index=False)  # Salva a planilha de log
+
+    resultados_notas_sheet.to_excel("Resultados_Notas.xlsx", index=False)  # Salva a planilha de resultados
+
+def subir_linha(dados_da_linha):
+    # Arruma os dados da linha para subir na API do Omie
+    unidade = dados_da_linha[4]
+    codigo_pedido = dados_da_linha[11]
+    codigo_integracao = codigo_pedido
+    observacoes = dados_da_linha[0]
+    codigo_cliente_integracao = dados_da_linha[2]
+    quantidade_de_parcelas = dados_da_linha[8]
+
+    cDadosAdicNF = str(dados_da_linha[11])
+    nCodCC = dados_da_linha[12]
+
+    servicos_jsons = dados_da_linha[10].split(";")
+    servicos_array = [json.loads(servico) for servico in servicos_jsons]
+
+    cDadosAdicNF = "Serviços prestados - " + cDadosAdicNF
+
+    # Busca as chaves da API
+    chaves_api = gerar_obj_api()
+    api_secret = chaves_api[unidade]["api_secret"]
+    api_key = chaves_api[unidade]["api_key"]
+
+    # Define a quantidade de parcelas e outras informações da OS
+    codigo_parcela = "000"
+
+    dados_os = {
+        "Cabecalho": {
+            "cCodIntOS": codigo_integracao,
+            "cCodIntCli": codigo_cliente_integracao,
+            "cEtapa": "50",
+            "cCodParc": codigo_parcela,
+            "nQtdeParc": quantidade_de_parcelas
+        },
+        "InformacoesAdicionais": {
+            "cDadosAdicNF": cDadosAdicNF,
+            "cCodCateg": "1.01.02",
+            "nCodCC": nCodCC,
+            "cNumPedido": codigo_pedido
+        },
+        "Observacoes": {
+            "cObsOS": observacoes
+        },
+        "ServicosPrestados": servicos_array
+    }
+
+    # Envia a requisição para criar a OS
+    response = criar_os(api_secret, api_key, dados_os)
+    print(response)
+    return response
+
+
+
+
+def criar_clientes_selecionados(base_df):
+  chaves_api = gerar_obj_api() 
+  
+  resultados = [["client_id","Resultado","Response"]]
+
+  counter = 0
+  for row in base_df:
+    dados_cliente = row["dados_cliente"]
+    unidade = row["store_name"]
+    id_do_cliente = row["customer_id"]
+
+    api_secret = chaves_api[unidade]["api_secret"]
+    api_key = chaves_api[unidade]["api_key"]
+
+    try:
+      dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
+    except json.JSONDecodeError:
+      continue  # Pula para a próxima iteração
+
+    id_cliente = dados_cliente["codigo_cliente_integracao"]
+
+    full_response = criar_cliente(api_secret,api_key,dados_cliente)
+    response_status = full_response.get("descricao_status")
+
+    cadastro_novo = False
+    result_status = "Error"
+
+    if response_status:
+        if re.search(r"Cliente cadastrado com sucesso.", response_status):
+            # Checa se é cliente novo
+            cadastro_novo = True
+
+    if re.search(r"código de integração \[\]", response_status):
+        regex = r"com o Id \[([0-9]+)\]"
+        match = re.search(regex, response_status)
+        codigo_omie = match.group(1)
+
+        dados_cliente = {
+            "codigo_cliente_omie": codigo_omie,
+            "codigo_cliente_integracao": id_cliente
+        }
+
+        full_response = associar_id_cliente(dados_cliente, api_secret, api_key)
+
+        if not full_response.get("descricao_status"):
+            result_status = "Error"
+        else:
+            result_status = "OK"
+
+    faultstring = full_response.get("faultstring")
+    if faultstring:
+        if re.search(r"Cliente já cadastrado para o Código de Integração", faultstring):
+            result_status = "OK"
+    else:
+        result_status = "OK"
+
+    if not cadastro_novo:
+        # Se não for cadastro novo, atualiza os dados do cliente
+        atualizar_dados = alterar_dados(dados_cliente, api_secret, api_key)
+
+    if counter % 20 == 0:
+        time.sleep(5)  # Aguarda 5 segundos
+    
+    resultados.append([id_do_cliente,result_status,full_response])
+    counter += 1
+
+  resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
+  return resultados_df
+    
+def criar_cliente(api_secret, api_key, dados_cliente):
+    # Requisição da API do Omie para criar Cliente
+    request = {
+        "call": "IncluirCliente",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [dados_cliente]
+    }
+
+    request_body = json.dumps(request)
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+
+    data = response.json()
+    return data
+
+def associar_id_cliente(dados_cliente, api_secret, api_key):
+    # Requisição para associar código de integração do cliente
+    print(f"Alterando Cliente: {dados_cliente['codigo_cliente_integracao']}")
+
+    request = {
+        "call": "AssociarCodIntCliente",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [dados_cliente]
+    }
+
+    request_body = json.dumps(request)
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+
+    data = response.json()
+    return data
+
+def alterar_dados(dados_cliente, api_secret, api_key):
+    # Requisição para alterar dados do cliente
+    request = {
+        "call": "AlterarCliente",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [dados_cliente]
+    }
+
+    request_body = json.dumps(request)
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+
+    data = response.json()
+    return data
 
