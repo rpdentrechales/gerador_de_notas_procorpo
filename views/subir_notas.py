@@ -37,13 +37,19 @@ if (pegar_dados):
   st.session_state["dados_crm_df"] = dados_crm_df
 
 if "dados_crm_df" in st.session_state:
-  st.write("**Selecione notas para subir**")
+  
   dados_crm_df = st.session_state["dados_crm_df"]
+  dados_crm_df["Selecionar notas para subir"] = False
+  st.write(dados_crm_df.collumns)
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
     dados_crm_df["Tipo de Pagamento"].unique(),
     index=None
     )
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+  st.write("**Selecione notas para subir**")
   if filtro_pagamento:
-    st.write(filtered_df)
+    filtered_df
+    st.data_editor(filtered_df,
+                   hide_index=True
+                   )
