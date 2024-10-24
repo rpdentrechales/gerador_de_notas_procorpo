@@ -455,8 +455,6 @@ def criar_clientes_selecionados(base_df):
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
     
-    st.write([api_secret,api_key])
-
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
     response_status = full_response.get("descricao_status")
 
@@ -518,12 +516,14 @@ def criar_cliente(api_secret, api_key, dados_cliente):
     }
 
     request_body = json.dumps(request)
-
+    
     headers = {
         "Content-Type": "application/json"
     }
 
     response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+    
+    st.write(response)
 
     data = response.json()
     return data
