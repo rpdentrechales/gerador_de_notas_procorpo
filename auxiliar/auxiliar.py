@@ -20,8 +20,6 @@ def update_sheet(worksheet, df):
     return df
 
 def query_BillCharges(current_page, start_date, end_date):
-    # Log message
-    print(f"Querying Billcharges: page {current_page}")
 
     # API URL and token
     baseURL = "https://open-api.eprocorpo.com.br/graphql"
@@ -218,7 +216,6 @@ def paste_billcharges_with_json(start_date, end_date):
     results = query_BillCharges(current_page, start_date, end_date)
     billcharges_data = results['data']['fetchBillCharges']['data']
     billcharges_data_length = len(billcharges_data)
-    print(f"billcharges_data_length: {billcharges_data_length}")
 
     # Initialize sheet data array
     sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
@@ -434,7 +431,6 @@ def subir_linha(dados_da_linha):
 
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, dados_os)
-    print(response)
     return response
 
 def criar_clientes_selecionados(base_df):
@@ -458,6 +454,8 @@ def criar_clientes_selecionados(base_df):
       continue  # Pula para a próxima iteração
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
+    
+    st.write(dados_cliente)
 
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
     response_status = full_response.get("descricao_status")
@@ -465,7 +463,7 @@ def criar_clientes_selecionados(base_df):
     cadastro_novo = False
     result_status = "Error"
     st.write(response_status)
-    
+
     if response_status:
         if re.search(r"Cliente cadastrado com sucesso.", response_status):
             # Checa se é cliente novo
@@ -489,6 +487,7 @@ def criar_clientes_selecionados(base_df):
             result_status = "OK"
 
     faultstring = full_response.get("faultstring")
+
     if faultstring:
         if re.search(r"Cliente já cadastrado para o Código de Integração", faultstring):
             result_status = "OK"
@@ -530,7 +529,6 @@ def criar_cliente(api_secret, api_key, dados_cliente):
 
 def associar_id_cliente(dados_cliente, api_secret, api_key):
     # Requisição para associar código de integração do cliente
-    print(f"Alterando Cliente: {dados_cliente['codigo_cliente_integracao']}")
 
     request = {
         "call": "AssociarCodIntCliente",
