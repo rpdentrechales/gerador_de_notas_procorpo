@@ -455,13 +455,14 @@ def criar_clientes_selecionados(base_df):
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
     
-    st.write(dados_cliente)
+    st.write([api_secret,api_key])
 
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
     response_status = full_response.get("descricao_status")
 
     cadastro_novo = False
     result_status = "Error"
+
     st.write(response_status)
 
     if response_status:
