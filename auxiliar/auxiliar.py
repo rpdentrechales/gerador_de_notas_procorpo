@@ -437,9 +437,6 @@ def subir_linha(dados_da_linha):
     print(response)
     return response
 
-
-
-
 def criar_clientes_selecionados(base_df):
   chaves_api = gerar_obj_api() 
   
