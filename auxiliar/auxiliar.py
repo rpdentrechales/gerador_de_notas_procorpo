@@ -439,8 +439,8 @@ def criar_clientes_selecionados(base_df):
   resultados = [["client_id","Resultado","Response"]]
   counter = 0
 
-  st.write("Criando Clients")
-  
+  st.write("Criando clientes")
+
   for indes,row in base_df.iterrows():
   
     dados_cliente = row["dados_cliente"]
@@ -462,6 +462,9 @@ def criar_clientes_selecionados(base_df):
     
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
     response_status = full_response.get("descricao_status")
+
+    st.write(full_response)
+    st.write(response_status)
 
     cadastro_novo = False
     result_status = "Error"
