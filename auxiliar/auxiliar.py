@@ -451,6 +451,9 @@ def criar_clientes_selecionados(base_df):
     try:
       dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
     except json.JSONDecodeError:
+      result_status = "Error"
+      full_response = "Erro ao converter JSON"
+      resultados.append([id_do_cliente,result_status,full_response])
       continue  # Pula para a próxima iteração
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
@@ -505,9 +508,7 @@ def criar_clientes_selecionados(base_df):
   return resultados_df
     
 def criar_cliente(api_secret, api_key, dados_cliente):
-    st.write(type(dados_cliente))
-    st.write([api_secret,api_key,dados_cliente])
-    # Requisição da API do Omie para criar Cliente
+
     request = {
         "call": "IncluirCliente",
         "app_key": api_key,
@@ -521,12 +522,12 @@ def criar_cliente(api_secret, api_key, dados_cliente):
         "Content-Type": "application/json"
     }
 
-    response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+    # Usa POST para enviar os dados
+    response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
     
-    st.write(response)
+    response_text = response.json()
 
-    data = response.json()
-    return data
+    return response_text
 
 def associar_id_cliente(dados_cliente, api_secret, api_key):
     # Requisição para associar código de integração do cliente
@@ -544,13 +545,16 @@ def associar_id_cliente(dados_cliente, api_secret, api_key):
         "Content-Type": "application/json"
     }
 
-    response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+    # Usa POST para enviar os dados
+    response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+    
+    response_text = response.json()
 
-    data = response.json()
-    return data
+    return response_text
 
 def alterar_dados(dados_cliente, api_secret, api_key):
     # Requisição para alterar dados do cliente
+
     request = {
         "call": "AlterarCliente",
         "app_key": api_key,
@@ -564,8 +568,9 @@ def alterar_dados(dados_cliente, api_secret, api_key):
         "Content-Type": "application/json"
     }
 
-    response = requests.get("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+    # Usa POST para enviar os dados
+    response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+    
+    response_text = response.json()
 
-    data = response.json()
-    return data
-
+    return response_text
