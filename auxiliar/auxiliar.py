@@ -505,6 +505,7 @@ def criar_clientes_selecionados(base_df):
   return resultados_df
     
 def criar_cliente(api_secret, api_key, dados_cliente):
+    st.write(type(dados_cliente))
     st.write([api_secret,api_key,dados_cliente])
     # Requisição da API do Omie para criar Cliente
     request = {
