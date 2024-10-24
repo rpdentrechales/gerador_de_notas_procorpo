@@ -461,8 +461,6 @@ def criar_clientes_selecionados(base_df):
     cadastro_novo = False
     result_status = "Error"
 
-    st.write(response_status)
-
     if response_status:
         if re.search(r"Cliente cadastrado com sucesso.", response_status):
             # Checa se é cliente novo
@@ -507,6 +505,7 @@ def criar_clientes_selecionados(base_df):
   return resultados_df
     
 def criar_cliente(api_secret, api_key, dados_cliente):
+    st.write([api_secret,api_key,dados_cliente])
     # Requisição da API do Omie para criar Cliente
     request = {
         "call": "IncluirCliente",
