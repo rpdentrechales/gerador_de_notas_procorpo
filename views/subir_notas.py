@@ -98,4 +98,4 @@ if "dados_crm_df" in st.session_state:
                    disabled=columns_to_disable
                    )
     
-    st.write(selected_df)
+    st.write(selected_df.loc[selected_df["Selecionar notas para subir"] == True])
