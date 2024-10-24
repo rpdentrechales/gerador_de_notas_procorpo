@@ -40,7 +40,49 @@ if "dados_crm_df" in st.session_state:
   
   dados_crm_df = st.session_state["dados_crm_df"]
   dados_crm_df["Selecionar notas para subir"] = False
-  st.write(dados_crm_df.columns)
+  columns_order = [
+            "Selecionar notas para subir",
+            "quote_id",
+            "billCharge_id",
+            "customer_id",
+            "customer_name",
+            "store_name",
+            "quote_status",
+            "paymentMethod_name",
+            "billcharge_paidAt",
+            "bill_installmentsQuantity",
+            "bill_amount",
+            "servicos_json",
+            "os_id",
+            "id_conta_corrente",
+            "dados_cliente",
+            "isPaid",
+            "Tipo de Pagamento",
+            "billcharge_dueAt",
+            "amount"
+            ]
+
+  columns_to_disable = [
+            "quote_id",
+            "billCharge_id",
+            "customer_id",
+            "customer_name",
+            "store_name",
+            "quote_status",
+            "paymentMethod_name",
+            "billcharge_paidAt",
+            "bill_installmentsQuantity",
+            "bill_amount",
+            "servicos_json",
+            "os_id",
+            "id_conta_corrente",
+            "dados_cliente",
+            "isPaid",
+            "Tipo de Pagamento",
+            "billcharge_dueAt",
+            "amount"
+            ]
+
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
     dados_crm_df["Tipo de Pagamento"].unique(),
@@ -50,6 +92,10 @@ if "dados_crm_df" in st.session_state:
   st.write("**Selecione notas para subir**")
   if filtro_pagamento:
     filtered_df
-    st.data_editor(filtered_df,
-                   hide_index=True
+    selected_df = st.data_editor(filtered_df,
+                   hide_index=True,
+                   column_order=columns_order,
+                   disabled=columns_to_disable
                    )
+    
+    st.write(selected_df)
