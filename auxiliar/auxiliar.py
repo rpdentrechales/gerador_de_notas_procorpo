@@ -438,12 +438,13 @@ def subir_linha(dados_da_linha):
     return response
 
 def criar_clientes_selecionados(base_df):
-  chaves_api = gerar_obj_api() 
-  
-  resultados = [["client_id","Resultado","Response"]]
 
+  chaves_api = gerar_obj_api() 
+  resultados = [["client_id","Resultado","Response"]]
   counter = 0
+
   for row in base_df:
+  
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
     id_do_cliente = row["customer_id"]
@@ -463,7 +464,7 @@ def criar_clientes_selecionados(base_df):
 
     cadastro_novo = False
     result_status = "Error"
-
+    print("teste 1")
     if response_status:
         if re.search(r"Cliente cadastrado com sucesso.", response_status):
             # Checa se é cliente novo
