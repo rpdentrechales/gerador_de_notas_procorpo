@@ -466,9 +466,13 @@ def criar_clientes_selecionados(base_df):
 
     if 'faultstring' in full_response:
         full_response = full_response['faultstring']
+        faultstring = full_response
+
     elif 'descricao_status' in full_response:
+        
         full_response = full_response['descricao_status']
     else:
+        
         full_response = None
 
     cadastro_novo = False
@@ -479,15 +483,15 @@ def criar_clientes_selecionados(base_df):
             # Checa se é cliente novo
             cadastro_novo = True
 
-    if re.search(r"código de integração \[\]", full_response):
-        regex = r"com o Id \[([0-9]+)\]"
-        match = re.search(regex, full_response)
-        codigo_omie = match.group(1)
+        if re.search(r"código de integração \[\]", full_response):
+            regex = r"com o Id \[([0-9]+)\]"
+            match = re.search(regex, full_response)
+            codigo_omie = match.group(1)
 
-        dados_cliente = {
-            "codigo_cliente_omie": codigo_omie,
-            "codigo_cliente_integracao": id_cliente
-        }
+            dados_cliente = {
+                "codigo_cliente_omie": codigo_omie,
+                "codigo_cliente_integracao": id_cliente
+            }
 
         full_response = associar_id_cliente(dados_cliente, api_secret, api_key)
 
@@ -496,7 +500,7 @@ def criar_clientes_selecionados(base_df):
         else:
             result_status = "OK"
 
-    faultstring = full_response.get("faultstring")
+
 
     if faultstring:
         if re.search(r"Cliente já cadastrado para o Código de Integração", faultstring):
