@@ -464,6 +464,13 @@ def criar_clientes_selecionados(base_df):
 
     st.write(full_response)
 
+    if 'faultstring' in full_response:
+        full_response = full_response['faultstring']
+    elif 'descricao_status' in full_response:
+        full_response = full_response['descricao_status']
+    else:
+        full_response = None
+
     cadastro_novo = False
     result_status = "Error"
 
