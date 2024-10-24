@@ -40,7 +40,7 @@ if "dados_crm_df" in st.session_state:
   
   dados_crm_df = st.session_state["dados_crm_df"]
   dados_crm_df["Selecionar notas para subir"] = False
-  st.write(dados_crm_df.collumns)
+  st.write(dados_crm_df.columns)
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
     dados_crm_df["Tipo de Pagamento"].unique(),
