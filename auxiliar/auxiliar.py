@@ -464,7 +464,8 @@ def criar_clientes_selecionados(base_df):
 
     cadastro_novo = False
     result_status = "Error"
-    print("teste 1")
+    st.write(response_status)
+    
     if response_status:
         if re.search(r"Cliente cadastrado com sucesso.", response_status):
             # Checa se é cliente novo
