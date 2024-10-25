@@ -106,9 +106,6 @@ def query_BillCharges(current_page, start_date, end_date):
         # Return the error if any occurs
         return str(err)
 
-def teste(variavel):
-  st.write(f"teste: {variavel}")
-
 def gerar_obj_api():
     api_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
 
@@ -218,10 +215,10 @@ def paste_billcharges_with_json(start_date, end_date):
     billcharges_data_length = len(billcharges_data)
 
     # Initialize sheet data array
-    sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
-                    "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
-                    "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
-                    "billcharge_dueAt", "amount"]]
+    # sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
+    #                 "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
+    #                 "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
+    #                 "billcharge_dueAt", "amount"]]
 
     # Main loop to process data
     while billcharges_data_length > 0:
@@ -318,10 +315,10 @@ def paste_billcharges_with_json(start_date, end_date):
                     os_id += "-01"  # Concatenate strings
 
             # Add processed row to sheet array
-            sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
-                         billcharge_paidAt, bill_installmentsQuantity, bill_amount, servico_obj, os_id, id_conta_corrente,
-                         dados_cliente, isPaid, tipo_de_pagamento, billcharge_dueAt, bill_amount]
-            sheet_array.append(sheet_row)
+            # sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
+            #              billcharge_paidAt, bill_installmentsQuantity, bill_amount, servico_obj, os_id, id_conta_corrente,
+            #              dados_cliente, isPaid, tipo_de_pagamento, billcharge_dueAt, bill_amount]
+            # sheet_array.append(sheet_row)
 
         # Fetch the next page of results
         current_page += 1
@@ -331,7 +328,7 @@ def paste_billcharges_with_json(start_date, end_date):
 
     billcharges_df = pd.DataFrame(sheet_array[1:], columns=sheet_array[0])
     # Update the Google Sheets with the processed data
-    update_sheet("CRM - Billcharges (Json)", billcharges_df)
+    # update_sheet("CRM - Billcharges (Json)", billcharges_df)
 
     return billcharges_df
 
@@ -463,9 +460,6 @@ def criar_clientes_selecionados(base_df):
 
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
     full_response = check_response(full_response)
-    
-    st.write("Criar_cliente_response: ")
-    st.write(full_response)
 
     if full_response:
         if re.search(r"Cliente cadastrado com sucesso.", full_response):
