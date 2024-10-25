@@ -37,7 +37,7 @@ if (pegar_dados):
   st.session_state["dados_crm_df"] = dados_crm_df
 
 if "dados_crm_df" in st.session_state:
-  
+
   dados_crm_df = st.session_state["dados_crm_df"]
   dados_crm_df["Selecionar notas para subir"] = False
   columns_order = [
@@ -92,14 +92,15 @@ if "dados_crm_df" in st.session_state:
   st.write("**Selecione notas para subir**")
   if filtro_pagamento:
     filtered_df
-    selected_df = st.data_editor(filtered_df,
+    dados_CRM_df = st.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,
                    disabled=columns_to_disable
                    )
-    
+
   subir_clientes_botao = st.button("Subir Clientes",type="primary")
 
   if subir_clientes_botao:
+    selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
     resultados = criar_clientes_selecionados(selected_df)
     st.write(resultados)

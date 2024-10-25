@@ -435,20 +435,23 @@ def subir_linha(dados_da_linha):
 
 def criar_clientes_selecionados(base_df):
 
-  chaves_api = gerar_obj_api() 
+  chaves_api = gerar_obj_api()
   resultados = [["client_id","Resultado","Response"]]
   counter = 0
 
   st.write("Criando clientes")
 
-  for indes,row in base_df.iterrows():
-  
+  for index,row in base_df.iterrows():
+
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
     id_do_cliente = row["customer_id"]
 
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
+
+    cadastro_novo = False
+    result_status = "Error"
 
     try:
       dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
@@ -459,24 +462,9 @@ def criar_clientes_selecionados(base_df):
       continue  # Pula para a próxima iteração
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
-    
+
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
-
-    st.write(full_response)
-
-    if 'faultstring' in full_response:
-        full_response = full_response['faultstring']
-        faultstring = full_response
-
-    elif 'descricao_status' in full_response:
-        
-        full_response = full_response['descricao_status']
-    else:
-        
-        full_response = None
-
-    cadastro_novo = False
-    result_status = "Error"
+    full_response = check_response(full_response)
 
     if full_response:
         if re.search(r"Cliente cadastrado com sucesso.", full_response):
@@ -484,43 +472,44 @@ def criar_clientes_selecionados(base_df):
             cadastro_novo = True
 
         if re.search(r"código de integração \[\]", full_response):
-            regex = r"com o Id \[([0-9]+)\]"
-            match = re.search(regex, full_response)
-            codigo_omie = match.group(1)
+          regex = r"com o Id \[([0-9]+)\]"
+          match = re.search(regex, full_response)
+          codigo_omie = match.group(1)
 
-            dados_cliente = {
-                "codigo_cliente_omie": codigo_omie,
-                "codigo_cliente_integracao": id_cliente
-            }
+          dados_cliente = {
+              "codigo_cliente_omie": codigo_omie,
+              "codigo_cliente_integracao": id_cliente
+          }
 
-        full_response = associar_id_cliente(dados_cliente, api_secret, api_key)
+          associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
+          full_response = check_response(associar_cliente)
 
-        if not full_response.get("descricao_status"):
-            result_status = "Error"
-        else:
+          if full_response:
             result_status = "OK"
-
-
-
-    if faultstring:
-        if re.search(r"Cliente já cadastrado para o Código de Integração", faultstring):
-            result_status = "OK"
-    else:
-        result_status = "OK"
+            full_response = full_response['descricao_status']
+          else:
+              result_status = "Error"
 
     if not cadastro_novo:
         # Se não for cadastro novo, atualiza os dados do cliente
         atualizar_dados = alterar_dados(dados_cliente, api_secret, api_key)
+        full_response = check_response(atualizar_dados)
+        
+        if full_response:
+          result_status = "OK"
+          full_response = full_response['descricao_status']
+        else:
+          result_status = "Error"
 
     if counter % 20 == 0:
         time.sleep(5)  # Aguarda 5 segundos
-    
+
     resultados.append([id_do_cliente,result_status,full_response])
     counter += 1
 
   resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
   return resultados_df
-    
+
 def criar_cliente(api_secret, api_key, dados_cliente):
 
     request = {
@@ -531,14 +520,14 @@ def criar_cliente(api_secret, api_key, dados_cliente):
     }
 
     request_body = json.dumps(request)
-    
+
     headers = {
         "Content-Type": "application/json"
     }
 
     # Usa POST para enviar os dados
     response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
-    
+
     response_text = response.json()
 
     return response_text
@@ -561,7 +550,7 @@ def associar_id_cliente(dados_cliente, api_secret, api_key):
 
     # Usa POST para enviar os dados
     response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
-    
+
     response_text = response.json()
 
     return response_text
@@ -584,7 +573,17 @@ def alterar_dados(dados_cliente, api_secret, api_key):
 
     # Usa POST para enviar os dados
     response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
-    
+
     response_text = response.json()
 
     return response_text
+
+def check_response(response):
+  # Check if response is fault or sucessfull
+
+    if 'faultstring' in response:
+        return response['faultstring']
+    elif 'descricao_status' in response:
+        return response['descricao_status']
+    else:
+        return None
