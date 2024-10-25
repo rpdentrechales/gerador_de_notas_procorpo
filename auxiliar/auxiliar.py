@@ -454,7 +454,7 @@ def criar_clientes_selecionados(base_df):
     try:
       dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
     except json.JSONDecodeError:
-      result_status = "Error"
+      result_status = "Erro ao converter JSON"
       full_response = "Erro ao converter JSON"
       resultados.append([id_do_cliente,result_status,full_response])
       continue  # Pula para a próxima iteração
@@ -471,6 +471,7 @@ def criar_clientes_selecionados(base_df):
         if re.search(r"Cliente cadastrado com sucesso.", full_response):
             # Checa se é cliente novo
             cadastro_novo = True
+            result_status = "Cliente Novo Cadastrado"
 
         if re.search(r"código de integração \[\]", full_response):
           regex = r"com o Id \[([0-9]+)\]"
@@ -486,10 +487,9 @@ def criar_clientes_selecionados(base_df):
           full_response = check_response(associar_cliente)
 
           if full_response:
-            result_status = "OK"
-            full_response = full_response['descricao_status']
+            result_status = "Id do Cliente Associado"
           else:
-              result_status = "Error"
+            result_status = "Erro ao Associar Id do Cliente"
 
     if not cadastro_novo:
         # Se não for cadastro novo, atualiza os dados do cliente
@@ -497,10 +497,9 @@ def criar_clientes_selecionados(base_df):
         full_response = check_response(atualizar_dados)
 
         if full_response:
-          result_status = "OK"
-          full_response = full_response['descricao_status']
+          result_status = "Cadastro do cliente atualizado"
         else:
-          result_status = "Error"
+          result_status = "Erro ao Atualizar Cadastro do Cliente"
 
     if counter % 20 == 0:
         time.sleep(5)  # Aguarda 5 segundos
