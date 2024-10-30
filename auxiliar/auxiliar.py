@@ -215,10 +215,10 @@ def paste_billcharges_with_json(start_date, end_date):
     billcharges_data_length = len(billcharges_data)
 
     # Initialize sheet data array
-    # sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
-    #                 "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
-    #                 "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
-    #                 "billcharge_dueAt", "amount"]]
+    sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
+                    "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
+                    "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
+                    "billcharge_dueAt", "amount"]]
 
     # Main loop to process data
     while billcharges_data_length > 0:
