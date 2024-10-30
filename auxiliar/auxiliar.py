@@ -334,6 +334,7 @@ def paste_billcharges_with_json(start_date, end_date):
 
 def criar_os(api_secret, api_key, dados_ordem):
     # Requisição da API do Omie para criar Ordem de Serviço
+    st.write(dados_ordem)
     request = {
         "call": "IncluirOS",
         "app_key": api_key,
@@ -353,7 +354,7 @@ def criar_os(api_secret, api_key, dados_ordem):
     return data
 
 def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
-  resultados = [["Dados","resposta"]]
+  resultados = []
 
   for index, linha in linhas_selecionadas.iterrows():
     
@@ -362,7 +363,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     response = check_response(resposta)
     resultados.append([linha,response])
 
-  resultados_df = pd.DataFrame(resultados)
+  resultados_df = pd.DataFrame(resultados,columns=["Dados","resposta"])
 
   return resultados_df
   
