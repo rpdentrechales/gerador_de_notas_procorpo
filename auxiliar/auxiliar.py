@@ -353,33 +353,18 @@ def criar_os(api_secret, api_key, dados_ordem):
     return data
 
 def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
-    now = datetime.now()
+  resultados = [["Dados","resposta"]]
 
-    for index, linha in linhas_selecionadas.iterrows():
-        id_orcamento = linha[0]
-        tipo_de_pagamento = linha[15]
+  for index, linha in linhas_selecionadas.iterrows():
+    
+    resposta = subir_linha(linha)
+    response = check_response(resposta)
+    resultados.apend([linha,response])
 
-        if pd.isnull(linha[0]):  # Verifica se é uma linha em branco
-            continue
-        else:
-            resposta = subir_linha(linha)
-            if 'faultstring' in resposta:
-                resposta = resposta['faultstring']
+  resultados_df = pd.DataFrame(resultados)
 
-            # Adiciona os dados ao array de logs
-            logs.append([id_orcamento, tipo_de_pagamento, resposta, now])
-
-            # Adiciona os dados na aba "Resultados - Notas"
-            resultados_notas_sheet = resultados_notas_sheet.append(
-                pd.DataFrame([[id_orcamento, tipo_de_pagamento, resposta, now]])
-            )
-
-    # Adiciona os dados na aba "log"
-    if len(linhas_selecionadas) > 1:
-        log_sheet = log_sheet.append(linhas_selecionadas[1:])
-        log_sheet.to_excel("log.xlsx", index=False)  # Salva a planilha de log
-
-    resultados_notas_sheet.to_excel("Resultados_Notas.xlsx", index=False)  # Salva a planilha de resultados
+  return resultados_df
+  
 
 def subir_linha(dados_da_linha):
     # Arruma os dados da linha para subir na API do Omie
