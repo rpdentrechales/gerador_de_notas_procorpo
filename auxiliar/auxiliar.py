@@ -309,10 +309,10 @@ def paste_billcharges_with_json(start_date, end_date):
                 regex_pagamentos_em_dinheiro = r".*PIX.*|.*Dinheiro.*|.*Transferência.*"
                 if re.search(regex_pagamentos_em_dinheiro, paymentMethod_name):
                     tipo_de_pagamento = "Pontual - Dinheiro"
-                    os_id += "-00"  # Concatenate strings
+                    os_id = f"{os_id}-00"  # Concatenate strings
                 else:
                     tipo_de_pagamento = "Pontual - Cartão"
-                    os_id += "-01"  # Concatenate strings
+                    os_id = f"{os_id}-01"  # Concatenate strings
 
             # Add processed row to sheet array
             sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
@@ -573,6 +573,7 @@ def alterar_dados(dados_cliente, api_secret, api_key):
     return response_text
 
 def check_response(response):
+  
   # Check if response is fault or sucessfull
 
     if 'faultstring' in response:
@@ -581,3 +582,7 @@ def check_response(response):
         return response['descricao_status']
     else:
         return None
+
+
+def compilar_linhas_para_subir(df_selecionado):
+  df_groupby = df_selecionado.group
