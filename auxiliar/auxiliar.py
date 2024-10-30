@@ -351,7 +351,6 @@ def criar_os(api_secret, api_key, dados_ordem):
 
     data = response.json()
 
-
     return data
 
 def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
@@ -413,10 +412,10 @@ def subir_linha(dados_da_linha):
         "ServicosPrestados": servicos_array
     }
 
-    json_string = json.dumps(dados_os)
+    # json_string = json.dumps(dados_os)
 
     # Envia a requisição para criar a OS
-    response = criar_os(api_secret, api_key, json_string)
+    response = criar_os(api_secret, api_key, dados_os)
     return response
 
 def criar_clientes_selecionados(base_df):
