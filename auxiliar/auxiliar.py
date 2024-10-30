@@ -358,6 +358,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
   for index, linha in linhas_selecionadas.iterrows():
     
     resposta = subir_linha(linha)
+    st.write(resposta)
     response = check_response(resposta)
     resultados.append([linha,response])
 
