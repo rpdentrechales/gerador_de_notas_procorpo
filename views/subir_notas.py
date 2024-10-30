@@ -7,7 +7,7 @@ from auxiliar.auxiliar import *
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-st.title("Subir Notas - Ajuste dataframe")
+st.title("Subir Notas - Ajuste OS")
 
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
