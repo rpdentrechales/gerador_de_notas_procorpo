@@ -103,7 +103,9 @@ if "dados_crm_df" in st.session_state:
   subir_clientes_botao = st.button("Subir Clientes",type="primary")
 
   if subir_clientes_botao:
+    
     selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
-    # resultados = criar_clientes_selecionados(selected_df)
-    resultados = compilar_linhas_para_subir(dados_CRM_df)
-    st.write(resultados)
+    base_compilada = resultados = compilar_linhas_para_subir(dados_CRM_df)
+    clientes_subidos = criar_clientes_selecionados(base_compilada)
+
+    st.write(clientes_subidos)
