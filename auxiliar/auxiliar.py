@@ -315,10 +315,10 @@ def paste_billcharges_with_json(start_date, end_date):
                     os_id += "-01"  # Concatenate strings
 
             # Add processed row to sheet array
-            # sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
-            #              billcharge_paidAt, bill_installmentsQuantity, bill_amount, servico_obj, os_id, id_conta_corrente,
-            #              dados_cliente, isPaid, tipo_de_pagamento, billcharge_dueAt, bill_amount]
-            # sheet_array.append(sheet_row)
+            sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
+                         billcharge_paidAt, bill_installmentsQuantity, bill_amount, servico_obj, os_id, id_conta_corrente,
+                         dados_cliente, isPaid, tipo_de_pagamento, billcharge_dueAt, bill_amount]
+            sheet_array.append(sheet_row)
 
         # Fetch the next page of results
         current_page += 1
