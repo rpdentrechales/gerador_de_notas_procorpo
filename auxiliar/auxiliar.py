@@ -334,7 +334,7 @@ def paste_billcharges_with_json(start_date, end_date):
 
 def criar_os(api_secret, api_key, dados_ordem):
     # Requisição da API do Omie para criar Ordem de Serviço
-    st.write([api_secret, api_key, dados_ordem])
+    st.write(dados_ordem)
     request = {
         "call": "IncluirOS",
         "app_key": api_key,
@@ -343,7 +343,6 @@ def criar_os(api_secret, api_key, dados_ordem):
     }
 
     request_body = json.dumps(request)
-
     headers = {
         "Content-Type": "application/json"
     }
@@ -351,6 +350,8 @@ def criar_os(api_secret, api_key, dados_ordem):
     response = requests.post("https://app.omie.com.br/api/v1/servicos/os/", headers=headers, data=request_body)
 
     data = response.json()
+
+
     return data
 
 def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
@@ -393,7 +394,7 @@ def subir_linha(dados_da_linha):
     codigo_parcela = "000"
 
     dados_os = {
-        "cabecalho": {
+        "Cabecalho": {
             "cCodIntOS": codigo_integracao,
             "cCodIntCli": codigo_cliente_integracao,
             "cEtapa": "50",
