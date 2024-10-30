@@ -368,6 +368,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
 
 def subir_linha(dados_da_linha):
     # Arruma os dados da linha para subir na API do Omie
+    st.write(dados_da_linha)
     unidade = dados_da_linha[4]
     codigo_pedido = dados_da_linha[11]
     codigo_integracao = codigo_pedido
