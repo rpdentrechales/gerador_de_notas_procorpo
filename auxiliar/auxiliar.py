@@ -369,17 +369,18 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
 def subir_linha(dados_da_linha):
     # Arruma os dados da linha para subir na API do Omie
     st.write(dados_da_linha)
-    unidade = dados_da_linha[4]
-    codigo_pedido = dados_da_linha[11]
+
+    unidade = dados_da_linha["store_name"]
+    codigo_pedido = dados_da_linha["os_id"]
     codigo_integracao = codigo_pedido
-    observacoes = dados_da_linha[0]
-    codigo_cliente_integracao = dados_da_linha[2]
-    quantidade_de_parcelas = dados_da_linha[8]
+    observacoes = dados_da_linha["quote_id"]
+    codigo_cliente_integracao = dados_da_linha["customer_id"]
+    quantidade_de_parcelas = dados_da_linha["bill_installmentsQuantity"]
 
-    cDadosAdicNF = str(dados_da_linha[11])
-    nCodCC = dados_da_linha[12]
+    cDadosAdicNF = str(codigo_pedido)
+    nCodCC = dados_da_linha["id_conta_corrente"]
 
-    servicos_jsons = dados_da_linha[10].split(";")
+    servicos_jsons = dados_da_linha["servicos_json"].split(";")
     servicos_array = [json.loads(servico) for servico in servicos_jsons]
 
     cDadosAdicNF = "Serviços prestados - " + cDadosAdicNF
