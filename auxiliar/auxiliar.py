@@ -348,7 +348,7 @@ def criar_os(api_secret, api_key, dados_ordem):
         "Content-Type": "application/json"
     }
 
-    response = requests.get("https://app.omie.com.br/api/v1/servicos/os/", headers=headers, data=request_body)
+    response = requests.post("https://app.omie.com.br/api/v1/servicos/os/", headers=headers, data=request_body)
 
     data = response.json()
     return data
