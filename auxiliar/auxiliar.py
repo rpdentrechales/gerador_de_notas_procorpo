@@ -585,4 +585,8 @@ def check_response(response):
 
 
 def compilar_linhas_para_subir(df_selecionado):
-  df_groupby = df_selecionado.group
+  df_groupby = df_selecionado.groupby(["os_id"]).agg({'bill_total': 'sum'})
+  df_drop_duplicates = df_selecionado.drop_duplicates(subset=["os_id"],keep="first")
+  df_merge = pd.merge(df_drop_duplicates, df_groupby, on="os_id")
+  
+  return df_merge
