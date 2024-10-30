@@ -359,13 +359,12 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     
     resposta = subir_linha(linha)
     response = check_response(resposta)
-    resultados.apend([linha,response])
+    resultados.append([linha,response])
 
   resultados_df = pd.DataFrame(resultados)
 
   return resultados_df
   
-
 def subir_linha(dados_da_linha):
     # Arruma os dados da linha para subir na API do Omie
 
