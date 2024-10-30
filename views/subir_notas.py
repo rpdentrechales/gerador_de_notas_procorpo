@@ -7,7 +7,7 @@ from auxiliar.auxiliar import *
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-st.title("Subir Notas - Testar Billcharge")
+st.title("Subir Notas - Ajuste dataframe")
 
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
@@ -89,7 +89,9 @@ if "dados_crm_df" in st.session_state:
     index=None
     )
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+
   st.write("**Selecione notas para subir**")
+
   if filtro_pagamento:
     filtered_df
     dados_CRM_df = st.data_editor(filtered_df,
