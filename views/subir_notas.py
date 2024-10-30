@@ -103,9 +103,10 @@ if "dados_crm_df" in st.session_state:
   subir_clientes_botao = st.button("Subir Clientes",type="primary")
 
   if subir_clientes_botao:
-    
-    selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
-    base_compilada = resultados = compilar_linhas_para_subir(dados_CRM_df)
-    clientes_subidos = criar_clientes_selecionados(base_compilada)
 
-    st.write(clientes_subidos)
+    selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
+    base_compilada = resultados = compilar_linhas_para_subir(selected_df)
+    clientes_subidos = criar_clientes_selecionados(base_compilada)
+    os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
+
+    st.write(os_subidos)
