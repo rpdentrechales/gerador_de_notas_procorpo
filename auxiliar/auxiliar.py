@@ -357,7 +357,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
   resultados = []
 
   for index, linha in linhas_selecionadas.iterrows():
-    
+
     resposta = subir_linha(linha)
     response = check_response(resposta)
     resultados.append([linha,response])
@@ -365,7 +365,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
   resultados_df = pd.DataFrame(resultados,columns=["Dados","resposta"])
 
   return resultados_df
-  
+
 def subir_linha(dados_da_linha):
     # Arruma os dados da linha para subir na API do Omie
 
@@ -393,7 +393,7 @@ def subir_linha(dados_da_linha):
     codigo_parcela = "000"
 
     dados_os = {
-        "Cabecalho": {
+        "cabecalho": {
             "cCodIntOS": codigo_integracao,
             "cCodIntCli": codigo_cliente_integracao,
             "cEtapa": "50",
@@ -413,7 +413,7 @@ def subir_linha(dados_da_linha):
     }
 
     json_string = json.dumps(dados_os)
-    
+
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, json_string)
     return response
@@ -561,7 +561,7 @@ def alterar_dados(dados_cliente, api_secret, api_key):
     return response_text
 
 def check_response(response):
-  
+
   # Check if response is fault or sucessfull
 
     if 'faultstring' in response:
@@ -576,5 +576,5 @@ def compilar_linhas_para_subir(df_selecionado):
   df_drop_duplicates = df_selecionado.drop_duplicates(subset=["os_id"],keep="first")
   df_drop_duplicates = df_drop_duplicates.drop(columns=["bill_amount"])
   df_merge = pd.merge(df_drop_duplicates, df_groupby, on="os_id")
-  
+
   return df_merge
