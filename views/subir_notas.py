@@ -100,16 +100,23 @@ if "dados_crm_df" in st.session_state:
                    disabled=columns_to_disable
                    )
 
-  subir_clientes_botao = st.button("Subir Clientes",type="primary")
+  gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
-  if subir_clientes_botao:
+  if gerar_notas_botao:
+    
+    with st.status("Criando Notas...", expanded=True) as status:
 
-    selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
-    base_compilada = compilar_linhas_para_subir(selected_df)
-    st.write("base_compilada:")
-    st.write(base_compilada)
-    clientes_subidos = criar_clientes_selecionados(base_compilada)
-    os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
+      st.write("Compilando Base...")
 
-    st.write("os_subidos:")
-    st.write(os_subidos)
+      selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
+      base_compilada = compilar_linhas_para_subir(selected_df)
+      
+      st.write("Criando Clientes...")
+      clientes_subidos = criar_clientes_selecionados(base_compilada)
+
+      st.write("Criando Ordens de Serviço...")
+      os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
+
+      status.update(
+          label="Notas Criadas!", state="complete", expanded=False
+      )
