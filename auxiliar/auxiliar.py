@@ -334,7 +334,7 @@ def paste_billcharges_with_json(start_date, end_date):
 
 def criar_os(api_secret, api_key, dados_ordem):
     # Requisição da API do Omie para criar Ordem de Serviço
-    st.write(dados_ordem)
+
     request = {
         "call": "IncluirOS",
         "app_key": api_key,
@@ -574,7 +574,7 @@ def update_value_json(row):
 
     json_obj = json.loads(row['servicos_json'])  
     json_obj['nValUnit'] = row['bill_amount']  
-    
+
     return json.dumps(json_obj) 
 
 def compilar_linhas_para_subir(df_selecionado):
