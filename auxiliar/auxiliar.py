@@ -574,13 +574,15 @@ def update_value_json(row):
 
     json_obj = json.loads(row['servicos_json'])  
     json_obj['nValUnit'] = row['bill_amount']  
-
+    st.write(f"Update Valeu: {row['bill_amount']}")
     return json.dumps(json_obj) 
 
 def compilar_linhas_para_subir(df_selecionado):
   df_groupby = df_selecionado.groupby(["os_id"]).agg({'bill_amount': 'sum'})
+
   df_drop_duplicates = df_selecionado.drop_duplicates(subset=["os_id"],keep="first")
   df_drop_duplicates = df_drop_duplicates.drop(columns=["bill_amount"])
+  
   df_merge = pd.merge(df_drop_duplicates, df_groupby, on="os_id")
 
   df_merge['json_data'] = df_merge.apply(update_value_json, axis=1)
