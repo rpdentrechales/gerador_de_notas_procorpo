@@ -7,7 +7,7 @@ from auxiliar.auxiliar import *
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-st.title("Subir Notas - Ajuste OS")
+st.title("Subir Notas")
 
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
@@ -88,10 +88,10 @@ if "dados_crm_df" in st.session_state:
   visualisar_clientes_sem_endereco = clientes_sem_endereco_df[colunas_cliente_sem_endereco].drop_duplicates()
   quantidade_clientes_sem_endereco = len(visualisar_clientes_sem_endereco)
 
-  @st.dialog("Clientes Sem End", width="large")
+  @st.dialog("Clientes Sem Endereço", width="large")
   def abrir_clientes_sem_endereco():
     
-    st.dataframe(visualisar_clientes_sem_endereco)
+    st.dataframe(visualisar_clientes_sem_endereco,use_container_width=True)
 
   clientes_sem_endereco_botao = st.button(f"{quantidade_clientes_sem_endereco} Clientes Sem Endereço",type="secondary")
 
