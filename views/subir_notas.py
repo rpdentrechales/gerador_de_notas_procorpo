@@ -89,9 +89,10 @@ if "dados_crm_df" in st.session_state:
 
   @st.dialog("Clientes Sem End", width="large")
   def abrir_clientes_sem_endereco():
-      st.dataframe(clientes_sem_endereco_df[colunas_cliente_sem_endereco])
+    visualisar_clientes_sem_endereco = clientes_sem_endereco_df[colunas_cliente_sem_endereco].drop_duplicates()
+    st.dataframe(visualisar_clientes_sem_endereco)
 
-  clientes_sem_endereco_botao = st.button(f"{quantidade_clientes_sem_endereco} Clientes Sem Endereço",type="primary")
+  clientes_sem_endereco_botao = st.button(f"{quantidade_clientes_sem_endereco} Clientes Sem Endereço",type="secondary")
 
   if clientes_sem_endereco_botao:
     abrir_clientes_sem_endereco()
