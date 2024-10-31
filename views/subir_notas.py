@@ -106,7 +106,10 @@ if "dados_crm_df" in st.session_state:
 
     selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
     base_compilada = compilar_linhas_para_subir(selected_df)
+    st.write("base_compilada:")
+    st.write(base_compilada)
     clientes_subidos = criar_clientes_selecionados(base_compilada)
     os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
 
+    st.write("os_subidos:")
     st.write(os_subidos)
