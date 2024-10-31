@@ -359,8 +359,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
   for index, linha in linhas_selecionadas.iterrows():
 
     resposta = subir_linha(linha)
-    response = check_response(resposta)
-    resultados.append([linha,response])
+    resultados.append([linha,resposta])
 
   resultados_df = pd.DataFrame(resultados,columns=["Dados","resposta"])
 
@@ -571,10 +570,19 @@ def check_response(response):
     else:
         return None
 
+def update_value_json(row):
+
+    json_obj = json.loads(row['servicos_json'])  
+    json_obj['nValUnit'] = row['bill_amount']  
+
+    return json.dumps(json_obj) 
+
 def compilar_linhas_para_subir(df_selecionado):
   df_groupby = df_selecionado.groupby(["os_id"]).agg({'bill_amount': 'sum'})
   df_drop_duplicates = df_selecionado.drop_duplicates(subset=["os_id"],keep="first")
   df_drop_duplicates = df_drop_duplicates.drop(columns=["bill_amount"])
   df_merge = pd.merge(df_drop_duplicates, df_groupby, on="os_id")
+
+  df_merge['json_data'] = df_merge.apply(update_value_json, axis=1)
 
   return df_merge
