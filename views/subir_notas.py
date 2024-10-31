@@ -82,7 +82,13 @@ if "dados_crm_df" in st.session_state:
             "billcharge_dueAt",
             "amount"
             ]
+  
+  dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Cliente sem endereço"]
+  clientes_sem_endereco_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] == "Cliente sem endereço"]
+  quantidade_clientes_sem_endereco = len(clientes_sem_endereco_df)
 
+  colunas = clientes_sem_endereco_df.columns
+  
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
     dados_crm_df["Tipo de Pagamento"].unique(),
@@ -99,9 +105,18 @@ if "dados_crm_df" in st.session_state:
                    column_order=columns_order,
                    disabled=columns_to_disable
                    )
+  
+  @st.dialog("Clientes Sem End")
+  def abrir_clientes_sem_endereco():
+      st.write(colunas)
 
   gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
+  clientes_sem_endereco_botao = st.button(f"{quantidade_clientes_sem_endereco} Clientes Sem Endereço",type="primary")
+
+  if clientes_sem_endereco_botao:
+    abrir_clientes_sem_endereco()
+  
   if gerar_notas_botao:
     
     with st.status("Criando Notas...", expanded=True) as status:
