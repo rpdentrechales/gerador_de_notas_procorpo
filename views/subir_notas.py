@@ -84,7 +84,7 @@ if "dados_crm_df" in st.session_state:
             ]
 
   clientes_sem_endereco_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] == "Cliente sem endereço"]    
-  colunas_cliente_sem_endereco = ["quote_id","billCharge_id","customer_id","customer_name","store_name"]
+  colunas_cliente_sem_endereco = ["quote_id","customer_id","customer_name","store_name"]
   quantidade_clientes_sem_endereco = len(clientes_sem_endereco_df)
 
   @st.dialog("Clientes Sem End", width="large")
