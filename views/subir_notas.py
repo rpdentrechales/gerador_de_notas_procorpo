@@ -110,8 +110,9 @@ if "dados_crm_df" in st.session_state:
   st.write("**Selecione notas para subir**")
 
   if filtro_pagamento:
-    
-    dados_CRM_df = st.data_editor(filtered_df,
+    tabela = st.container()
+
+    tabela.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,
                    disabled=columns_to_disable
@@ -123,10 +124,14 @@ if "dados_crm_df" in st.session_state:
     gerar_notas_botao = st.button("Gerar Notas",type="primary")
   
   with botoes_col2:
-    selecionar_tudo_botao = st.button("Selecionar Tudo",type="secondary")
+    selecionar_tudo_botao = st.button("Marcar/Desmarcar Tudo",type="secondary")
 
   if selecionar_tudo_botao:
-    dados_CRM_df["Selecionar notas para subir"] = True
+
+    if "selecionar_tudo" in st.session_state:
+      st.session_state["selecionar_tudo"] = not st.session_state["selecionar_tudo"]
+    else:
+      st.session_state["selecionar_tudo"] = True
 
   if gerar_notas_botao:
 
