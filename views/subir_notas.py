@@ -133,6 +133,17 @@ if "dados_crm_df" in st.session_state:
     else:
       st.session_state["selecionar_tudo"] = True
 
+    selecion = st.session_state["selecionar_tudo"]
+
+    dados_crm_df["Selecionar notas para subir"] = selecion
+
+    filtered_df["Selecionar notas para subir"] = selecion
+    tabela.data_editor(filtered_df,
+                   hide_index=True,
+                   column_order=columns_order,
+                   disabled=columns_to_disable
+                   )
+
   if gerar_notas_botao:
 
     with st.status("Criando Notas...", expanded=True) as status:
