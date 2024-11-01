@@ -83,7 +83,7 @@ if "dados_crm_df" in st.session_state:
             "amount"
             ]
 
-  clientes_sem_endereco_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] == "Cliente sem endereço"]    
+  clientes_sem_endereco_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] == "Cliente sem endereço"]
   colunas_cliente_sem_endereco = ["quote_id","customer_id","customer_name","store_name"]
   visualisar_clientes_sem_endereco = clientes_sem_endereco_df[colunas_cliente_sem_endereco].drop_duplicates()
   quantidade_clientes_sem_endereco = len(visualisar_clientes_sem_endereco)
@@ -99,7 +99,7 @@ if "dados_crm_df" in st.session_state:
     abrir_clientes_sem_endereco()
 
   dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Cliente sem endereço"]
-  
+
   filtro_pagamento = st.selectbox(
     "Selecionar tipo de pagamento",
     dados_crm_df["Tipo de Pagamento"].unique(),
@@ -116,19 +116,27 @@ if "dados_crm_df" in st.session_state:
                    column_order=columns_order,
                    disabled=columns_to_disable
                    )
-  
 
-  gerar_notas_botao = st.button("Gerar Notas",type="primary")
- 
+  botoes_col1, botoes_col2 = st.columns(2)
+
+  with botoes_col1:
+    gerar_notas_botao = st.button("Gerar Notas",type="primary")
+  
+  with botoes_col2:
+    selecionar_tudo_botao = st.button("Selecionar Tudo",type="secondary")
+
+  if selecionar_tudo_botao:
+    dados_CRM_df["Selecionar notas para subir"] = True
+
   if gerar_notas_botao:
-    
+
     with st.status("Criando Notas...", expanded=True) as status:
 
       st.write("Compilando Base...")
 
       selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
       base_compilada = compilar_linhas_para_subir(selected_df)
-      
+
       st.write("Criando Clientes...")
       clientes_subidos = criar_clientes_selecionados(base_compilada)
 
