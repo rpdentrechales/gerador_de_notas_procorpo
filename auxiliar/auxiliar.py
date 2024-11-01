@@ -244,7 +244,7 @@ def paste_billcharges_with_json(start_date, end_date):
             if not isPaid or quote_status != "completed":
                 continue
 
-            regex_pagamentos_para_excluir = r".*Vale Tratamento|Crédito Promocional.*|.*Utilizar Crédito.*|.*INKLO.*|.*CRMBonus.*"
+            regex_pagamentos_para_excluir = r".*Crédito Promocional.*|.*Utilizar Crédito.*|.*INKLO.*|.*CRMBonus.*"
             if re.search(regex_pagamentos_para_excluir, paymentMethod_name):
                 continue
 
