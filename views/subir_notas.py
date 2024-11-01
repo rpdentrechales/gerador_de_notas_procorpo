@@ -110,7 +110,7 @@ if "dados_crm_df" in st.session_state:
   st.write("**Selecione notas para subir**")
 
   if filtro_pagamento:
-    filtered_df
+    
     dados_CRM_df = st.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,
