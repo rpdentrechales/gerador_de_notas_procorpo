@@ -115,7 +115,7 @@ if "dados_crm_df" in st.session_state:
     tabela.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,
-                   disabled=columns_to_disable
+                   disabled=columns_to_disable,key="tabela"
                    )
 
   botoes_col1, botoes_col2 = st.columns(2)
@@ -141,7 +141,7 @@ if "dados_crm_df" in st.session_state:
     tabela.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,
-                   disabled=columns_to_disable
+                   disabled=columns_to_disable,key="tabela"
                    )
 
   if gerar_notas_botao:
