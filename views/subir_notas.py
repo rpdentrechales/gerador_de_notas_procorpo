@@ -91,7 +91,7 @@ if "dados_crm_df" in st.session_state:
   @st.dialog("Clientes Sem Endereço", width="large")
   def abrir_clientes_sem_endereco():
     st.write("Lista de clientes sem endereço:")
-    st.dataframe(visualisar_clientes_sem_endereco,use_container_width=True,hide_index=False)
+    st.dataframe(visualisar_clientes_sem_endereco,use_container_width=True,hide_index=True)
 
   clientes_sem_endereco_botao = st.button(f"{quantidade_clientes_sem_endereco} Clientes Sem Endereço",type="secondary")
 
@@ -110,7 +110,7 @@ if "dados_crm_df" in st.session_state:
   st.write("**Selecione notas para subir**")
 
   if filtro_pagamento:
-    
+
     dados_CRM_df = st.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,

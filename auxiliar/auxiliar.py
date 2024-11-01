@@ -244,7 +244,7 @@ def paste_billcharges_with_json(start_date, end_date):
             if not isPaid or quote_status != "completed":
                 continue
 
-            regex_pagamentos_para_excluir = r".*Crédito Promocional.*|.*Utilizar Crédito.*|.*INKLO.*|.*CRMBonus.*"
+            regex_pagamentos_para_excluir = r".*Vale Tratamento|Crédito Promocional.*|.*Utilizar Crédito.*|.*INKLO.*|.*CRMBonus.*"
             if re.search(regex_pagamentos_para_excluir, paymentMethod_name):
                 continue
 
@@ -572,17 +572,17 @@ def check_response(response):
 
 def update_value_json(row):
 
-    json_obj = json.loads(row['servicos_json'])  
-    json_obj['nValUnit'] = row['bill_amount']  
+    json_obj = json.loads(row['servicos_json'])
+    json_obj['nValUnit'] = row['bill_amount']
 
-    return json.dumps(json_obj) 
+    return json.dumps(json_obj)
 
 def compilar_linhas_para_subir(df_selecionado):
   df_groupby = df_selecionado.groupby(["os_id"]).agg({'bill_amount': 'sum'})
 
   df_drop_duplicates = df_selecionado.drop_duplicates(subset=["os_id"],keep="first")
   df_drop_duplicates = df_drop_duplicates.drop(columns=["bill_amount"])
-  
+
   df_merge = pd.merge(df_drop_duplicates, df_groupby, on="os_id")
 
   df_merge['servicos_json'] = df_merge.apply(update_value_json, axis=1)
