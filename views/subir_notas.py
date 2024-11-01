@@ -117,7 +117,7 @@ if "dados_crm_df" in st.session_state:
                    disabled=columns_to_disable
                    )
 
-  gerar_notas_botao = st.button("Gerar Notas",type="primary")
+    gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
   if gerar_notas_botao:
 
