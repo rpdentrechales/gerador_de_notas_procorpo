@@ -162,6 +162,7 @@ if "dados_crm_df" in st.session_state:
         st.write(os_subidos)
         os_subidos = os_subidos.to_dict(orient='records')
         st.write(os_subidos)
+        st.write("teste")
         # subir_dados_mongodb("log_os",os_subidos)
 
         status.update(
