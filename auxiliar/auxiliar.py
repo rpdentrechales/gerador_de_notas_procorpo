@@ -246,7 +246,6 @@ def paste_billcharges_with_json(start_date, end_date):
 
             regex_pagamentos_para_excluir = r".*Vale Tratamento|Crédito Promocional.*|.*Utilizar Crédito.*|.*INKLO.*|.*CRMBonus.*"
             if re.search(regex_pagamentos_para_excluir, paymentMethod_name):
-                st.write(data_row)
                 continue
 
             # Process customer address
