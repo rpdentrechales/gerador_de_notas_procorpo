@@ -100,12 +100,30 @@ if "dados_crm_df" in st.session_state:
 
   dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Cliente sem endereço"]
 
-  filtro_pagamento = st.selectbox(
-    "Selecionar tipo de pagamento",
-    dados_crm_df["Tipo de Pagamento"].unique(),
-    index=None
-    )
+  filtro_col_1, filtro_col_2 = st.columns(2)
+
+  with filtro_col_1:
+
+    filtro_pagamento = st.selectbox(
+      "Selecionar tipo de pagamento",
+      dados_crm_df["Tipo de Pagamento"].unique(),
+      index=None
+      )
+    
+  with filtro_col_2:
+    unidades = dados_crm_df["store_name"].unique()
+    unidades.append("Todas")
+
+    filtro_unidade = st.selectbox(
+      "Selecionar unidade",
+      unidades,
+      index=len(unidades)
+      )
+    
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+  
+  if filtro_unidade != "Todas":
+    filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
 
   st.write("**Selecione notas para subir**")
 
