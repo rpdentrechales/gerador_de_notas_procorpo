@@ -19,7 +19,7 @@ log_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Omie": [subir_notas_page,log_page]
+        "Subir notas": [subir_notas_page,log_page]
     }
 )
 
