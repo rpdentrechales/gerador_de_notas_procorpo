@@ -114,17 +114,16 @@ if "dados_crm_df" in st.session_state:
 
   with filtro_col_2:
     unidades = list(filtered_df["store_name"].unique())
-    unidades.append("Todas")
+    unidades.insert(0,"TODAS")
 
     filtro_unidade = st.selectbox(
       "Selecionar unidade",
       unidades,
-      index=len(unidades)-1
+      index=0
       )
-    
   
 
-  if filtro_unidade != "Todas":
+  if filtro_unidade != "TODAS":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
 
   st.write("**Selecione notas para subir**")
