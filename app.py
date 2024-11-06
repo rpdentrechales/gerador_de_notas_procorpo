@@ -9,7 +9,7 @@ subir_notas_page = st.Page(
 )
 log_page = st.Page(
     "views/log.py",
-    title="Subir Notas",
+    title="Logs",
     icon=":material/thumb_up:",
 )
 
@@ -19,7 +19,7 @@ log_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Subir notas": [subir_notas_page,log_page]
+        "Notas Omie": [subir_notas_page,log_page]
     }
 )
 
