@@ -159,12 +159,11 @@ if "dados_crm_df" in st.session_state:
 
         st.write("Criando Ordens de Serviço...")
         os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
-        st.write(os_subidos)
         os_subidos = os_subidos.to_dict(orient='records')
-        st.write(os_subidos)
-        st.write("teste")
+
         # subir_dados_mongodb("log_os",os_subidos)
 
         status.update(
             label="Notas Criadas!", state="complete", expanded=False
         )
+      st.write(os_subidos)
