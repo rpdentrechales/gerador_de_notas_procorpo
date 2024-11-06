@@ -109,9 +109,11 @@ if "dados_crm_df" in st.session_state:
       dados_crm_df["Tipo de Pagamento"].unique(),
       index=None
       )
-    
+  
+  filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+
   with filtro_col_2:
-    unidades = dados_crm_df["store_name"].unique()
+    unidades = list(filtered_df["store_name"].unique())
     unidades.append("Todas")
 
     filtro_unidade = st.selectbox(
@@ -120,8 +122,8 @@ if "dados_crm_df" in st.session_state:
       index=len(unidades)
       )
     
-  filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
   
+
   if filtro_unidade != "Todas":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
 
