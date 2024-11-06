@@ -4,13 +4,13 @@ import streamlit as st
 subir_notas_page = st.Page(
     "views/subir_notas.py",
     title="Subir Notas",
-    icon=":material/thumb_up:",
+    icon=":material/cloud_upload:",
     default=True,
 )
 log_page = st.Page(
     "views/log.py",
     title="Logs",
-    icon=":material/thumb_up:",
+    icon=":material/summarize:",
 )
 
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
