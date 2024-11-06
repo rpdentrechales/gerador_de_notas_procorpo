@@ -6,6 +6,8 @@ import requests
 import json
 import re
 import time
+import pymongo
+from pymongo import MongoClient
 
 def load_dataframe(worksheet):
 
@@ -588,3 +590,21 @@ def compilar_linhas_para_subir(df_selecionado):
   df_merge['servicos_json'] = df_merge.apply(update_value_json, axis=1)
 
   return df_merge
+
+def subir_dados_mongodb(collection_name,dados):
+
+  client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+  db = client["notas_omie"]
+  collection = db[collection]
+  insert_result = collection.insert_many(dados)
+
+  return insert_result
+
+def pegar_dados_mongodb(collection_name,dados):
+
+  client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+  db = client["notas_omie"]
+  collection = db[collection]
+  all_documents = collection.find()
+
+  return all_documents

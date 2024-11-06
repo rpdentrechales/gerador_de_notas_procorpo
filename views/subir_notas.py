@@ -124,7 +124,7 @@ if "dados_crm_df" in st.session_state:
 
   if filtro_unidade != "TODAS":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
-    
+
   with filtro_col_3:
 
     soma = filtered_df["amount"].sum()
@@ -154,9 +154,13 @@ if "dados_crm_df" in st.session_state:
 
         st.write("Criando Clientes...")
         clientes_subidos = criar_clientes_selecionados(base_compilada)
+        clientes_subidos = clientes_subidos.to_dict(orient='records')
+        subir_dados_mongodb("log_clientes",clientes_subidos)
 
         st.write("Criando Ordens de Serviço...")
         os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
+        os_subidos = os_subidos.to_dict(orient='records')
+        subir_dados_mongodb("log_clientes",os_subidos)
 
         status.update(
             label="Notas Criadas!", state="complete", expanded=False
