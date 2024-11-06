@@ -600,11 +600,13 @@ def subir_dados_mongodb(collection_name,dados):
 
   return insert_result
 
-def pegar_dados_mongodb(collection_name,dados):
+def pegar_dados_mongodb(collection_name):
 
   client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   db = client["notas_omie"]
-  collection = db[collection]
+  collection = db[collection_name]
   all_documents = collection.find()
+  data = list(all_documents)
+  df = pd.DataFrame(data).drop(columns=['_id'], errors='ignore')
 
-  return all_documents
+  return df

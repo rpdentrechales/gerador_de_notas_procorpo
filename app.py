@@ -7,6 +7,11 @@ subir_notas_page = st.Page(
     icon=":material/thumb_up:",
     default=True,
 )
+log_page = st.Page(
+    "views/log.py",
+    title="Subir Notas",
+    icon=":material/thumb_up:",
+)
 
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
 # pg = st.navigation(pages=[about_page, project_1_page, project_2_page])
@@ -14,7 +19,7 @@ subir_notas_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Omie": [subir_notas_page]
+        "Omie": [subir_notas_page,log_page]
     }
 )
 

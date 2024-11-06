@@ -7,7 +7,7 @@ from auxiliar.auxiliar import *
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-st.title("Subir Notas - testes")
+st.title("Subir Notas")
 
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
@@ -160,7 +160,7 @@ if "dados_crm_df" in st.session_state:
         st.write("Criando Ordens de Serviço...")
         os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
         os_subidos = os_subidos.to_dict(orient='records')
-        subir_dados_mongodb("log_clientes",os_subidos)
+        subir_dados_mongodb("log_os",os_subidos)
 
         status.update(
             label="Notas Criadas!", state="complete", expanded=False
