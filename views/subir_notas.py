@@ -119,7 +119,7 @@ if "dados_crm_df" in st.session_state:
     filtro_unidade = st.selectbox(
       "Selecionar unidade",
       unidades,
-      index=len(unidades)
+      index=len(unidades)-1
       )
     
   
