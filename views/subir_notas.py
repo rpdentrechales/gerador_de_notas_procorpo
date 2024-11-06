@@ -100,14 +100,14 @@ if "dados_crm_df" in st.session_state:
 
   dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Cliente sem endereço"]
 
-  filtro_col_1, filtro_col_2 = st.columns(2)
+  filtro_col_1, filtro_col_2, filtro_col_3 = st.columns(3)
 
   with filtro_col_1:
 
     filtro_pagamento = st.selectbox(
       "Selecionar tipo de pagamento",
       dados_crm_df["Tipo de Pagamento"].unique(),
-      index=None
+      index=0
       )
   
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
@@ -121,10 +121,15 @@ if "dados_crm_df" in st.session_state:
       unidades,
       index=0
       )
-  
 
   if filtro_unidade != "TODAS":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
+    
+  with filtro_col_3:
+
+    soma = filtered_df["amount"].sum()
+    soma = f"R$ {soma:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    st.metric(label="Valor Total", value=soma)
 
   st.write("**Selecione notas para subir**")
 
