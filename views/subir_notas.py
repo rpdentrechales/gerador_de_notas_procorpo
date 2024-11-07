@@ -111,7 +111,6 @@ if "dados_crm_df" in st.session_state:
       )
 
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
-  st.session_state["filtered_df"] = filtered_df
 
   with filtro_col_2:
     unidades = list(filtered_df["store_name"].unique())
@@ -125,7 +124,6 @@ if "dados_crm_df" in st.session_state:
 
   if filtro_unidade != "TODAS":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
-    st.session_state["filtered_df"] = filtered_df
 
   with filtro_col_3:
 
@@ -138,12 +136,8 @@ if "dados_crm_df" in st.session_state:
   if st.button("Marcar Tudo"):
   
     filtered_df["Selecionar notas para subir"] = True
-    st.session_state["filtered_df"] = filtered_df
-    st.write("foi!")
+    st.write("foi")
   
-  if "filtered_df" in st.session_state:
-    filtered_df = st.session_state["filtered_df"]
-
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
                   column_order=columns_order,
