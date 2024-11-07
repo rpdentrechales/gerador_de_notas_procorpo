@@ -133,6 +133,8 @@ if "dados_crm_df" in st.session_state:
 
   st.write("**Selecione notas para subir**")
   selecionar_tudo_botao = st.button("Marcar Tudo")
+  if selecionar_tudo_botao:
+      st.session_state["df_editor"]["Selecionar notas para subir"] = True
 
   if filtro_pagamento:
 
@@ -143,8 +145,6 @@ if "dados_crm_df" in st.session_state:
                    key = "df_editor"
                    )
     
-    if selecionar_tudo_botao:
-      st.session_state["df_editor"]["Selecionar notas para subir"] = True
 
     gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
