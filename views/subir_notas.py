@@ -12,7 +12,7 @@ st.title("Subir Notas")
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
 
-col_data_1, col_data_2, blank_3 = st.columns([1,1,3])
+col_data_1, col_data_2, blank_3 = st.columns([1,1,2])
 
 with col_data_1:
   data_seletor = st.date_input(
