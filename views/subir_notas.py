@@ -136,9 +136,13 @@ if "dados_crm_df" in st.session_state:
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
                   column_order=columns_order,
-                  disabled=columns_to_disable
+                  disabled=columns_to_disable,
+                  key="edited_df"
                   )
   
+  if st.button("Selecionar Tudo"):
+    st.session_state["edited_df"]["Selecionar_notas_para_subir"] = True
+
   gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
   if gerar_notas_botao:
