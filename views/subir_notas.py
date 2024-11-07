@@ -132,23 +132,29 @@ if "dados_crm_df" in st.session_state:
     st.metric(label="Valor Total", value=soma)
 
   st.write("**Selecione notas para subir**")
-  selecionar_tudo_botao = st.button("Marcar Tudo")
 
-  if selecionar_tudo_botao:
+  if "edited_data" not in st.session_state:
+    st.session_state["edited_data"] = filtered_df.copy()
+
+  if "select_all" not in st.session_state:
+    st.session_state["select_all"] = True
+
+  def toggle_select():
+    st.session_state["edited_data"]["Selecionar notas para subir"] = st.session_state["select_all"]
+    st.session_state["select_all"] = not st.session_state["select_all"] 
   
-    filtered_df["Selecionar notas para subir"] = True
-    st.session_state["df_editor"]["Selecionar notas para subir"] = True
+  if st.button("Marcar Tudo"):
+    toggle_select()
 
   if filtro_pagamento:
 
-    edited_df = st.data_editor(filtered_df,
+    edited_df = st.data_editor(st.session_state["edited_data"],
                    hide_index=True,
                    column_order=columns_order,
                    disabled=columns_to_disable,
-                   key = "df_editor"
+                   key="edited_data"
                    )
     
-
     gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
     if gerar_notas_botao:
