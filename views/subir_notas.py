@@ -132,10 +132,12 @@ if "dados_crm_df" in st.session_state:
     st.metric(label="Valor Total", value=soma)
 
   st.write("**Selecione notas para subir**")
+
   on = st.toggle("Subir Tudo")
+
   if on:
     filtered_df["Selecionar notas para subir"] = True
-    columns_to_disable = columns_to_disable.append("Selecionar notas para subir")
+    columns_to_disable.append("Selecionar notas para subir")
 
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
