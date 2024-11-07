@@ -255,6 +255,7 @@ def paste_billcharges_with_json(start_date, end_date):
             if customer_address:
                 dados_cliente = {
                     "razao_social": customer_name,
+                    "nome_fantasia":customer_name,
                     "cnpj_cpf": customer_document,
                     "codigo_cliente_integracao": customer_id,
                     "endereco": customer_address['street'],
@@ -546,7 +547,7 @@ def associar_id_cliente(dados_cliente, api_secret, api_key):
 
 def alterar_dados(dados_cliente, api_secret, api_key):
     # Requisição para alterar dados do cliente
-    st.write(dados_cliente)
+
     request = {
         "call": "AlterarCliente",
         "app_key": api_key,
