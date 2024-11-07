@@ -363,9 +363,12 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     resposta = subir_linha(linha)
     quote_id = linha["quote_id"]
     unidade = linha["store_name"]
-    resultados.append([quote_id,unidade,resposta])
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+    resultados.append([quote_id,unidade,resposta,timestamp])
+    st.write(linha)
 
-  resultados_df = pd.DataFrame(resultados,columns=["quote_id","store_name","resposta"])
+  resultados_df = pd.DataFrame(resultados,columns=["quote_id","store_name","resposta","timestamp"])
 
   return resultados_df
 
@@ -424,7 +427,9 @@ def subir_linha(dados_da_linha):
 def criar_clientes_selecionados(base_df):
 
   chaves_api = gerar_obj_api()
-  resultados = [["client_id","Resultado","Response"]]
+  now = datetime.now()
+  timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+  resultados = [["client_id","Resultado","Response","timestamp"]]
   counter = 0
 
   for index,row in base_df.iterrows():
@@ -444,7 +449,7 @@ def criar_clientes_selecionados(base_df):
     except json.JSONDecodeError:
       result_status = "Erro ao converter JSON"
       full_response = "Erro ao converter JSON"
-      resultados.append([id_do_cliente,result_status,full_response])
+      resultados.append([id_do_cliente,result_status,full_response,timestamp])
       continue  # Pula para a próxima iteração
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
@@ -489,7 +494,7 @@ def criar_clientes_selecionados(base_df):
     if counter % 20 == 0:
         time.sleep(5)  # Aguarda 5 segundos
 
-    resultados.append([id_do_cliente,result_status,full_response])
+    resultados.append([id_do_cliente,result_status,full_response,timestamp])
     counter += 1
 
   resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
