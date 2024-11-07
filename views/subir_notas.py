@@ -133,11 +133,11 @@ if "dados_crm_df" in st.session_state:
 
   st.write("**Selecione notas para subir**")
 
-  on = st.toggle("Subir Tudo")
+  seletor_subir_tudo = st.toggle("Subir Tudo")
 
-  if on:
+  if seletor_subir_tudo:
     filtered_df["Selecionar notas para subir"] = True
-    columns_to_disable.append("Selecionar notas para subir")
+    columns_order.remove("Selecionar notas para subir")
 
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
