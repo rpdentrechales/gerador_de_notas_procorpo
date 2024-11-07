@@ -132,12 +132,7 @@ if "dados_crm_df" in st.session_state:
     st.metric(label="Valor Total", value=soma)
 
   st.write("**Selecione notas para subir**")
-
-  if st.button("Marcar Tudo"):
-  
-    filtered_df["Selecionar notas para subir"] = True
-    st.write("foi")
-  
+ 
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
                   column_order=columns_order,
