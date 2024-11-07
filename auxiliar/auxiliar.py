@@ -361,9 +361,11 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
   for index, linha in linhas_selecionadas.iterrows():
 
     resposta = subir_linha(linha)
-    resultados.append([linha,resposta])
+    quote_id = linha["quote_id"]
+    unidade = linha["store_name"]
+    resultados.append([quote_id,unidade,resposta])
 
-  resultados_df = pd.DataFrame(resultados,columns=["Dados","resposta"])
+  resultados_df = pd.DataFrame(resultados,columns=["quote_id","store_name","resposta"])
 
   return resultados_df
 
