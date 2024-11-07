@@ -111,6 +111,7 @@ if "dados_crm_df" in st.session_state:
       )
 
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+  st.session_state["filtered_df"] = filtered_df
 
   with filtro_col_2:
     unidades = list(filtered_df["store_name"].unique())
@@ -124,6 +125,7 @@ if "dados_crm_df" in st.session_state:
 
   if filtro_unidade != "TODAS":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
+    st.session_state["filtered_df"] = filtered_df
 
   with filtro_col_3:
 
@@ -142,35 +144,33 @@ if "dados_crm_df" in st.session_state:
   if "filtered_df" in st.session_state:
     filtered_df = st.session_state["filtered_df"]
 
-  if filtro_pagamento:
+  edited_df = st.data_editor(filtered_df,
+                  hide_index=True,
+                  column_order=columns_order,
+                  disabled=columns_to_disable
+                  )
+  
+  gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
-    edited_df = st.data_editor(filtered_df,
-                   hide_index=True,
-                   column_order=columns_order,
-                   disabled=columns_to_disable
-                   )
-    
-    gerar_notas_botao = st.button("Gerar Notas",type="primary")
+  if gerar_notas_botao:
 
-    if gerar_notas_botao:
+    with st.status("Criando Notas...", expanded=True) as status:
 
-      with st.status("Criando Notas...", expanded=True) as status:
+      st.write("Compilando Base...")
 
-        st.write("Compilando Base...")
+      selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
+      base_compilada = compilar_linhas_para_subir(selected_df)
 
-        selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
-        base_compilada = compilar_linhas_para_subir(selected_df)
+      st.write("Criando Clientes...")
+      clientes_subidos = criar_clientes_selecionados(base_compilada)
+      clientes_subidos = clientes_subidos.to_dict(orient='records')
+      subir_dados_mongodb("log_clientes",clientes_subidos)
 
-        st.write("Criando Clientes...")
-        clientes_subidos = criar_clientes_selecionados(base_compilada)
-        clientes_subidos = clientes_subidos.to_dict(orient='records')
-        subir_dados_mongodb("log_clientes",clientes_subidos)
+      st.write("Criando Ordens de Serviço...")
+      os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
+      os_subidos = os_subidos.to_dict(orient='records')
+      subir_dados_mongodb("log_os",os_subidos)
 
-        st.write("Criando Ordens de Serviço...")
-        os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
-        os_subidos = os_subidos.to_dict(orient='records')
-        subir_dados_mongodb("log_os",os_subidos)
-
-        status.update(
-            label="Notas Criadas!", state="complete", expanded=False
-        )
+      status.update(
+          label="Notas Criadas!", state="complete", expanded=False
+      )
