@@ -144,7 +144,7 @@ if "dados_crm_df" in st.session_state:
                    )
     
     if selecionar_tudo_botao:
-      st.session_state["edited_data"]["Selecionar notas para subir"] = True
+      st.session_state["df_editor"]["Selecionar notas para subir"] = True
 
     gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
