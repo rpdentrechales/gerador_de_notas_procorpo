@@ -134,14 +134,15 @@ if "dados_crm_df" in st.session_state:
   st.write("**Selecione notas para subir**")
 
   if st.button("Marcar Tudo"):
-    filtered_df["Selecionar notas para subir"] = True
+    st.session_state["edited_data"]["Selecionar notas para subir"] = True
 
   if filtro_pagamento:
 
-    dados_CRM_df = st.data_editor(filtered_df,
+    edited_df = st.data_editor(filtered_df,
                    hide_index=True,
                    column_order=columns_order,
-                   disabled=columns_to_disable
+                   disabled=columns_to_disable,
+                   key = "df_editor"
                    )
 
     gerar_notas_botao = st.button("Gerar Notas",type="primary")
@@ -152,7 +153,7 @@ if "dados_crm_df" in st.session_state:
 
         st.write("Compilando Base...")
 
-        selected_df = dados_CRM_df.loc[dados_CRM_df["Selecionar notas para subir"] == True]
+        selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
         base_compilada = compilar_linhas_para_subir(selected_df)
 
         st.write("Criando Clientes...")
