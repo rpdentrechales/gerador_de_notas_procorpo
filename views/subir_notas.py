@@ -109,7 +109,7 @@ if "dados_crm_df" in st.session_state:
       dados_crm_df["Tipo de Pagamento"].unique(),
       index=0
       )
-  
+
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
 
   with filtro_col_2:
@@ -160,10 +160,8 @@ if "dados_crm_df" in st.session_state:
         st.write("Criando Ordens de Serviço...")
         os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
         os_subidos = os_subidos.to_dict(orient='records')
-
-        # subir_dados_mongodb("log_os",os_subidos)
+        subir_dados_mongodb("log_os",os_subidos)
 
         status.update(
             label="Notas Criadas!", state="complete", expanded=False
         )
-      st.write(os_subidos)
