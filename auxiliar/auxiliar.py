@@ -546,7 +546,7 @@ def associar_id_cliente(dados_cliente, api_secret, api_key):
 
 def alterar_dados(dados_cliente, api_secret, api_key):
     # Requisição para alterar dados do cliente
-
+    st.write(dados_cliente)
     request = {
         "call": "AlterarCliente",
         "app_key": api_key,
