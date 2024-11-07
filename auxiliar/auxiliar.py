@@ -363,7 +363,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     resposta = subir_linha(linha)
     quote_id = linha["quote_id"]
     unidade = linha["store_name"]
-    now = datetime.now()
+    now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([quote_id,unidade,resposta,timestamp])
     st.write(linha)
@@ -427,7 +427,7 @@ def subir_linha(dados_da_linha):
 def criar_clientes_selecionados(base_df):
 
   chaves_api = gerar_obj_api()
-  now = datetime.now()
+  now = datetime.datetime.now()
   timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
   resultados = [["client_id","Resultado","Response","timestamp"]]
   counter = 0
