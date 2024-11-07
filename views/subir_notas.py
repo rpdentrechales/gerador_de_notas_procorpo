@@ -137,6 +137,7 @@ if "dados_crm_df" in st.session_state:
   
     filtered_df["Selecionar notas para subir"] = True
     st.session_state["filtered_df"] = filtered_df
+    st.write("foi!")
   
   if "filtered_df" in st.session_state:
     filtered_df = st.session_state["filtered_df"]
