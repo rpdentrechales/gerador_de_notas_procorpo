@@ -133,6 +133,9 @@ if "dados_crm_df" in st.session_state:
 
   st.write("**Selecione notas para subir**")
 
+  if st.button("Marcar Tudo"):
+    filtered_df["Selecionar notas para subir"] = True
+
   if filtro_pagamento:
 
     dados_CRM_df = st.data_editor(filtered_df,
