@@ -252,7 +252,9 @@ def paste_billcharges_with_json(start_date, end_date):
 
             # Process customer address
             customer_address = data_row['quote']['customer']['address']
+            
             if customer_address:
+              if customer_document:
                 dados_cliente = {
                     "razao_social": customer_name,
                     "nome_fantasia":customer_name,
@@ -268,6 +270,8 @@ def paste_billcharges_with_json(start_date, end_date):
                     "email": data_row['quote']['customer']['email']
                 }
                 dados_cliente = json.dumps(dados_cliente)
+              else:
+                dados_cliente = "Cliente sem CPF"
             else:
                 dados_cliente = "Cliente sem endereço"
 
