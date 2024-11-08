@@ -271,9 +271,9 @@ def paste_billcharges_with_json(start_date, end_date):
                 }
                 dados_cliente = json.dumps(dados_cliente)
               else:
-                dados_cliente = "Cliente sem CPF"
+                dados_cliente = "Sem cadastro"
             else:
-                dados_cliente = "Cliente sem endereço"
+                dados_cliente = "Sem cadastro"
 
             # Process unit and aliquota data
             dados_da_unidade = unidades_obj.get(store_name)

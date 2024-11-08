@@ -83,22 +83,22 @@ if "dados_crm_df" in st.session_state:
             "amount"
             ]
 
-  clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].isin(["Cliente sem endereço", "Cliente sem CPF"])]
+  clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].isin(["Sem cadastro"])]
   colunas_cliente_sem_cadastro = ["quote_id","customer_id","customer_name","store_name"]
   visualisar_clientes_sem_cadastro = clientes_sem_cadastro_df[colunas_cliente_sem_cadastro].drop_duplicates()
   quantidade_clientes_sem_cadastro = len(visualisar_clientes_sem_cadastro)
 
-  @st.dialog("Clientes Sem Endereço", width="large")
+  @st.dialog("Clientes Sem Cadastro", width="large")
   def abrir_clientes_sem_cadastro():
-    st.write("Lista de clientes sem endereço:")
+    st.write("Lista de clientes sem Cadastro:")
     st.dataframe(visualisar_clientes_sem_cadastro,use_container_width=True,hide_index=True)
 
-  clientes_sem_cadastro_botao = st.button(f"{quantidade_clientes_sem_cadastro} Clientes Sem Endereço",type="secondary")
+  clientes_sem_cadastro_botao = st.button(f"{quantidade_clientes_sem_cadastro} Clientes Sem Cadastro",type="secondary")
 
   if clientes_sem_cadastro_botao:
     abrir_clientes_sem_cadastro()
 
-  dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Cliente sem endereço"]
+  dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Sem cadastro"]
 
   filtro_col_1, filtro_col_2, filtro_col_3 = st.columns(3)
 
