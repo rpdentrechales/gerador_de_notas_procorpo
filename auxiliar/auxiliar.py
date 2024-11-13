@@ -252,7 +252,7 @@ def paste_billcharges_with_json(start_date, end_date):
 
             # Process customer address
             customer_address = data_row['quote']['customer']['address']
-            
+
             if customer_address:
               if customer_document:
                 dados_cliente = {
@@ -621,3 +621,34 @@ def pegar_dados_mongodb(collection_name):
   df = pd.DataFrame(data).drop(columns=['_id'], errors='ignore')
 
   return df
+
+def criar_clientes_selecionados_batch(base_df):
+
+  chaves_api = gerar_obj_api()
+  now = datetime.datetime.now()
+  timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+  resultados = [["client_id","Resultado","Response","timestamp"]]
+  counter = 0
+
+  unidades = base_df["store_name"].unique()
+
+  for unidade in unidades:
+
+    df_unidade = base_df[base_df["store_name"] == unidade]
+    api_secret = chaves_api[unidade]["api_secret"]
+    api_key = chaves_api[unidade]["api_key"]
+
+    batch_list = []   
+
+    for index,row in df_unidade.iterrows():
+
+      dados_cliente = row["dados_cliente"]
+
+      try:
+        dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
+      except json.JSONDecodeError:
+        continue  # Pula para a próxima iteração
+
+      batch_list.append(api_secret,api_key,dados_cliente)
+      
+  st.write(batch_list)  

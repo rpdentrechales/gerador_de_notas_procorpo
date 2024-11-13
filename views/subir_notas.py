@@ -169,3 +169,6 @@ if "dados_crm_df" in st.session_state:
       status.update(
           label="Notas Criadas!", state="complete", expanded=False
       )
+
+  if st.button("Testar - subir cliente batch"):
+    criar_clientes_selecionados_batch(selected_df)
