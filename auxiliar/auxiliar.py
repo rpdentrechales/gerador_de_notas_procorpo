@@ -650,5 +650,32 @@ def criar_clientes_selecionados_batch(base_df):
         continue  # Pula para a próxima iteração
 
       batch_list.append(dados_cliente)
-  
-    st.write(batch_list)  
+    
+    response = criar_cliente_por_lote(api_secret, api_key, batch_list)
+    st.write(response)
+
+def criar_cliente_por_lote(api_secret, api_key, dados_cliente):
+    
+    lote_cliente = {
+     "clientes_cadastro": dados_cliente
+    }
+
+    request = {
+        "call": "IncluirClientesPorLote",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [lote_cliente]
+    }
+
+    request_body = json.dumps(request)
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # Usa POST para enviar os dados
+    response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+
+    response_text = response.json()
+
+    return response_text  
