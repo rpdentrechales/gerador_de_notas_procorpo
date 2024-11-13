@@ -650,5 +650,5 @@ def criar_clientes_selecionados_batch(base_df):
         continue  # Pula para a próxima iteração
 
       batch_list.append(dados_cliente)
-
-  st.write(batch_list)  
+  
+    st.write(batch_list)  
