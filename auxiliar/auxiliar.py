@@ -649,6 +649,6 @@ def criar_clientes_selecionados_batch(base_df):
       except json.JSONDecodeError:
         continue  # Pula para a próxima iteração
 
-      batch_list.append(api_secret,api_key,dados_cliente)
-      
+      batch_list.append(dados_cliente)
+
   st.write(batch_list)  
