@@ -444,8 +444,6 @@ def criar_clientes_selecionados(base_df):
     id_do_cliente = row["customer_id"]
     if id_do_cliente in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
       st.write(f"cliente: {id_do_cliente} na base")
-    
-    st.write("all done")
 
 
     # api_secret = chaves_api[unidade]["api_secret"]
@@ -509,6 +507,7 @@ def criar_clientes_selecionados(base_df):
 
   # resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
   # return resultados_df
+  st.write("all done")
   return None
 
 def criar_cliente(api_secret, api_key, dados_cliente):
