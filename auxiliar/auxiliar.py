@@ -444,8 +444,9 @@ def criar_clientes_selecionados(base_df):
     id_do_cliente = row["customer_id"]
     if id_do_cliente in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
       st.write(f"cliente: {id_do_cliente} na base")
-    else:
-      st.write(f"cliente: {id_do_cliente} não está na base")
+    
+    st.write("all done")
+
 
     # api_secret = chaves_api[unidade]["api_secret"]
     # api_key = chaves_api[unidade]["api_key"]
