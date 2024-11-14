@@ -442,7 +442,7 @@ def criar_clientes_selecionados(base_df):
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
     id_do_cliente = row["customer_id"]
-    if id_do_cliente in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
+    if str(id_do_cliente) in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
       st.write(f"cliente: {id_do_cliente} na base")
 
 
