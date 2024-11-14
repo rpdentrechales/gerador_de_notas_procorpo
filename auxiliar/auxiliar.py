@@ -435,74 +435,80 @@ def criar_clientes_selecionados(base_df):
   timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
   resultados = [["client_id","Resultado","Response","timestamp"]]
   counter = 0
+  codigo_integracao = pegar_dados_mongodb("id_clientes")
 
   for index,row in base_df.iterrows():
 
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
     id_do_cliente = row["customer_id"]
+    if id_do_cliente in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
+      st.write(f"cliente: {id_do_cliente} na base")
+    else:
+      st.write(f"cliente: {id_do_cliente} não está na base")
 
-    api_secret = chaves_api[unidade]["api_secret"]
-    api_key = chaves_api[unidade]["api_key"]
+    # api_secret = chaves_api[unidade]["api_secret"]
+    # api_key = chaves_api[unidade]["api_key"]
 
-    cadastro_novo = False
-    result_status = "Error"
+    # cadastro_novo = False
+    # result_status = "Error"
 
-    try:
-      dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
-    except json.JSONDecodeError:
-      result_status = "Erro ao converter JSON"
-      full_response = "Erro ao converter JSON"
-      resultados.append([id_do_cliente,result_status,full_response,timestamp])
-      continue  # Pula para a próxima iteração
+    # try:
+    #   dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
+    # except json.JSONDecodeError:
+    #   result_status = "Erro ao converter JSON"
+    #   full_response = "Erro ao converter JSON"
+    #   resultados.append([id_do_cliente,result_status,full_response,timestamp])
+    #   continue  # Pula para a próxima iteração
 
-    id_cliente = dados_cliente["codigo_cliente_integracao"]
+    # id_cliente = dados_cliente["codigo_cliente_integracao"]
 
-    full_response = criar_cliente(api_secret,api_key,dados_cliente)
-    full_response = check_response(full_response)
+    # full_response = criar_cliente(api_secret,api_key,dados_cliente)
+    # full_response = check_response(full_response)
 
-    if full_response:
-        if re.search(r"Cliente cadastrado com sucesso.", full_response):
-            # Checa se é cliente novo
-            cadastro_novo = True
-            result_status = "Cliente Novo Cadastrado"
+    # if full_response:
+    #     if re.search(r"Cliente cadastrado com sucesso.", full_response):
+    #         # Checa se é cliente novo
+    #         cadastro_novo = True
+    #         result_status = "Cliente Novo Cadastrado"
 
-        if re.search(r"código de integração \[\]", full_response):
-          regex = r"com o Id \[([0-9]+)\]"
-          match = re.search(regex, full_response)
-          codigo_omie = match.group(1)
+    #     if re.search(r"código de integração \[\]", full_response):
+    #       regex = r"com o Id \[([0-9]+)\]"
+    #       match = re.search(regex, full_response)
+    #       codigo_omie = match.group(1)
 
-          dados_cliente = {
-              "codigo_cliente_omie": codigo_omie,
-              "codigo_cliente_integracao": id_cliente
-          }
+    #       dados_cliente = {
+    #           "codigo_cliente_omie": codigo_omie,
+    #           "codigo_cliente_integracao": id_cliente
+    #       }
 
-          associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
-          full_response = check_response(associar_cliente)
+    #       associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
+    #       full_response = check_response(associar_cliente)
 
-          if full_response:
-            result_status = "Id do Cliente Associado"
-          else:
-            result_status = "Erro ao Associar Id do Cliente"
+    #       if full_response:
+    #         result_status = "Id do Cliente Associado"
+    #       else:
+    #         result_status = "Erro ao Associar Id do Cliente"
 
-    if not cadastro_novo:
-        # Se não for cadastro novo, atualiza os dados do cliente
-        atualizar_dados = alterar_dados(dados_cliente, api_secret, api_key)
-        full_response = check_response(atualizar_dados)
+    # if not cadastro_novo:
+    #     # Se não for cadastro novo, atualiza os dados do cliente
+    #     atualizar_dados = alterar_dados(dados_cliente, api_secret, api_key)
+    #     full_response = check_response(atualizar_dados)
 
-        if full_response:
-          result_status = "Cadastro do cliente atualizado"
-        else:
-          result_status = "Erro ao Atualizar Cadastro do Cliente"
+    #     if full_response:
+    #       result_status = "Cadastro do cliente atualizado"
+    #     else:
+    #       result_status = "Erro ao Atualizar Cadastro do Cliente"
 
-    if counter % 20 == 0:
-        time.sleep(5)  # Aguarda 5 segundos
+    # if counter % 20 == 0:
+    #     time.sleep(5)  # Aguarda 5 segundos
 
-    resultados.append([id_do_cliente,result_status,full_response,timestamp])
-    counter += 1
+    # resultados.append([id_do_cliente,result_status,full_response,timestamp])
+    # counter += 1
 
-  resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
-  return resultados_df
+  # resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
+  # return resultados_df
+  return None
 
 def criar_cliente(api_secret, api_key, dados_cliente):
 

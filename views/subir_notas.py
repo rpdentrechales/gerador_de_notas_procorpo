@@ -170,7 +170,6 @@ if "dados_crm_df" in st.session_state:
           label="Notas Criadas!", state="complete", expanded=False
       )
 
-  if st.button("Testar - subir cliente batch"):
+  if st.button("Testar - subir clientes"):
     selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
     resultados = criar_clientes_selecionados(selected_df)
-    st.write(resultados)
