@@ -7,7 +7,7 @@ from auxiliar.auxiliar import *
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
-st.title("Subir Notas - testes")
+st.title("Subir Notas")
 
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
@@ -100,7 +100,7 @@ if "dados_crm_df" in st.session_state:
 
   dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Sem cadastro"]
 
-  filtro_col_1, filtro_col_2, filtro_col_3 = st.columns(3)
+  filtro_col_1, filtro_col_2, filtro_col_3, filtro_col_4= st.columns(4)
 
   with filtro_col_1:
 
@@ -129,7 +129,13 @@ if "dados_crm_df" in st.session_state:
 
     soma = filtered_df["amount"].sum()
     soma = f"R$ {soma:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    st.metric(label="Valor Total", value=soma)
+    st.metric(label="Valor Total - Cliente com Cadastro", value=soma)
+
+  with filtro_col_4:
+
+    soma_sem_cadastro = clientes_sem_cadastro_df["amount"].sum()
+    soma_sem_cadastro = f"R$ {soma:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    st.metric(label="Valor Total - Cliente com Cadastro", value=soma_sem_cadastro)
 
   st.write("**Selecione notas para subir**")
 
@@ -169,7 +175,3 @@ if "dados_crm_df" in st.session_state:
       status.update(
           label="Notas Criadas!", state="complete", expanded=False
       )
-
-  if st.button("Teste - Subir Clientes"):
-    selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
-    resultados = criar_clientes_selecionados(selected_df)
