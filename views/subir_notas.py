@@ -84,7 +84,7 @@ if "dados_crm_df" in st.session_state:
             ]
 
   clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].isin(["Sem cadastro"])]
-  colunas_cliente_sem_cadastro = ["quote_id","customer_id","customer_name","store_name","paymentMethod_name"]
+  colunas_cliente_sem_cadastro = ["quote_id","customer_id","customer_name","store_name","paymentMethod_name","dados_cliente"]
   visualisar_clientes_sem_cadastro = clientes_sem_cadastro_df[colunas_cliente_sem_cadastro].drop_duplicates()
   quantidade_clientes_sem_cadastro = len(visualisar_clientes_sem_cadastro)
 
@@ -135,7 +135,7 @@ if "dados_crm_df" in st.session_state:
 
     soma_sem_cadastro = clientes_sem_cadastro_df["amount"].sum()
     soma_sem_cadastro = f"R$ {soma_sem_cadastro:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    st.metric(label="Valor Total - Cliente com Cadastro", value=soma_sem_cadastro)
+    st.metric(label="Valor Total - Cliente sem Cadastro", value=soma_sem_cadastro)
 
   st.write("**Selecione notas para subir**")
 
