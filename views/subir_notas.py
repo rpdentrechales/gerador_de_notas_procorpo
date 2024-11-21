@@ -83,7 +83,7 @@ if "dados_crm_df" in st.session_state:
             "amount"
             ]
 
-  clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].isin(["Sem cadastro"])]
+  clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].str.contains("Cadastro inválido", na=False)]
   colunas_cliente_sem_cadastro = ["quote_id","customer_id","customer_name","store_name","paymentMethod_name","dados_cliente"]
   visualisar_clientes_sem_cadastro = clientes_sem_cadastro_df[colunas_cliente_sem_cadastro].drop_duplicates()
   quantidade_clientes_sem_cadastro = len(visualisar_clientes_sem_cadastro)
@@ -97,8 +97,8 @@ if "dados_crm_df" in st.session_state:
 
   if clientes_sem_cadastro_botao:
     abrir_clientes_sem_cadastro()
-
-  dados_crm_df = dados_crm_df.loc[dados_crm_df["dados_cliente"] != "Sem cadastro"]
+  
+  dados_crm_df = dados_crm_df.loc[~dados_crm_df["dados_cliente"].str.contains("Cadastro inválido", na=False)]
 
   filtro_col_1, filtro_col_2, filtro_col_3, filtro_col_4= st.columns(4)
 
