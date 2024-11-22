@@ -10,5 +10,5 @@ st.title("Utilitários")
 
 df_1,df_2 = atualizar_base_de_clientes()
 
-st.write(df_1,hide_index = True,use_container_width=True)
-st.write(df_2,hide_index = True,use_container_width=True)
+st.write(df_1)
+st.write(df_2)
