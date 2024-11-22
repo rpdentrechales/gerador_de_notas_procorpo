@@ -16,7 +16,7 @@ log_page = st.Page(
 utility_page = st.Page(
     "views/utility.py",
     title="Utility",
-    icon=":material/gear:",
+    icon=":material/manufacturing:",
 )
 
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
