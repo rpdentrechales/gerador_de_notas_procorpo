@@ -660,12 +660,10 @@ def atualizar_base_de_clientes():
   dados_unidade = gerar_obj_api()
 
   todos_dados_clientes = {}
-  return (dados_unidade,dados_unidade)
-  for row in dados_unidade:
+  for unidade in df.columns:
 
-    unidade = row[0]
-    api_secret = row[2]
-    api_key = row[3]
+    api_secret = df[unidade].iloc[0]  # First row
+    api_key = df[unidade].iloc[1] 
     pagina = 1
 
     loop_paginas = True
