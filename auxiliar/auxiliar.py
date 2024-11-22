@@ -662,8 +662,6 @@ def atualizar_base_de_clientes():
   todos_dados_clientes = {}
 
   for unidade, credentials in dados_unidade.items():
-    st.write("Teste unidades")
-    st.write(unidade)
     api_secret = credentials['api_secret']
     api_key = credentials['api_key']
     pagina = 1
@@ -687,6 +685,5 @@ def atualizar_base_de_clientes():
     todos_dados_clientes[unidade] = resultados
 
   codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
-  # dados_omie = pd.DataFrame(todos_dados_clientes)
 
   return (codigo_integracao_omie_mongodb,todos_dados_clientes)
