@@ -656,13 +656,12 @@ def pega_dados_do_cliente_omie(api_secret, api_key,pagina):
 
     return data
 
-
 def atualizar_base_de_clientes():
   dados_unidade = gerar_obj_api()
 
   todos_dados_clientes = {}
-
-  for row in dados_unidade[1:]:
+  return (dados_unidade,dados_unidade)
+  for row in dados_unidade:
 
     unidade = row[0]
     api_secret = row[2]
