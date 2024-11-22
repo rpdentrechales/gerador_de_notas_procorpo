@@ -660,8 +660,8 @@ def atualizar_base_de_clientes():
   dados_unidade = gerar_obj_api()
 
   todos_dados_clientes = {}
-  
-  for unidade, credentials in data.items():
+
+  for unidade, credentials in dados_unidade.items():
     api_secret = credentials['api_secret']
     api_key = credentials['api_key']
     pagina = 1
