@@ -686,7 +686,7 @@ def atualizar_base_de_clientes():
 
     todos_dados_clientes[unidade] = resultados
 
-    codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
-    dados_omie = pd.DataFrame(todos_dados_clientes)
+  codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
+  # dados_omie = pd.DataFrame(todos_dados_clientes)
 
   return (codigo_integracao_omie_mongodb,todos_dados_clientes)
