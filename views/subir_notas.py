@@ -141,8 +141,8 @@ if "dados_crm_df" in st.session_state:
 
     soma_total = soma+soma_sem_cadastro
     soma_total_string = f"R$ {soma_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    st.metric(label="Valor Total - Cliente sem Cadastro", value=soma_total_string)
-    
+    st.metric(label="Valor Total", value=soma_total_string)
+
   st.write("**Selecione notas para subir**")
 
   seletor_subir_tudo = st.toggle("Subir Tudo")
