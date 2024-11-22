@@ -662,6 +662,7 @@ def atualizar_base_de_clientes():
   todos_dados_clientes = {}
 
   for unidade, credentials in dados_unidade.items():
+    st.write("Teste unidades")
     st.write(unidade)
     api_secret = credentials['api_secret']
     api_key = credentials['api_key']
