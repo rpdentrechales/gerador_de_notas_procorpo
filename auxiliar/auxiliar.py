@@ -671,7 +671,7 @@ def atualizar_base_de_clientes():
 
     while loop_paginas:
 
-      response = pega_dados_do_cliente(api_secret, api_key,pagina)
+      response = pega_dados_do_cliente_omie(api_secret, api_key,pagina)
       dados_cliente = response["clientes_cadastro_resumido"]
       total_paginas = response["total_de_paginas"]
       resultados.extend(dados_cliente)
