@@ -664,6 +664,8 @@ def atualizar_base_de_clientes():
 
   st.write(dados_unidade)
   for unidade, credentials in dados_unidade.items():
+    st.write("TESTES")
+    st.write(unidade)
     api_secret = credentials['api_secret']
     api_key = credentials['api_key']
     pagina = 1
@@ -682,8 +684,7 @@ def atualizar_base_de_clientes():
         loop_paginas = False
       else:
         pagina += 1
-    st.write("TESTES")
-    st.write(unidade)
+
 
     todos_dados_clientes[unidade] = resultados
 
