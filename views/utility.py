@@ -4,12 +4,11 @@ from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import *
 
-st.set_page_config(page_title="Logs", page_icon="💎",layout="wide")
+st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
-st.title("Log Clientes:")
-log_clientes_df = pegar_dados_mongodb("log_clientes")
-st.dataframe(log_clientes_df,hide_index = True,use_container_width=True)
+st.title("Utilitários")
 
-st.title("Log Ordens de Serviço:")
-log_os_df = pegar_dados_mongodb("log_os")
-st.dataframe(log_os_df,hide_index = True,use_container_width=True)
+df_1,df_2 = atualizar_base_de_clientes()
+
+st.dataframe(df_1,hide_index = True,use_container_width=True)
+st.dataframe(df_2,hide_index = True,use_container_width=True)
