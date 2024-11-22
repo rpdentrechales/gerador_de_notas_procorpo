@@ -680,7 +680,9 @@ def atualizar_base_de_clientes():
         loop_paginas = False
       else:
         pagina += 1
+    st.write("TESTES")
     st.write(unidade)
+
     todos_dados_clientes[unidade] = resultados
 
     codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
