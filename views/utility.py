@@ -8,7 +8,7 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
 st.title("Utilitários")
 
-image_url = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwebmasters.stackexchange.com%2Fquestions%2F5135%2Fwhat-is-the-typical-example-of-old-school-website-design&psig=AOvVaw28mDDSs8vIgghf0wOJdKna&ust=1732375562466000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCJDnq4Sg8IkDFQAAAAAdAAAAABAE"
+image_url = "https://i.sstatic.net/tM18j.gif"
 
 # Display the image in Streamlit
 st.image(image_url, caption="Example of old-school website design")
