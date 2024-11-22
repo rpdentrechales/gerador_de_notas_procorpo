@@ -8,7 +8,7 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
 st.title("Utilitários")
 
-image_url = "https://i.sstatic.net/tM18j.gif"
+image_url = "https://vstevam.com/images/building.gif"
 
 # Display the image in Streamlit
 st.image(image_url, caption="Example of old-school website design")
