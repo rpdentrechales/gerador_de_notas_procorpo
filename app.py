@@ -13,6 +13,12 @@ log_page = st.Page(
     icon=":material/summarize:",
 )
 
+utility_page = st.Page(
+    "views/utility.py",
+    title="Utility",
+    icon=":material/gear:",
+)
+
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
 # pg = st.navigation(pages=[about_page, project_1_page, project_2_page])
 

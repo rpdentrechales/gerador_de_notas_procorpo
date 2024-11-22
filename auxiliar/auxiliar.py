@@ -444,7 +444,7 @@ def criar_clientes_selecionados(base_df):
     id_do_cliente = row["customer_id"]
     if str(id_do_cliente) in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
       continue
-      
+
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
 
@@ -628,3 +628,65 @@ def pegar_dados_mongodb(collection_name):
   df = pd.DataFrame(data).drop(columns=['_id'], errors='ignore')
 
   return df
+
+def pega_dados_do_cliente_omie(api_secret, api_key,pagina):
+    # Requisição da API do Omie para criar Ordem de Serviço
+
+    parametro = {
+      "pagina": pagina,
+      "registros_por_pagina": 500,
+      "apenas_importado_api": "N"
+    }
+
+    request = {
+        "call": "ListarClientesResumido",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [parametro]
+    }
+
+    request_body = json.dumps(request)
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post("https://app.omie.com.br/api/v1/geral/clientes/", headers=headers, data=request_body)
+
+    data = response.json()
+
+    return data
+
+
+def atualizar_base_de_clientes():
+  dados_unidade = gerar_obj_api()
+
+  todos_dados_clientes = {}
+
+  for row in dados_unidade[1:]:
+
+    unidade = row[0]
+    api_secret = row[2]
+    api_key = row[3]
+    pagina = 1
+
+    loop_paginas = True
+    resultados = []
+
+    while loop_paginas:
+
+      response = pega_dados_do_cliente(api_secret, api_key,pagina)
+      dados_cliente = response["clientes_cadastro_resumido"]
+      total_paginas = response["total_de_paginas"]
+      resultados.extend(dados_cliente)
+
+      if pagina == total_paginas:
+        loop_paginas = False
+      else:
+        pagina += 1
+
+    todos_dados_clientes[unidade] = resultados
+
+    codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
+    dados_omie = pd.DataFrame(todos_dados_clientes)
+
+    return (codigo_integracao_omie_mongodb,dados_omie)
