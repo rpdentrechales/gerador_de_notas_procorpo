@@ -15,7 +15,7 @@ log_page = st.Page(
 
 utility_page = st.Page(
     "views/utility.py",
-    title="Utility",
+    title="Utilitários",
     icon=":material/manufacturing:",
 )
 
@@ -25,7 +25,7 @@ utility_page = st.Page(
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Notas Omie": [subir_notas_page,log_page]
+        "Notas Omie": [subir_notas_page,log_page,utility_page]
     }
 )
 
