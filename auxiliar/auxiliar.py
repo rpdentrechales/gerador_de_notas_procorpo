@@ -660,6 +660,8 @@ def atualizar_base_de_clientes():
   dados_unidade = gerar_obj_api()
 
   todos_dados_clientes = {}
+
+  return (dados_unidade,dados_unidade)
   for unidade in dados_unidade.columns:
 
     api_secret = dados_unidade[unidade].iloc[0]
