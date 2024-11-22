@@ -97,10 +97,10 @@ if "dados_crm_df" in st.session_state:
 
   if clientes_sem_cadastro_botao:
     abrir_clientes_sem_cadastro()
-  
+
   dados_crm_df = dados_crm_df.loc[~dados_crm_df["dados_cliente"].str.contains("Cadastro inválido", na=False)]
 
-  filtro_col_1, filtro_col_2, filtro_col_3, filtro_col_4= st.columns(4)
+  filtro_col_1, filtro_col_2, filtro_col_3, filtro_col_4, filtro_col_5 = st.columns(5)
 
   with filtro_col_1:
 
@@ -128,15 +128,21 @@ if "dados_crm_df" in st.session_state:
   with filtro_col_3:
 
     soma = filtered_df["amount"].sum()
-    soma = f"R$ {soma:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    st.metric(label="Valor Total - Cliente com Cadastro", value=soma)
+    soma_string = f"R$ {soma:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    st.metric(label="Valor Total - Cliente com Cadastro", value=soma_string)
 
   with filtro_col_4:
 
     soma_sem_cadastro = clientes_sem_cadastro_df["amount"].sum()
-    soma_sem_cadastro = f"R$ {soma_sem_cadastro:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    st.metric(label="Valor Total - Cliente sem Cadastro", value=soma_sem_cadastro)
+    soma_sem_cadastro_string = f"R$ {soma_sem_cadastro:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    st.metric(label="Valor Total - Cliente sem Cadastro", value=soma_sem_cadastro_string)
 
+  with filtro_col_5:
+
+    soma_total = soma+soma_sem_cadastro
+    soma_total_string = f"R$ {soma_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    st.metric(label="Valor Total - Cliente sem Cadastro", value=soma_total_string)
+    
   st.write("**Selecione notas para subir**")
 
   seletor_subir_tudo = st.toggle("Subir Tudo")
