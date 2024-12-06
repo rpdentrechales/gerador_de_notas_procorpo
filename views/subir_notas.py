@@ -111,7 +111,7 @@ if "dados_crm_df" in st.session_state:
       )
 
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
-  filtered_df_sem_cadastro = clientes_sem_cadastro_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+  filtered_df_sem_cadastro = clientes_sem_cadastro_df.loc[clientes_sem_cadastro_df["Tipo de Pagamento"] == filtro_pagamento]
 
   with filtro_col_2:
     unidades = list(filtered_df["store_name"].unique())
