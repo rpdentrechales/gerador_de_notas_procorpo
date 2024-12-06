@@ -111,6 +111,7 @@ if "dados_crm_df" in st.session_state:
       )
 
   filtered_df = dados_crm_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
+  filtered_df_sem_cadastro = clientes_sem_cadastro_df.loc[dados_crm_df["Tipo de Pagamento"] == filtro_pagamento]
 
   with filtro_col_2:
     unidades = list(filtered_df["store_name"].unique())
@@ -124,6 +125,7 @@ if "dados_crm_df" in st.session_state:
 
   if filtro_unidade != "TODAS":
     filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
+    filtered_df_sem_cadastro = filtered_df_sem_cadastro.loc[dados_crm_df["store_name"] == filtro_unidade]
 
   with filtro_col_3:
 
@@ -133,7 +135,7 @@ if "dados_crm_df" in st.session_state:
 
   with filtro_col_4:
 
-    soma_sem_cadastro = clientes_sem_cadastro_df["amount"].sum()
+    soma_sem_cadastro = filtered_df_sem_cadastro["amount"].sum()
     soma_sem_cadastro_string = f"R$ {soma_sem_cadastro:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     st.metric(label="Valor Total - Cliente sem Cadastro", value=soma_sem_cadastro_string)
 
@@ -156,6 +158,8 @@ if "dados_crm_df" in st.session_state:
                   column_order=columns_order,
                   disabled=columns_to_disable
                   )
+
+  st.write(f"Total de linhas: {filtered_df.shape[0]}")
 
   gerar_notas_botao = st.button("Gerar Notas",type="primary")
 
