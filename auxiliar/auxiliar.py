@@ -125,14 +125,14 @@ def gerar_obj_enderecos():
         cep = row[7]
 
         endereo_data_obj = {
-        "endereco" = endereco,
-        "endereco_numero" = endereco_numero,
-        "bairro" = bairro,
-        "complemento" = complemento,
-        "estado" = estado,
-        "cidade" = cidade,
-        "cep" = cep
-        }
+                        "endereco": endereco,
+                        "endereco_numero": endereco_numero,
+                        "bairro": bairro,
+                        "complemento": complemento,
+                        "estado": estado,
+                        "cidade": cidade,
+                        "cep": cep
+                         }
 
         endereco_obj[unidade] = endereo_data_obj
 
@@ -240,6 +240,7 @@ def paste_billcharges_with_json(start_date, end_date):
     tipo_pagamento_obj = gerar_obj_tipo_pagamento()
     unidades_obj = gerar_obj_unidades()
     aliquota_obj = gerar_obj_aliquota()
+    enderecos_obj = gerar_obj_enderecos()
 
     # First API query to get BillCharges
     results = query_BillCharges(current_page, start_date, end_date)
@@ -303,7 +304,21 @@ def paste_billcharges_with_json(start_date, end_date):
               else:
                 dados_cliente = "Cadastro inválido - Sem CPF"
             else:
-                dados_cliente = "Cadastro inválido - Sem endereço"
+                enderecos_loja = enderecos_obj[store_name]
+                dados_cliente = {
+                    "razao_social": customer_name,
+                    "nome_fantasia":customer_name,
+                    "cnpj_cpf": customer_document,
+                    "codigo_cliente_integracao": customer_id,
+                    "endereco": enderecos_loja['endereco'],
+                    "endereco_numero": enderecos_loja['endereco_numero'],
+                    "bairro": enderecos_loja['bairro'],
+                    "complemento": enderecos_loja['complemento'],
+                    "estado": enderecos_loja['state']['estado'],
+                    "cidade": enderecos_loja['cidade'],
+                    "cep": enderecos_loja['cep'],
+                    "email": data_row['quote']['customer']['email']
+                }
 
             # Process unit and aliquota data
             dados_da_unidade = unidades_obj.get(store_name)
