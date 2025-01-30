@@ -8,7 +8,7 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
 st.title("Utilitários")
 
-image_url = "https://vstevam.com/images/building.gif"
+image_url = "https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/8688491/hiE5vMs.gif"
 
 # Display the image in Streamlit
 st.image(image_url, caption="Under construction!!!!!!")

@@ -108,6 +108,36 @@ def query_BillCharges(current_page, start_date, end_date):
         # Return the error if any occurs
         return str(err)
 
+def gerar_obj_enderecos():
+   
+    endereo_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    endereco_obj = {}
+
+    for _, row in endereo_data.iterrows():
+
+        unidade = row[0]
+        endereco = row[1]
+        endereco_numero = row[2]
+        bairro = row[3]
+        complemento = row[4]
+        estado = row[5]
+        cidade = row[6]
+        cep = row[7]
+
+        endereo_data_obj = {
+        "endereco" = endereco,
+        "endereco_numero" = endereco_numero,
+        "bairro" = bairro,
+        "complemento" = complemento,
+        "estado" = estado,
+        "cidade" = cidade,
+        "cep" = cep
+        }
+
+        endereco_obj[unidade] = endereo_data_obj
+
+    return endereco_obj
+
 def gerar_obj_api():
     api_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
 
@@ -221,7 +251,7 @@ def paste_billcharges_with_json(start_date, end_date):
                     "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
                     "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
                     "billcharge_dueAt", "amount"]]
-
+    
     # Main loop to process data
     while billcharges_data_length > 0:
         for data_row in billcharges_data:
