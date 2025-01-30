@@ -314,7 +314,7 @@ def paste_billcharges_with_json(start_date, end_date):
                     "endereco_numero": enderecos_loja['endereco_numero'],
                     "bairro": enderecos_loja['bairro'],
                     "complemento": enderecos_loja['complemento'],
-                    "estado": enderecos_loja['state']['estado'],
+                    "estado": enderecos_loja['estado'],
                     "cidade": enderecos_loja['cidade'],
                     "cep": enderecos_loja['cep'],
                     "email": data_row['quote']['customer']['email']
