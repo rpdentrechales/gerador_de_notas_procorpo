@@ -110,10 +110,11 @@ def query_BillCharges(current_page, start_date, end_date):
 
 def gerar_obj_enderecos():
    
-    endereo_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    endereco_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
     endereco_obj = {}
+    print(endereco_data)
 
-    for _, row in endereo_data.iterrows():
+    for _, row in endereco_data.iterrows():
 
         unidade = row[0]
         endereco = row[1]
@@ -124,7 +125,7 @@ def gerar_obj_enderecos():
         cidade = row[6]
         cep = row[7]
 
-        endereo_data_obj = {
+        endereco_data_obj = {
                         "endereco": endereco,
                         "endereco_numero": endereco_numero,
                         "bairro": bairro,
@@ -134,7 +135,7 @@ def gerar_obj_enderecos():
                         "cep": cep
                          }
 
-        endereco_obj[unidade] = endereo_data_obj
+        endereco_obj[unidade] = endereco_data_obj
 
     return endereco_obj
 
