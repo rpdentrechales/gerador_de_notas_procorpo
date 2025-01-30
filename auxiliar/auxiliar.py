@@ -307,7 +307,6 @@ def paste_billcharges_with_json(start_date, end_date):
               else:
                 dados_cliente = "Cadastro inválido - Sem CPF"
             else:
-                print(f"{customer_name} - sem cadastro")
                 enderecos_loja = enderecos_obj[store_name]
                 dados_cliente = {
                     "razao_social": customer_name,
