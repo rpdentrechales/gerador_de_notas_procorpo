@@ -780,8 +780,6 @@ def atualizar_base_de_OS():
     while loop_paginas:
 
       response = pega_dados_OS_omie(api_secret, api_key,pagina)
-      st.write(response)
-      break
       os_cadastradas = response["osCadastro"]
       total_paginas = response["total_de_paginas"]
 
@@ -797,5 +795,5 @@ def atualizar_base_de_OS():
         loop_paginas = False
       else:
         pagina += 1
-
+    
   return resultados

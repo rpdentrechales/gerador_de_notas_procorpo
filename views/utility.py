@@ -10,4 +10,6 @@ st.title("Utilitários")
 
 dados_os = atualizar_base_de_OS()
 
-st.write(dados_os)
+resultados_df = pd.DataFrame(dados_os)
+
+st.dataframe(resultados_df)
