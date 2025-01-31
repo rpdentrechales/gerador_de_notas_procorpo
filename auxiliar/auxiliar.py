@@ -675,8 +675,6 @@ def pegar_dados_mongodb(collection_name):
   return df
 
 def pega_dados_do_cliente_omie(api_secret, api_key,pagina):
-    # Requisição da API do Omie para criar Ordem de Serviço
-
     parametro = {
       "pagina": pagina,
       "registros_por_pagina": 500,
@@ -732,3 +730,67 @@ def atualizar_base_de_clientes():
   codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
 
   return (codigo_integracao_omie_mongodb,todos_dados_clientes)
+
+
+def pega_dados_OS_omie(api_secret, api_key,pagina):
+
+    parametro = {
+      "pagina": pagina,
+      "registros_por_pagina": 500,
+      "apenas_importado_api": "N"
+    }
+
+    request = {
+        "call": "osListarRequest",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [parametro]
+    }
+
+    request_body = json.dumps(request)
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post("https://app.omie.com.br/api/v1/servicos/os/", headers=headers, data=request_body)
+
+    data = response.json()
+
+    return data
+  
+def atualizar_base_de_OS():
+  
+  dados_unidade = gerar_obj_api()
+
+  todos_dados_OS = {}
+
+  for unidade, credentials in dados_unidade.items():
+    api_secret = credentials['api_secret']
+    api_key = credentials['api_key']
+    pagina = 1
+
+    loop_paginas = True
+    resultados = {"unidade":unidade,
+                  "nCodOS": [],
+                  "cCodIntOS": []}
+
+    while loop_paginas:
+
+      response = pega_dados_OS_omie(api_secret, api_key,pagina)
+      os_cadastradas = response["osCadastro"]
+      total_paginas = response["total_de_paginas"]
+
+      for os in os_cadastradas:
+
+        nCodOS = os["Cabecalho"]["nCodOS"]
+        cCodIntOS = os["Cabecalho"]["cCodIntOS"]
+      
+      resultados["nCodOS"].append(nCodOS)
+      resultados["cCodIntOS"].append(nCodOS)
+
+      if pagina == total_paginas:
+        loop_paginas = False
+      else:
+        pagina += 1
+
+  return resultados
