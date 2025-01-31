@@ -757,7 +757,10 @@ def pega_dados_OS_omie(api_secret, api_key,pagina):
     data = response.json()
 
     return data
-  
+
+def teste():
+   st.write("teste")
+
 def atualizar_base_de_OS():
   
   dados_unidade = gerar_obj_api()

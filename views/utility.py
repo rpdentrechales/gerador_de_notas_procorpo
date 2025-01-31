@@ -8,6 +8,8 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
 st.title("Utilitários")
 
+teste()
+
 dados_os = atualizar_base_de_OS()
 
 st.write(dados_os)
