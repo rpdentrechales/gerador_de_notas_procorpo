@@ -741,7 +741,7 @@ def pega_dados_OS_omie(api_secret, api_key,pagina):
     }
 
     request = {
-        "call": "osListarRequest",
+        "call": "ListarOS",
         "app_key": api_key,
         "app_secret": api_secret,
         "param": [parametro]
