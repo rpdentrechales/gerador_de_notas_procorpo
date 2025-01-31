@@ -8,17 +8,12 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
 st.title("Utilitários")
 
-with st.status("Carregando Notas...", expanded=True) as status:
+image_url = "https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/8688491/hiE5vMs.gif"
 
-    st.write("Pegando dados")
+# Display the image in Streamlit
+st.image(image_url, caption="Under construction!!!!!!")
 
-    dados_os = atualizar_base_de_OS()
+# df_1,df_2 = atualizar_base_de_clientes()
 
-    resultados_df = pd.DataFrame(dados_os)
-
-    status.update(
-        label="Todos os dados Carregados!", state="complete", expanded=False
-    )
-
-
-st.dataframe(resultados_df)
+# st.write(df_1)
+# st.write(df_2)
