@@ -780,6 +780,7 @@ def atualizar_base_de_OS():
     while loop_paginas:
 
       response = pega_dados_OS_omie(api_secret, api_key,pagina)
+      st.write(response)
       os_cadastradas = response["osCadastro"]
       total_paginas = response["total_de_paginas"]
 
