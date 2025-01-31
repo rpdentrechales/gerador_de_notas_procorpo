@@ -776,24 +776,26 @@ def atualizar_base_de_OS():
     resultados = {"unidade":unidade,
                   "nCodOS": [],
                   "cCodIntOS": []}
+    
+    st.write(f"Pegando dados da unidade: {unidade}")
 
     while loop_paginas:
+        st.write(f"{unidade} - {pagina}/{total_paginas} Páginas")
+        response = pega_dados_OS_omie(api_secret, api_key,pagina)
+        os_cadastradas = response["osCadastro"]
+        total_paginas = response["total_de_paginas"]
 
-      response = pega_dados_OS_omie(api_secret, api_key,pagina)
-      os_cadastradas = response["osCadastro"]
-      total_paginas = response["total_de_paginas"]
+        for os in os_cadastradas:
 
-      for os in os_cadastradas:
+            nCodOS = os["Cabecalho"]["nCodOS"]
+            cCodIntOS = os["Cabecalho"]["cCodIntOS"]
+            
+            resultados["nCodOS"].append(nCodOS)
+            resultados["cCodIntOS"].append(nCodOS)
 
-        nCodOS = os["Cabecalho"]["nCodOS"]
-        cCodIntOS = os["Cabecalho"]["cCodIntOS"]
-      
-      resultados["nCodOS"].append(nCodOS)
-      resultados["cCodIntOS"].append(nCodOS)
+            if pagina == total_paginas:
+                loop_paginas = False
+            else:
+                pagina += 1
 
-      if pagina == total_paginas:
-        loop_paginas = False
-      else:
-        pagina += 1
-    
   return resultados
