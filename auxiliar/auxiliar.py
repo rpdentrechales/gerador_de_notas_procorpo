@@ -416,7 +416,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     os_id = linha["os_id"]
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
-    resultados.append([quote_id,unidade,resposta,timestamp])
+    resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
   resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
