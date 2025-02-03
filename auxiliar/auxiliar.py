@@ -413,11 +413,12 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     resposta = subir_linha(linha)
     quote_id = linha["quote_id"]
     unidade = linha["store_name"]
+    os_id = linha["os_id"]
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([quote_id,unidade,resposta,timestamp])
 
-  resultados_df = pd.DataFrame(resultados,columns=["quote_id","store_name","resposta","timestamp"])
+  resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
   return resultados_df
 
