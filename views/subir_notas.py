@@ -168,7 +168,7 @@ if "dados_crm_df" in st.session_state:
     seletor_visualizar = st.toggle("Ocultar ids processados",value=True)
 
     if seletor_visualizar:
-      filtered_df = filtered_df.loc[filtered_df["os_na_base"] == True]
+      filtered_df = filtered_df.loc[filtered_df["os_na_base"] == False]
 
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
