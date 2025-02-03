@@ -36,7 +36,7 @@ if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
   ids_os_subidos = pegar_dados_mongodb("log_os")
   ids_os_subidos = ids_os_subidos["os_id"]
-  dados_crm_df['os_na_base'] = dados_crm_df['os_id'].isin(ids_series)
+  dados_crm_df['os_na_base'] = dados_crm_df['os_id'].isin(ids_os_subidos)
 
   st.session_state["dados_crm_df"] = dados_crm_df
 
