@@ -34,6 +34,10 @@ with col_data_2:
 
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
+  ids_os_subidos = pegar_dados_mongodb("log_os")
+  ids_os_subidos = ids_os_subidos["os_id"]
+  dados_crm_df['os_na_base'] = dados_crm_df['os_id'].isin(ids_series)
+
   st.session_state["dados_crm_df"] = dados_crm_df
 
 if "dados_crm_df" in st.session_state:
@@ -59,7 +63,8 @@ if "dados_crm_df" in st.session_state:
             "isPaid",
             "Tipo de Pagamento",
             "billcharge_dueAt",
-            "amount"
+            "amount",
+            "os_na_base"
             ]
 
   columns_to_disable = [
@@ -80,7 +85,8 @@ if "dados_crm_df" in st.session_state:
             "isPaid",
             "Tipo de Pagamento",
             "billcharge_dueAt",
-            "amount"
+            "amount",
+            "os_na_base"
             ]
 
   clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].str.contains("Cadastro inválido", na=False)]
@@ -145,13 +151,24 @@ if "dados_crm_df" in st.session_state:
     soma_total_string = f"R$ {soma_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     st.metric(label="Valor Total", value=soma_total_string)
 
-  st.write("**Selecione notas para subir**")
+  seletor_1,seletor_2 = st.columns(2)
+  
+  with seletor_1:
+    st.write("**Selecione notas para subir**")
 
-  seletor_subir_tudo = st.toggle("Subir Tudo")
+    seletor_subir_tudo = st.toggle("Subir Tudo")
 
-  if seletor_subir_tudo:
-    filtered_df["Selecionar notas para subir"] = True
-    columns_order.remove("Selecionar notas para subir")
+    if seletor_subir_tudo:
+      filtered_df["Selecionar notas para subir"] = True
+      columns_order.remove("Selecionar notas para subir")
+  
+  with seletor_2:
+    st.write("Selecione notas para visulizar")
+    
+    seletor_visualizar = st.toggle("Ocultar ids processados",value=True)
+
+    if seletor_visualizar:
+      filtered_df = filtered_df.loc[filtered_df["os_na_base"] == True]
 
   edited_df = st.data_editor(filtered_df,
                   hide_index=True,
@@ -180,7 +197,6 @@ if "dados_crm_df" in st.session_state:
       st.write("Criando Ordens de Serviço...")
       os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
       os_subidos = os_subidos.to_dict(orient='records')
-      st.write(os_subidos)
       subir_dados_mongodb("log_os",os_subidos)
 
       status.update(
