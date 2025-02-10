@@ -130,8 +130,8 @@ if "dados_crm_df" in st.session_state:
       )
 
   if filtro_unidade != "TODAS":
-    filtered_df = filtered_df.loc[dados_crm_df["store_name"] == filtro_unidade]
-    filtered_df_sem_cadastro = filtered_df_sem_cadastro.loc[dados_crm_df["store_name"] == filtro_unidade]
+    filtered_df = filtered_df.loc[filtered_df["store_name"] == filtro_unidade]
+    filtered_df_sem_cadastro = filtered_df_sem_cadastro.loc[filtered_df_sem_cadastro["store_name"] == filtro_unidade]
 
   with filtro_col_3:
 
