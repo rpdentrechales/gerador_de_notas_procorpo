@@ -120,7 +120,7 @@ if "dados_crm_df" in st.session_state:
   filtered_df_sem_cadastro = clientes_sem_cadastro_df.loc[clientes_sem_cadastro_df["Tipo de Pagamento"] == filtro_pagamento]
 
   with filtro_col_2:
-    unidades = filtered_df["store_name"].unique().sort_valeus()
+    unidades = filtered_df["store_name"].unique().sort_values()
     unidades.insert(0,"TODAS")
 
     filtro_unidade = st.selectbox(
