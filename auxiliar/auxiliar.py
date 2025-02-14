@@ -319,6 +319,7 @@ def paste_billcharges_with_json(start_date, end_date):
                     "cep": enderecos_loja['cep'],
                     "email": data_row['quote']['customer']['email']
                 }
+                dados_cliente = json.dumps(dados_cliente)
 
             # Process unit and aliquota data
             dados_da_unidade = unidades_obj.get(store_name)
