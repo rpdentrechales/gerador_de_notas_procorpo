@@ -35,7 +35,8 @@ with col_data_2:
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
   ids_os_subidos = pegar_dados_mongodb("log_os")
-  ids_os_subidos = ids_os_subidos["os_id"]
+  id_mask = ids_os_subidos["resposta"].astype(str).str.contains("ERROR", case=False, na=False)
+  ids_os_subidos = ids_os_subidos.loc[~id_mask,"os_id"]
   dados_crm_df['os_na_base'] = dados_crm_df['os_id'].isin(ids_os_subidos)
 
   st.session_state["dados_crm_df"] = dados_crm_df
@@ -196,8 +197,14 @@ if "dados_crm_df" in st.session_state:
 
       st.write("Criando Ordens de Serviço...")
       os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
-      os_subidos = os_subidos.to_dict(orient='records')
-      subir_dados_mongodb("log_os",os_subidos)
+      os_subidos_dic = os_subidos.to_dict(orient='records')
+      subir_dados_mongodb("log_os",os_subidos_dic)
+
+      erros_mask = os_subidos["resposta"].astype(str).str.contains("ERROR", case=False, na=False)
+      ids_para_subir = os_subidos.loc[~id_mask,"os_id"]
+      base_para_subir = dados_crm_df.loc[dados_crm_df['os_id'].isin(os_subidos)]
+      base_para_subir_dic = base_para_subir.to_dict(orient='records')
+      subir_dados_mongodb("os_processados",base_para_subir_dic)
 
       status.update(
           label="Notas Criadas!", state="complete", expanded=False
