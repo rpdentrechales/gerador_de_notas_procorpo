@@ -203,6 +203,7 @@ if "dados_crm_df" in st.session_state:
       erros_mask = os_subidos["resposta"].astype(str).str.contains("ERROR", case=False, na=False)
       ids_para_subir = os_subidos.loc[~erros_mask,"os_id"]
       base_para_subir = dados_crm_df.loc[dados_crm_df['os_id'].isin(ids_para_subir)]
+      base_para_subir = base_para_subir.drop_duplicates()
       base_para_subir_dic = base_para_subir.to_dict(orient='records')
       subir_dados_mongodb("os_processados",base_para_subir_dic)
 
