@@ -18,11 +18,14 @@ data_seletor = st.date_input(
 )
 
 if len(data_seletor) == 2:
-    data_inicial = datetime.combine(data_seletor[0], time.min)
-    data_final = datetime.combine(data_seletor[1], time.max)
+    data_inicial = data_seletor[0]
+    data_final = data_seletor[1]
 else:
-    data_inicial = datetime.combine(data_seletor[0], time.min)
-    data_final = datetime.combine(data_seletor[0], time.max)
+    data_inicial = data_seletor[0]
+    data_final = data_seletor[0]
+
+st.write(data_seletor)
+
 
 query = {
     "billcharge_paidAt": {
