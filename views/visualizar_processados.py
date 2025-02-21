@@ -31,7 +31,7 @@ query = {
     }
 }
 
-pegar_dados_button = st.button()
+pegar_dados_button = st.button("Pegar dados")
 
 if pegar_dados_mongodb:
 
