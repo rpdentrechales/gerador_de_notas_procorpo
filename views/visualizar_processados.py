@@ -6,7 +6,7 @@ from datetime import datetime, timedelta,time
 
 st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
-st.title("OS Processadas")
+st.title("OS Processadas - bugfix")
 
 today = datetime.now().date()
 trinta_dias = today - timedelta(days=30)
