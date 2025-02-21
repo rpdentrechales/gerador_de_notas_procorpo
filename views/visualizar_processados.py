@@ -11,18 +11,20 @@ st.title("OS Processadas")
 today = datetime.now().date()
 trinta_dias = today - timedelta(days=30)
 
+# Remove the format parameter
 data_seletor = st.date_input(
     "Selecione a data",
-    (trinta_dias, today),
-    format="DD/MM/YYYY",
+    (trinta_dias, today)
 )
 
+# Handle date range
 if isinstance(data_seletor, (list, tuple)) and len(data_seletor) == 2:
-    data_inicial = datetime.combine(data_seletor[0], time.min)
-    data_final = datetime.combine(data_seletor[1], time.max)
+    start_date, end_date = data_seletor
 else:
-    data_inicial = datetime.combine(data_seletor, time.min)
-    data_final = datetime.combine(data_seletor, time.max)
+    start_date = end_date = data_seletor
+
+data_inicial = datetime.combine(start_date, time.min)
+data_final = datetime.combine(end_date, time.max)
 
 query = {
     "billcharge_paidAt": {
@@ -30,8 +32,6 @@ query = {
         "$lte": data_final
     }
 }
-
-st.write(query)
 
 pegar_dados_button = st.button("Pegar dados")
 
