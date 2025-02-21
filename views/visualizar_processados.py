@@ -33,7 +33,7 @@ query = {
 
 pegar_dados_button = st.button("Pegar dados")
 
-if pegar_dados_mongodb:
+if pegar_dados_button:
 
     colunas = ['quote_id', 'billCharge_id', 'customer_id', 'customer_name',
        'store_name', 'quote_status', 'paymentMethod_name', 'billcharge_paidAt',
