@@ -24,9 +24,9 @@ else:
     data_inicial = data_seletor[0]
     data_final = data_inicial
 
-colunas = ['quote_id', 'billCharge_id', 'customer_id', 'customer_name',
+colunas = ['os_id','quote_id', 'billCharge_id', 'customer_id', 'customer_name',
        'store_name', 'quote_status', 'paymentMethod_name', 'billcharge_paidAt',
-       'bill_installmentsQuantity', 'bill_amount', 'servicos_json', 'os_id',
+       'bill_installmentsQuantity', 'bill_amount', 'servicos_json',
        'id_conta_corrente', 'dados_cliente', 'isPaid', 'Tipo de Pagamento',
        'billcharge_dueAt', 'amount']
     
@@ -36,6 +36,6 @@ os_processados['billcharge_paidAt'] = pd.to_datetime(os_processados['billcharge_
 
 os_processados = os_processados.loc[
     (os_processados['billcharge_paidAt'] >= data_inicial) & 
-    (os_processados['billcharge_paidAt'] <= data_final)
+    (os_processados['billcharge_paidAt'] <= data_final)]
 
-]st.dataframe(os_processados[colunas],hide_index=True)
+st.dataframe(os_processados[colunas],hide_index=True)
