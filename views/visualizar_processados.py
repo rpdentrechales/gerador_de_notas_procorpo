@@ -8,9 +8,12 @@ st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
 st.title("OS Processadas")
 
+today = datetime.datetime.now()
+trinta_dias = today - timedelta(days=30)
+
 data_seletor = st.date_input(
     "Selecione a data",
-    (three_days_ago, today),
+    (trinta_dias, today),
     format="DD/MM/YYYY",
 )
 
@@ -31,7 +34,7 @@ query = {
 pegar_dados_button = st.button()
 
 if pegar_dados_mongodb:
-    
+
     colunas = ['quote_id', 'billCharge_id', 'customer_id', 'customer_name',
        'store_name', 'quote_status', 'paymentMethod_name', 'billcharge_paidAt',
        'bill_installmentsQuantity', 'bill_amount', 'servicos_json', 'os_id',
