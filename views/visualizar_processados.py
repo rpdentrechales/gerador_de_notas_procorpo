@@ -6,44 +6,30 @@ from datetime import datetime, timedelta,time
 
 st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
-st.title("OS Processadas - bugfix")
+st.title("OS Processadas")
 
-today = datetime.now().date()
+today = datetime.datetime.now()
 trinta_dias = today - timedelta(days=30)
 
-# Remove the format parameter
 data_seletor = st.date_input(
-    "Selecione a data",
-    (trinta_dias, today)
+    "Selecione a data do pagamento",
+    (trinta_dias, today),
+    format="DD/MM/YYYY",
 )
 
-# Handle date range
-if isinstance(data_seletor, (list, tuple)) and len(data_seletor) == 2:
-    start_date, end_date = data_seletor
+if len(data_seletor) == 2:
+    data_inicial = data_seletor[0]
+    data_final = data_seletor[1]
 else:
-    start_date = end_date = data_seletor
+    data_inicial = data_seletor[0]
+    data_final = data_inicial
 
-start_date = datetime(2012, 2, 2, 6, 35, 6, 764)
-end_date = datetime(2025, 2, 21, 6, 55, 3, 381)
-
-
-query = {
-    "billcharge_paidAt": {
-        "$gte": start_date,
-        "$lte": end_date
-    }
-}
-
-pegar_dados_button = st.button("Pegar dados")
-
-if pegar_dados_button:
-
-    colunas = ['quote_id', 'billCharge_id', 'customer_id', 'customer_name',
+colunas = ['quote_id', 'billCharge_id', 'customer_id', 'customer_name',
        'store_name', 'quote_status', 'paymentMethod_name', 'billcharge_paidAt',
        'bill_installmentsQuantity', 'bill_amount', 'servicos_json', 'os_id',
        'id_conta_corrente', 'dados_cliente', 'isPaid', 'Tipo de Pagamento',
        'billcharge_dueAt', 'amount']
     
-    os_processados = pegar_dados_mongodb("os_processados",query=query)
-    
-    st.dataframe(os_processados,hide_index=True)
+os_processados = pegar_dados_mongodb("os_processados")
+os_processados = os_processados.loc[(os_processados["billcharge_paidAt"] >= data_inicial) & (os_processados["billcharge_paidAt"] >= data_final)]    
+st.dataframe(os_processados[colunas],hide_index=True)
