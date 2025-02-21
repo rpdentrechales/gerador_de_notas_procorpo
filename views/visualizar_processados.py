@@ -43,4 +43,4 @@ if pegar_dados_button:
     
     os_processados = pegar_dados_mongodb("os_processados",query=query)
     
-    st.dataframe(os_processados[colunas],hide_index=True)
+    st.dataframe(os_processados,hide_index=True)
