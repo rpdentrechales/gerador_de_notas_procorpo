@@ -23,6 +23,10 @@ if isinstance(data_seletor, (list, tuple)) and len(data_seletor) == 2:
 else:
     start_date = end_date = data_seletor
 
+start_date = datetime.datetime(2012, 2, 2, 6, 35, 6, 764)
+end_date = datetime.datetime(2025, 2, 21, 6, 55, 3, 381)
+
+
 query = {
     "billcharge_paidAt": {
         "$gte": start_date,
