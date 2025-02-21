@@ -18,14 +18,11 @@ data_seletor = st.date_input(
 )
 
 if len(data_seletor) == 2:
-    data_inicial = data_seletor[0]
-    data_final = data_seletor[1]
+    data_inicial = datetime.combine(data_seletor[0], time.min)
+    data_final = datetime.combine(data_seletor[1], time.max)
 else:
-    data_inicial = data_seletor[0]
-    data_final = data_seletor[0]
-
-st.write(data_seletor)
-
+    data_inicial = datetime.combine(data_seletor[0], time.min)
+    data_final = datetime.combine(data_seletor[0], time.max)
 
 query = {
     "billcharge_paidAt": {
@@ -33,6 +30,8 @@ query = {
         "$lte": data_final
     }
 }
+
+st.write(query)
 
 pegar_dados_button = st.button("Pegar dados")
 
@@ -44,6 +43,6 @@ if pegar_dados_button:
        'id_conta_corrente', 'dados_cliente', 'isPaid', 'Tipo de Pagamento',
        'billcharge_dueAt', 'amount']
     
-    os_processados = pegar_dados_mongodb("os_processados",query=query)
+    os_processados = pegar_dados_mongodb("os_processados")
     
     st.dataframe(os_processados,hide_index=True)
