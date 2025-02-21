@@ -18,10 +18,10 @@ data_seletor = st.date_input(
 )
 
 if len(data_seletor) == 2:
-    data_inicial = data_seletor[0]
-    data_final = data_seletor[1]
+    data_inicial = pd.to_datetime(data_seletor[0])
+    data_final = pd.to_datetime(data_seletor[1])
 else:
-    data_inicial = data_seletor[0]
+    data_inicial = pd.to_datetime(data_seletor[0])
     data_final = data_inicial
 
 colunas = ['os_id','quote_id', 'billCharge_id', 'customer_id', 'customer_name',
