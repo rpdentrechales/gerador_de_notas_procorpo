@@ -23,8 +23,8 @@ if isinstance(data_seletor, (list, tuple)) and len(data_seletor) == 2:
 else:
     start_date = end_date = data_seletor
 
-data_inicial = datetime.(start_date)
-data_final = datetime.(end_date)
+data_inicial = datetime(start_date)
+data_final = datetime(end_date)
 
 query = {
     "billcharge_paidAt": {
