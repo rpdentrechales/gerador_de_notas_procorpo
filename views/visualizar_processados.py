@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,time
 from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import *
 
@@ -8,6 +8,36 @@ st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
 st.title("OS Processadas")
 
-os_processados = pegar_dados_mongodb("os_processados")
+data_seletor = st.date_input(
+    "Selecione a data",
+    (three_days_ago, today),
+    format="DD/MM/YYYY",
+)
 
-st.dataframe(os_processados)
+if len(data_seletor) == 2:
+    data_inicial = datetime.combine(data_seletor[0], time.min)
+    data_final = datetime.combine(data_seletor[1], time.max)
+else:
+    data_inicial = datetime.combine(data_seletor[0], time.min)
+    data_final = datetime.combine(data_seletor[0], time.max)
+
+query = {
+    "billcharge_paidAt": {
+        "$gte": data_inicial,
+        "$lte": data_final
+    }
+}
+
+pegar_dados_button = st.button()
+
+if pegar_dados_mongodb:
+    
+    colunas = ['quote_id', 'billCharge_id', 'customer_id', 'customer_name',
+       'store_name', 'quote_status', 'paymentMethod_name', 'billcharge_paidAt',
+       'bill_installmentsQuantity', 'bill_amount', 'servicos_json', 'os_id',
+       'id_conta_corrente', 'dados_cliente', 'isPaid', 'Tipo de Pagamento',
+       'billcharge_dueAt', 'amount']
+    
+    os_processados = pegar_dados_mongodb("os_processados",query=query)
+    
+    st.dataframe(os_processados[colunas],hide_index=True)

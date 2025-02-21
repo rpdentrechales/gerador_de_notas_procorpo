@@ -665,16 +665,22 @@ def subir_dados_mongodb(collection_name,dados):
 
   return insert_result
 
-def pegar_dados_mongodb(collection_name):
-
-  client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-  db = client["notas_omie"]
-  collection = db[collection_name]
-  all_documents = collection.find()
-  data = list(all_documents)
-  df = pd.DataFrame(data).drop(columns=['_id'], errors='ignore')
-
-  return df
+def pegar_dados_mongodb(collection_name, query=None):
+    client = MongoClient("mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+    db = client["notas_omie"]
+    collection = db[collection_name]
+    
+    # Use empty query if none is provided
+    if query is None:
+        query = {}
+    
+    # Apply the query to filter documents
+    filtered_documents = collection.find(query)
+    
+    data = list(filtered_documents)
+    df = pd.DataFrame(data).drop(columns=['_id'], errors='ignore')
+    
+    return df
 
 def pega_dados_do_cliente_omie(api_secret, api_key,pagina):
     parametro = {
