@@ -8,7 +8,7 @@ st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
 st.title("OS Processadas")
 
-today = datetime.datetime.now()
+today = datetime.now()
 trinta_dias = today - timedelta(days=30)
 
 data_seletor = st.date_input(
