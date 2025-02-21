@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta,time
 from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import *
+from datetime import datetime, timedelta,time
 
 st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
