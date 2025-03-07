@@ -35,9 +35,14 @@ with col_data_2:
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
   ids_os_subidos = pegar_dados_mongodb("log_os")
-  id_mask = ids_os_subidos["resposta"].astype(str).str.contains("ERROR", case=False, na=False)
-  ids_os_subidos = ids_os_subidos.loc[~id_mask,"os_id"]
-  dados_crm_df['os_na_base'] = dados_crm_df['os_id'].isin(ids_os_subidos)
+  
+  if ids_os_subidos.empty:
+    dados_crm_df['os_na_base'] = False
+
+  else:
+    id_mask = ids_os_subidos["resposta"].astype(str).str.contains("ERROR", case=False, na=False)
+    ids_os_subidos = ids_os_subidos.loc[~id_mask,"os_id"]
+    dados_crm_df['os_na_base'] = dados_crm_df['os_id'].isin(ids_os_subidos)
 
   st.session_state["dados_crm_df"] = dados_crm_df
 
