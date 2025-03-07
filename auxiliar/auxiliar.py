@@ -8,6 +8,7 @@ import re
 import time
 import pymongo
 from pymongo import MongoClient
+import numpy as np
 
 def load_dataframe(worksheet):
 
@@ -123,15 +124,15 @@ def gerar_obj_enderecos():
         estado = row[5]
         cidade = row[6]
         cep = row[7]
-
+        
         endereco_data_obj = {
-                        "endereco": endereco,
-                        "endereco_numero": endereco_numero,
-                        "bairro": bairro,
-                        "complemento": complemento,
-                        "estado": estado,
-                        "cidade": cidade,
-                        "cep": cep
+                        "street": endereco,
+                        "number": endereco_numero,
+                        "neighborhood": bairro,
+                        "additional": complemento,
+                        "state": {"abbreviation" : estado},
+                        "city": cidade,
+                        "postcode": cep
                          }
 
         endereco_obj[unidade] = endereco_data_obj
@@ -284,8 +285,25 @@ def paste_billcharges_with_json(start_date, end_date):
             # Process customer address
             customer_address = data_row['quote']['customer']['address']
 
-            if customer_address:
-              if customer_document:
+            address_check = (
+                                pd.notna(customer_address)  # First check for missing values
+                                and customer_address not in [None, ""]  # Then check for empty values
+                                and str(customer_address).strip() != ""  # Finally check for whitespace-only
+                            )
+            document_check = (
+                                pd.notna(customer_document)  # First check for missing values
+                                and customer_document not in [None, ""]  # Then check for empty values
+                                and str(customer_document).strip() != ""  # Finally check for whitespace-only
+                            )
+            
+            if address_check:
+                continue
+
+            else:
+                customer_address = enderecos_obj[store_name]
+
+            if document_check:
+
                 dados_cliente = {
                     "razao_social": customer_name,
                     "nome_fantasia":customer_name,
@@ -301,25 +319,10 @@ def paste_billcharges_with_json(start_date, end_date):
                     "email": data_row['quote']['customer']['email']
                 }
                 dados_cliente = json.dumps(dados_cliente)
-              else:
-                dados_cliente = "Cadastro inválido - Sem CPF"
+
             else:
-                enderecos_loja = enderecos_obj[store_name]
-                dados_cliente = {
-                    "razao_social": customer_name,
-                    "nome_fantasia":customer_name,
-                    "cnpj_cpf": customer_document,
-                    "codigo_cliente_integracao": customer_id,
-                    "endereco": enderecos_loja['endereco'],
-                    "endereco_numero": enderecos_loja['endereco_numero'],
-                    "bairro": enderecos_loja['bairro'],
-                    "complemento": enderecos_loja['complemento'],
-                    "estado": enderecos_loja['estado'],
-                    "cidade": enderecos_loja['cidade'],
-                    "cep": enderecos_loja['cep'],
-                    "email": data_row['quote']['customer']['email']
-                }
-                dados_cliente = json.dumps(dados_cliente)
+
+                dados_cliente = "Cadastro inválido - Sem CPF"
 
             # Process unit and aliquota data
             dados_da_unidade = unidades_obj.get(store_name)
