@@ -741,3 +741,18 @@ def atualizar_base_de_clientes():
   codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
 
   return (codigo_integracao_omie_mongodb,todos_dados_clientes)
+
+
+def deletar_todos_documentos(collection_name, query=None):
+    client = MongoClient("mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+    db = client["notas_omie"]
+    collection = db[collection_name]
+    
+    # Delete all documents if no query is specified
+    if query is None:
+        result = collection.delete_many({})
+    else:
+        result = collection.delete_many(query)
+    
+    print(f"Documentos deletados: {result.deleted_count}")
+    client.close()
