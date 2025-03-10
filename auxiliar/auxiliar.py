@@ -297,7 +297,7 @@ def paste_billcharges_with_json(start_date, end_date):
                             )
             
             if address_check:
-                continue
+                pass
 
             else:
                 customer_address = enderecos_obj[store_name]
