@@ -32,8 +32,7 @@ colunas = ['os_id','quote_id', 'billCharge_id', 'customer_id', 'customer_name',
     
 os_processados = pegar_dados_mongodb("os_processados")
 
-st.write(os_processados)
-if os_processados.empty():
+if os_processados.empty:
     pass
 
 else:
