@@ -15,7 +15,7 @@ if deletar_button:
         deletar_todos_documentos("log_clientes", query=None)
         deletar_todos_documentos("log_os", query=None)
         deletar_todos_documentos("os_processados", query=None)
-        st.ballons()
+        st.balloons()
 
         status.update(
             label="Bases deletadas", state="complete", expanded=False
