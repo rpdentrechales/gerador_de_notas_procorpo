@@ -10,5 +10,13 @@ st.title("Deletar Base MongoDB")
 deletar_button = st.button("Deletar Base")
 
 if deletar_button:
-    deletar_todos_documentos("log_clientes", query=None)
-    st.ballons()
+    with st.status("Deletandos Bases...", expanded=True) as status:
+
+        deletar_todos_documentos("log_clientes", query=None)
+        deletar_todos_documentos("log_os", query=None)
+        deletar_todos_documentos("os_processados", query=None)
+        st.ballons()
+
+        status.update(
+            label="Bases deletadas", state="complete", expanded=False
+        )
