@@ -32,10 +32,14 @@ colunas = ['os_id','quote_id', 'billCharge_id', 'customer_id', 'customer_name',
     
 os_processados = pegar_dados_mongodb("os_processados")
 
-os_processados['billcharge_paidAt'] = pd.to_datetime(os_processados['billcharge_paidAt'])
+if os_processados.empty():
+    pass
 
-os_processados = os_processados.loc[
-    (os_processados['billcharge_paidAt'] >= data_inicial) & 
-    (os_processados['billcharge_paidAt'] <= data_final)]
+else:
+    os_processados['billcharge_paidAt'] = pd.to_datetime(os_processados['billcharge_paidAt'])
 
-st.dataframe(os_processados[colunas],hide_index=True)
+    os_processados = os_processados.loc[
+        (os_processados['billcharge_paidAt'] >= data_inicial) & 
+        (os_processados['billcharge_paidAt'] <= data_final)]
+
+    st.dataframe(os_processados[colunas],hide_index=True)
