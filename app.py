@@ -19,13 +19,19 @@ processadas_page = st.Page(
     icon=":material/manufacturing:",
 )
 
+utility_page = st.Page(
+    "views/utility_page.py",
+    title="Utilitários",
+    icon=":material/manufacturing:",
+)
+
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
 # pg = st.navigation(pages=[about_page, project_1_page, project_2_page])
 
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Notas Omie": [subir_notas_page,log_page,processadas_page]
+        "Notas Omie": [subir_notas_page,log_page,processadas_page,utility_page]
     }
 )
 
