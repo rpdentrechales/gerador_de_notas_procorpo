@@ -53,12 +53,9 @@ def pegar_contas_correntes(pagina_atual, api_secret, api_key):
     return response.json()
 
 
-def atualizar_conta_correntes(unidade_omie):
-    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
-    api_secret = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_omie,"API Secret"].iloc[0]
-    api_key = str(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_omie,"API KEY"].iloc[0])
+def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
 
-    nome_padrao_cc = dados_unidade = load_dataframe("Auxiliar - Dados para Criar CC")
+    nome_padrao_cc = load_dataframe("Auxiliar - Dados para Criar CC")
 
     base_cc = load_dataframe("Auxiliar - Contas Correntes")
     
@@ -79,9 +76,6 @@ def atualizar_conta_correntes(unidade_omie):
             if not required_keys.issubset(conta.keys()):
                 continue
     
-            nCodCC = conta["nCodCC"]
-            descricao = conta["descricao"]
-            cCodCCInt = conta["cCodCCInt"]
             tipo = conta["tipo_conta_corrente"]
             nome_padrao = nome_padrao_cc.loc[nome_padrao_cc["tipo_conta_corrente"] == tipo,"Nome Padrão"].iloc[0]
 
@@ -110,8 +104,10 @@ def atualizar_conta_correntes(unidade_omie):
 
 def criar_contas_correntes(unidade_omie,codigo):
 
-    api_secret = "2fae495eb5679299260c3676fe88d291"
-    api_key = "2485921847409"
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    api_secret = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_omie,"API Secret"].iloc[0]
+    api_key = str(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_omie,"API KEY"].iloc[0])
+
     dados_cc_para_criar = load_dataframe("Auxiliar - Dados para Criar CC")
 
     for dados_para_criar in dados_cc_para_criar.to_dict(orient='records'):
@@ -130,6 +126,8 @@ def criar_contas_correntes(unidade_omie,codigo):
         
         criar_cc(api_secret, api_key, dados_cc)
 
+    atualizar_conta_correntes(api_secret,api_key,unidade_omie)
+
 
 def pegar_contas_teste():
     #Dados Backoffice Omie
@@ -137,7 +135,7 @@ def pegar_contas_teste():
     api_secret = "2fae495eb5679299260c3676fe88d291"
     api_key = "2485921847409"
     unidade_omie = "BackOffice"
-    
+
 
 
     nome_padrao_cc = dados_unidade = load_dataframe("Auxiliar - Dados para Criar CC")
