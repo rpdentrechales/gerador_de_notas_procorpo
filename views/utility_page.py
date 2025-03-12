@@ -33,6 +33,8 @@ conta_set = set(np.append(contas_correntes["Unidade"].dropna().unique(), "teste"
 unidade_novas = unidades_set - conta_set
 unidades_novas = list(unidade_novas)
 
+link_da_planilha = "https://docs.google.com/spreadsheets/d/1MG2Idj77C4-qrraUyNcdE6dMCKjieV2v0lfyen2aopc"
+
 if len(unidade_novas) > 0:
 
     seletores_1,seletores_2 = st.columns(2)
@@ -46,9 +48,11 @@ if len(unidade_novas) > 0:
 
     if criar_contas_botao:
         criar_contas_correntes(unidade_selecionada,sigla_selecionada)
+    
+    st.markdown(f"[Link para cadastrar Unidades Novas]({link_da_planilha})")
 
 else:
-    link_da_planilha = "https://docs.google.com/spreadsheets/d/1MG2Idj77C4-qrraUyNcdE6dMCKjieV2v0lfyen2aopc"
+    
     st.write("Não há unidades novas.")
     st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha})")
 
