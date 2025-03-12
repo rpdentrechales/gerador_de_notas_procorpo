@@ -54,6 +54,6 @@ if len(unidade_novas) > 0:
 else:
     
     st.write("Não há unidades novas.")
-    st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha})")
+    st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha}).")
 
 
