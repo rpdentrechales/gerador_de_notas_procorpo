@@ -20,3 +20,9 @@ if deletar_button:
         status.update(
             label="Bases deletadas", state="complete", expanded=False
         )
+
+st.title("Adicionar Conta Corrente")
+
+contas_correntes = load_dataframe("Auxiliar - Contas Correntes")
+dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+
