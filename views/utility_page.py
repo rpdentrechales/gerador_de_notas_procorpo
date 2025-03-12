@@ -48,7 +48,7 @@ if len(unidade_novas) > 0:
         criar_contas_correntes(unidade_selecionada,sigla_selecionada)
 
 else:
-    link_da_planilha = "https://docs.google.com/spreadsheets/d/1HHoDNYlRhx6vRvTxBCCbuWD_XCwy8Oc-Cq1_lLyiPtE/edit?gid=1057011172#gid=1057011172"
+    link_da_planilha = "https://docs.google.com/spreadsheets/d/1MG2Idj77C4-qrraUyNcdE6dMCKjieV2v0lfyen2aopc"
     st.write("Não há unidades novas.")
     st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha})")
 
