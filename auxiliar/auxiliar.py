@@ -232,6 +232,20 @@ def gerar_obj_unidades():
 
     return unidades_obj
 
+def gerar_obj_cTribServ():
+    tributacao_data = load_dataframe("Auxiliar - tipo de tributação")
+
+    cTribServ_obj = {}
+
+    for _, row in tributacao_data.iterrows():
+        unidade_omie = row[0]
+        cTribServ = row[1]
+
+        cTribServ_obj[unidade_omie] = {"cTribServ": cTribServ}
+
+    return cTribServ_obj
+
+
 def paste_billcharges_with_json(start_date, end_date):
     # Fetch dates and initialize variables
     current_page = 1
@@ -242,6 +256,7 @@ def paste_billcharges_with_json(start_date, end_date):
     unidades_obj = gerar_obj_unidades()
     aliquota_obj = gerar_obj_aliquota()
     enderecos_obj = gerar_obj_enderecos()
+    cTribServ_obj = gerar_obj_cTribServ()
 
     # First API query to get BillCharges
     results = query_BillCharges(current_page, start_date, end_date)
@@ -334,6 +349,7 @@ def paste_billcharges_with_json(start_date, end_date):
             dados_aliquotas = aliquota_obj.get(cidade)
             codigo_municipio = dados_aliquotas['codigo_municipio']
             aliquota = dados_aliquotas['aliquota']
+            cTribServ = cTribServ_obj[unidade_omie]["cTribServ"]
 
             # Find account ID
             id_conta_corrente = find_cc_id(cc_obj_array, tipo_pagamento_obj, unidade_omie, paymentMethod_name)
@@ -341,7 +357,7 @@ def paste_billcharges_with_json(start_date, end_date):
             # Process service and payment types
             servico_obj = {
                 "cDadosAdicItem": f"Serviço Prestado - {billCharge_id}",
-                "cTribServ": "01",
+                "cTribServ": cTribServ,
                 "cCodServMun": codigo_municipio,
                 "cCodServLC116": "6.02",
                 "nQtde": 1,
