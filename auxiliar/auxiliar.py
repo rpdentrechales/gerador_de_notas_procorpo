@@ -677,15 +677,18 @@ def compilar_linhas_para_subir(df_selecionado):
 
 def subir_dados_mongodb(collection_name,dados):
 
-  client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-  db = client["notas_omie"]
-  collection = db[collection_name]
-  print("Debugg dados mongo:")
-  print(dados)
+    client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+    db = client["notas_omie"]
+    collection = db[collection_name]
+    
+    if len(dados) > 0:
 
-  insert_result = collection.insert_many(dados)
+        insert_result = collection.insert_many(dados)
 
-  return insert_result
+    else:
+        insert_result = None
+    
+    return insert_result
 
 def pegar_dados_mongodb(collection_name, query=None):
     client = MongoClient("mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
