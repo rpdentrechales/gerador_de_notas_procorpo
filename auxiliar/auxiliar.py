@@ -232,18 +232,18 @@ def gerar_obj_unidades():
 
     return unidades_obj
 
-def gerar_obj_cTribServ():
-    tributacao_data = load_dataframe("Auxiliar - tipo de tributação")
+def gerar_obj_nCodServico():
+    tributacao_data = load_dataframe("Auxiliar - Serviços")
 
-    cTribServ_obj = {}
+    nCodServ_obj = {}
 
     for _, row in tributacao_data.iterrows():
-        unidade_omie = row[0]
-        cTribServ = row[1]
+        unidade_omie = row["unidade_omie"]
+        nCodServ = row["nCodServ"]
 
-        cTribServ_obj[unidade_omie] = {"cTribServ": cTribServ}
+        nCodServ_obj[unidade_omie] = {"nCodServ": nCodServ}
 
-    return cTribServ_obj
+    return nCodServ_obj
 
 
 def paste_billcharges_with_json(start_date, end_date):
@@ -256,7 +256,7 @@ def paste_billcharges_with_json(start_date, end_date):
     unidades_obj = gerar_obj_unidades()
     aliquota_obj = gerar_obj_aliquota()
     enderecos_obj = gerar_obj_enderecos()
-    cTribServ_obj = gerar_obj_cTribServ()
+    nCodServico_obj = gerar_obj_nCodServico()
 
     # First API query to get BillCharges
     results = query_BillCharges(current_page, start_date, end_date)
@@ -349,7 +349,7 @@ def paste_billcharges_with_json(start_date, end_date):
             dados_aliquotas = aliquota_obj.get(cidade)
             codigo_municipio = dados_aliquotas['codigo_municipio']
             aliquota = dados_aliquotas['aliquota']
-            cTribServ = cTribServ_obj[unidade_omie]["cTribServ"]
+            nCodServico = nCodServico_obj[unidade_omie]["nCodServico"]
 
             # Find account ID
             id_conta_corrente = find_cc_id(cc_obj_array, tipo_pagamento_obj, unidade_omie, paymentMethod_name)
@@ -357,7 +357,7 @@ def paste_billcharges_with_json(start_date, end_date):
             # Process service and payment types
             servico_obj = {
                 "cDadosAdicItem": f"Serviço Prestado - {billCharge_id}",
-                "cTribServ": cTribServ,
+                "nCodServico": nCodServico,
                 "cCodServMun": codigo_municipio,
                 "cCodServLC116": "6.02",
                 "nQtde": 1,

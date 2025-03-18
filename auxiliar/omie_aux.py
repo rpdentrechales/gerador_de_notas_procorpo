@@ -138,7 +138,7 @@ def pegar_contas_teste():
 
 
 
-    nome_padrao_cc = dados_unidade = load_dataframe("Auxiliar - Dados para Criar CC")
+    nome_padrao_cc = load_dataframe("Auxiliar - Dados para Criar CC")
 
     pagina = 1
     dados_cc = pegar_contas_correntes(pagina,api_secret,api_key)
@@ -178,7 +178,69 @@ def pegar_contas_teste():
 
     return contas_correntes_novas
         
+
+def pegar_servicos(pagina_atual, api_secret, api_key):
+    
+    request_data = {
+        "call": "ListarCadastroServico",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [{
+            "nPagina": pagina_atual,
+            "nRegPorPagina": 500
+        }]
+    }
+    
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(
+            "https://app.omie.com.br/api/v1/servicos/servico/",
+            headers=headers,
+            data=json.dumps(request_data))
         
+    return response.json()       
+
+
+def atualizar_servicos():
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+
+    todos_servicos = []
+
+    for index, row in dados_unidade.iterrows():
+        unidade_omie = row["Unidades Omie"]
+        api_secret = row["API Secret"]
+        api_key = row["API KEY"]
+        pagina_atual = 1
+        servicos = pegar_servicos(pagina_atual, api_secret, api_key)
+        
+        servicos_cadastrados = servicos["cadastros"]
+
+        for servico in servicos_cadastrados:
+            cCodCateg = servico["cabecalho"]["cCodCateg"]
+            cCodLC116 = servico["cabecalho"]["cCodLC116"]
+            cCodServMun = servico["cabecalho"]["cCodServMun"]
+            cDescricao = servico["cabecalho"]["cDescricao"]
+            cIdTrib = servico["cabecalho"]["cIdTrib"]
+            nCodServ = servico["intListar"]["nCodServ"]
+
+            dados_servico = {
+                            "unidade_omie":unidade_omie,
+                            "cCodCateg":cCodCateg,
+                            "cCodLC116":cCodLC116,
+                            "cCodServMun":cCodServMun,
+                            "cDescricao":cDescricao,
+                            "cIdTrib":cIdTrib,
+                            "nCodServ":nCodServ
+                            }
+            
+            todos_servicos.append(dados_servico)
+
+    servicos_df = pd.DataFrame(todos_servicos)
+    update_sheet("Auxiliar - Serviços", servicos_df)
+
+    return servicos_df
+
+
 
 
 
