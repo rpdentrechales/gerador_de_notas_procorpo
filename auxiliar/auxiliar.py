@@ -349,8 +349,7 @@ def paste_billcharges_with_json(start_date, end_date):
             dados_aliquotas = aliquota_obj.get(cidade)
             codigo_municipio = dados_aliquotas['codigo_municipio']
             aliquota = dados_aliquotas['aliquota']
-            st.write(nCodServico_obj)
-            nCodServico = nCodServico_obj[unidade_omie]["nCodServico"]
+            nCodServico = nCodServico_obj[unidade_omie]["nCodServ"]
 
             # Find account ID
             id_conta_corrente = find_cc_id(cc_obj_array, tipo_pagamento_obj, unidade_omie, paymentMethod_name)
