@@ -680,6 +680,9 @@ def subir_dados_mongodb(collection_name,dados):
   client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   db = client["notas_omie"]
   collection = db[collection_name]
+
+  print(dados)
+
   insert_result = collection.insert_many(dados)
 
   return insert_result
