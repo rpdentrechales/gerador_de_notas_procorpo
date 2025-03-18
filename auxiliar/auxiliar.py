@@ -233,11 +233,11 @@ def gerar_obj_unidades():
     return unidades_obj
 
 def gerar_obj_nCodServico():
-    tributacao_data = load_dataframe("Auxiliar - Serviços")
+    servico_data = load_dataframe("Auxiliar - Serviços")
 
     nCodServ_obj = {}
 
-    for _, row in tributacao_data.iterrows():
+    for index, row in servico_data.iterrows():
         unidade_omie = row["unidade_omie"]
         nCodServ = row["nCodServ"]
 
@@ -349,6 +349,7 @@ def paste_billcharges_with_json(start_date, end_date):
             dados_aliquotas = aliquota_obj.get(cidade)
             codigo_municipio = dados_aliquotas['codigo_municipio']
             aliquota = dados_aliquotas['aliquota']
+            st.write(nCodServico_obj)
             nCodServico = nCodServico_obj[unidade_omie]["nCodServico"]
 
             # Find account ID
