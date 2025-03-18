@@ -508,8 +508,10 @@ def criar_clientes_selecionados(base_df):
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
     id_do_cliente = row["customer_id"]
-    if str(id_do_cliente) in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
-      continue
+
+    if not codigo_integracao.empty:
+        if str(id_do_cliente) in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
+            continue
 
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
@@ -680,7 +682,7 @@ def subir_dados_mongodb(collection_name,dados):
     client = MongoClient(f"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     db = client["notas_omie"]
     collection = db[collection_name]
-    
+
     if len(dados) > 0:
 
         insert_result = collection.insert_many(dados)
