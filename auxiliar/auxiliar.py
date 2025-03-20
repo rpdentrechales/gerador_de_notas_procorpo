@@ -438,6 +438,11 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
+    if index % 20:
+        time.sleep(5)
+    elif index % 4:
+        time.sleep(1)
+
   resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
   return resultados_df
@@ -516,7 +521,6 @@ def criar_clientes_selecionados(base_df):
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
 
-    cadastro_novo = False
     result_status = "Error"
 
     try:
@@ -534,8 +538,6 @@ def criar_clientes_selecionados(base_df):
 
     if full_response:
         if re.search(r"Cliente cadastrado com sucesso.", full_response):
-            # Checa se é cliente novo
-            cadastro_novo = True
             result_status = "Cliente Novo Cadastrado"
             dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
             subir_dados_mongodb("id_clientes",dados_mongodb)
@@ -560,18 +562,10 @@ def criar_clientes_selecionados(base_df):
           else:
             result_status = "Erro ao Associar Id do Cliente"
 
-    # if not cadastro_novo:
-    #     # Se não for cadastro novo, atualiza os dados do cliente
-    #     atualizar_dados = alterar_dados(dados_cliente, api_secret, api_key)
-    #     full_response = check_response(atualizar_dados)
-
-    #     if full_response:
-    #       result_status = "Cadastro do cliente atualizado"
-    #     else:
-    #       result_status = "Erro ao Atualizar Cadastro do Cliente"
-
     if counter % 20 == 0:
-        time.sleep(5)  # Aguarda 5 segundos
+        time.sleep(5)
+    elif counter % 4:
+        time.sleep(1)
 
     resultados.append([id_do_cliente,result_status,full_response,timestamp])
     counter += 1
