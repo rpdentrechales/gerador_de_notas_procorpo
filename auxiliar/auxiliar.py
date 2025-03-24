@@ -456,6 +456,7 @@ def subir_linha(dados_da_linha):
     observacoes = dados_da_linha["quote_id"]
     codigo_cliente_integracao = dados_da_linha["customer_id"]
     quantidade_de_parcelas = dados_da_linha["bill_installmentsQuantity"]
+    data_de_faturamento = pd.to_datetime(dados_da_linha["billcharge_paidAt"]).strftime("%d/%m/%Y")
 
     cDadosAdicNF = str(codigo_pedido)
     nCodCC = dados_da_linha["id_conta_corrente"]
@@ -487,6 +488,8 @@ def subir_linha(dados_da_linha):
             "nCodCC": nCodCC,
             "cNumPedido": codigo_pedido
         },
+        "InfoCadastro":{
+            "dDtFat":data_de_faturamento},
         "Observacoes": {
             "cObsOS": observacoes
         },
