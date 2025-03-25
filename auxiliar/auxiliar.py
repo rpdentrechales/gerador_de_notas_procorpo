@@ -437,7 +437,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
-    time.sleep(1)
+    time.sleep(2)
 
   resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
@@ -561,7 +561,7 @@ def criar_clientes_selecionados(base_df):
           else:
             result_status = "Erro ao Associar Id do Cliente"
 
-    time.sleep(1)
+    time.sleep(2)
 
     resultados.append([id_do_cliente,result_status,full_response,timestamp])
     counter += 1
