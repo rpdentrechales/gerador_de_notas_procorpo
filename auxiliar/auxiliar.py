@@ -346,8 +346,8 @@ def paste_billcharges_with_json(start_date, end_date):
             unidade_omie = dados_da_unidade['unidade_omie']
             cidade = dados_da_unidade['cidade']
             dados_aliquotas = aliquota_obj.get(cidade)
-            codigo_municipio = dados_aliquotas['codigo_municipio']
-            aliquota = dados_aliquotas['aliquota']
+            # codigo_municipio = dados_aliquotas['codigo_municipio']
+            # aliquota = dados_aliquotas['aliquota']
             nCodServico = nCodServico_obj[unidade_omie]["nCodServ"]
 
             # Find account ID
@@ -357,16 +357,16 @@ def paste_billcharges_with_json(start_date, end_date):
             servico_obj = {
                 "cDadosAdicItem": f"Serviço Prestado - {billCharge_id}",
                 "nCodServico": nCodServico,
-                "cCodServMun": codigo_municipio,
+                # "cCodServMun": codigo_municipio,
                 "cCodServLC116": "6.02",
                 "nQtde": 1,
                 "nValUnit": bill_amount,
                 "cRetemISS": "N",
                 "nValorDesconto": 0,
                 "cTpDesconto": "V",
-                "impostos": {
-                    "nAliqISS": aliquota
-                }
+                # "impostos": {
+                #     "nAliqISS": aliquota
+                # }
             }
             servico_obj = json.dumps(servico_obj)
 
