@@ -245,7 +245,6 @@ def gerar_obj_nCodServico():
 
     return nCodServ_obj
 
-
 def paste_billcharges_with_json(start_date, end_date):
     # Fetch dates and initialize variables
     current_page = 1
@@ -301,14 +300,14 @@ def paste_billcharges_with_json(start_date, end_date):
             customer_address = data_row['quote']['customer']['address']
 
             address_check = (
-                                pd.notna(customer_address)  # First check for missing values
-                                and customer_address not in [None, ""]  # Then check for empty values
-                                and str(customer_address).strip() != ""  # Finally check for whitespace-only
+                                pd.notna(customer_address)  
+                                and customer_address not in [None, ""]  
+                                and str(customer_address).strip() != ""
                             )
             document_check = (
-                                pd.notna(customer_document)  # First check for missing values
-                                and customer_document not in [None, ""]  # Then check for empty values
-                                and str(customer_document).strip() != ""  # Finally check for whitespace-only
+                                pd.notna(customer_document)  
+                                and customer_document not in [None, ""]  
+                                and str(customer_document).strip() != ""
                             )
             
             if address_check:
