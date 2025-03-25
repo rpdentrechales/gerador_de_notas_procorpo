@@ -438,8 +438,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
-    if index % 2:
-        time.sleep(1)
+    time.sleep(1)
 
   resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
