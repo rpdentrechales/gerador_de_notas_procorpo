@@ -437,7 +437,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
-    time.sleep(2)
+    time.sleep(1)
 
   resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
@@ -504,7 +504,6 @@ def criar_clientes_selecionados(base_df):
   now = datetime.datetime.now()
   timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
   resultados = [["client_id","Resultado","Response","timestamp"]]
-  counter = 0
   codigo_integracao = pegar_dados_mongodb("id_clientes")
 
   for index,row in base_df.iterrows():
@@ -533,6 +532,7 @@ def criar_clientes_selecionados(base_df):
     id_cliente = dados_cliente["codigo_cliente_integracao"]
 
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
+    time.sleep(1)
     full_response = check_response(full_response)
 
     if full_response:
@@ -552,6 +552,7 @@ def criar_clientes_selecionados(base_df):
           }
 
           associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
+          time.sleep(1)
           full_response = check_response(associar_cliente)
 
           if full_response:
@@ -561,10 +562,7 @@ def criar_clientes_selecionados(base_df):
           else:
             result_status = "Erro ao Associar Id do Cliente"
 
-    time.sleep(2)
-
     resultados.append([id_do_cliente,result_status,full_response,timestamp])
-    counter += 1
 
   resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
   return resultados_df
