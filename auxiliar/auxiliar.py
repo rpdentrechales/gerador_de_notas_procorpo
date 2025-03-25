@@ -345,7 +345,7 @@ def paste_billcharges_with_json(start_date, end_date):
 
             unidade_omie = dados_da_unidade['unidade_omie']
             cidade = dados_da_unidade['cidade']
-            dados_aliquotas = aliquota_obj.get(cidade)
+            # dados_aliquotas = aliquota_obj.get(cidade)
             # codigo_municipio = dados_aliquotas['codigo_municipio']
             # aliquota = dados_aliquotas['aliquota']
             nCodServico = nCodServico_obj[unidade_omie]["nCodServ"]
