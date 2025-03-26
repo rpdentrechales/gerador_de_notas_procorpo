@@ -194,6 +194,9 @@ if "dados_crm_df" in st.session_state:
 
       selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
       base_compilada = compilar_linhas_para_subir(selected_df)
+      linhas_para_subir = dados_crm_df.shape[0]
+      
+      st.write(f"Linhas para subir: {linhas_para_subir}")      
       
       st.write("Criando Clientes...")
       clientes_subidos = criar_clientes_selecionados(base_compilada)

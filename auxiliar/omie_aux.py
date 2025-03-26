@@ -241,10 +241,68 @@ def atualizar_servicos():
     return servicos_df
 
 
+def pegar_clientes(pagina_atual, api_secret, api_key):
+    
+    request_data = {
+        "call": "ListarClientesResumido",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [{
+            "pagina": pagina_atual,
+            "registros_por_pagina": 500,
+            "apenas_importado_api": "S"
+        }]
+    }
+    
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(
+            "https://app.omie.com.br/api/v1/geral/clientes/",
+            headers=headers,
+            data=json.dumps(request_data))
+        
+    return response.json()     
 
 
+def atualizar_base_clientes():
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    base_mongo = pegar_dados_mongodb("id_clientes")
 
+    clientes_list = []
 
+    for index, row in dados_unidade.iterrows():
+        unidade_crm = row["Unidades CRM"]
+        api_secret = row["API Secret"]
+        api_key = row["API KEY"]
+        
+        pagina_atual = 1
+        clientes_data = pegar_clientes(pagina_atual, api_secret, api_key)
+        pagina_total = clientes_data["total_de_paginas"]
+
+        while pagina_atual <= pagina_total:
+            print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
+            todos_clientes = clientes_data["clientes_cadastro_resumido"]
+
+            for cliente in todos_clientes:
+                codigo_cliente_integracao = cliente["codigo_cliente_integracao"]
+                
+                if codigo_cliente_integracao != "":
+
+                    cliente_data = {"unidade":unidade_crm,
+                                    "codigo_cliente_integracao":codigo_cliente_integracao}
+                    
+                    clientes_list.append(cliente_data)
+
+            pagina_atual += 1
+
+            if pagina_atual <= pagina_total:
+                clientes_data = pegar_clientes(pagina_atual, api_secret, api_key)            
+
+    clientes_list
+
+    return clientes_list
+    
+        
     
 
 
