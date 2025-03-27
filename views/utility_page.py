@@ -57,3 +57,10 @@ else:
     st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha}).")
 
 
+st.title("Atualizar Base de Clientes")
+st.write("Atualiza a base de clientes no MongoDB que o script usa para verificar se há a necessidade de criar clientes novos")
+atualizar_clientes_button = st.button("Atualizar Base de Clientes")
+
+if atualizar_clientes_button:
+    clientes_omie = atualizar_base_clientes()
+    st.write(f"{len(clientes_omie)} clientes novos criados")

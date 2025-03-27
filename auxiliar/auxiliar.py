@@ -492,8 +492,6 @@ def subir_linha(dados_da_linha):
         "ServicosPrestados": servicos_array
     }
 
-    # json_string = json.dumps(dados_os)
-
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, dados_os)
     return response
