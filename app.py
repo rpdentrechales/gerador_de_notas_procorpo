@@ -38,7 +38,6 @@ pg = st.navigation(
 
 # --- SHARED ON ALL PAGES ---
 # st.logo("assets/codingisfun_logo.png")
-st.write("version 2.3")
 
 # --- RUN NAVIGATION ---
 pg.run()
