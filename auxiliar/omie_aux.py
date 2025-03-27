@@ -241,10 +241,92 @@ def atualizar_servicos():
     return servicos_df
 
 
-
-
-
-
+def pegar_clientes(pagina_atual, api_secret, api_key):
     
+    request_data = {
+        "call": "ListarClientesResumido",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [{
+            "pagina": pagina_atual,
+            "registros_por_pagina": 500,
+            "apenas_importado_api": "N"
+        }]
+    }
+    
+    headers = {"Content-Type": "application/json"}
 
+    response = requests.post(
+            "https://app.omie.com.br/api/v1/geral/clientes/",
+            headers=headers,
+            data=json.dumps(request_data))
+        
+    return response.json()     
 
+def atualizar_base_clientes():
+
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    base_mongo = pegar_dados_mongodb("id_clientes")
+
+    clientes_omie_list = []
+
+    for index, row in dados_unidade.iterrows():
+        unidade_crm = row["Unidades CRM"]
+        api_secret = row["API Secret"]
+        api_key = row["API KEY"]
+        
+        pagina_atual = 1
+        clientes_data = pegar_clientes(pagina_atual, api_secret, api_key)
+        pagina_total = clientes_data["total_de_paginas"]
+
+        while pagina_atual <= pagina_total:
+            todos_clientes = clientes_data["clientes_cadastro_resumido"]
+
+            for cliente in todos_clientes:
+                codigo_cliente_integracao = cliente["codigo_cliente_integracao"]
+                
+                if codigo_cliente_integracao != "":
+
+                    cliente_data = {"unidade":unidade_crm,
+                                    "codigo_cliente_integracao":codigo_cliente_integracao}
+                    
+                    clientes_omie_list.append(cliente_data)
+
+            pagina_atual += 1
+
+            if pagina_atual <= pagina_total:
+                clientes_data = pegar_clientes(pagina_atual, api_secret, api_key)            
+
+    clientes_omie_df = pd.DataFrame(clientes_omie_list)
+
+    merged = clientes_omie_df.merge(base_mongo, on=['unidade', 'codigo_cliente_integracao'], how='left', indicator=True)
+    missing_rows = merged.loc[merged['_merge'] == 'left_only',['unidade', 'codigo_cliente_integracao']]
+    clientes_para_criar = missing_rows.to_dict('records')
+
+    if len(clientes_para_criar) > 0:
+        subir_dados_mongodb("id_clientes",clientes_para_criar)
+
+    return clientes_para_criar
+    
+        
+def pegar_os(pagina_atual, api_secret, api_key):
+    # Por enquanto não estamos usando, mas já deixei pronta, porque talvez tenha que usar.
+    request_data = {
+        "call": "ListarOS",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [{
+            "pagina": pagina_atual,
+            "registros_por_pagina": 500,
+            "apenas_importado_api": "N"
+        }]
+    }
+    
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(
+            "https://app.omie.com.br/api/v1/servicos/os/",
+            headers=headers,
+            data=json.dumps(request_data))
+        
+    return response.json()     

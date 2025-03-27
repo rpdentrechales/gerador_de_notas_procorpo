@@ -245,7 +245,6 @@ def gerar_obj_nCodServico():
 
     return nCodServ_obj
 
-
 def paste_billcharges_with_json(start_date, end_date):
     # Fetch dates and initialize variables
     current_page = 1
@@ -301,14 +300,14 @@ def paste_billcharges_with_json(start_date, end_date):
             customer_address = data_row['quote']['customer']['address']
 
             address_check = (
-                                pd.notna(customer_address)  # First check for missing values
-                                and customer_address not in [None, ""]  # Then check for empty values
-                                and str(customer_address).strip() != ""  # Finally check for whitespace-only
+                                pd.notna(customer_address)  
+                                and customer_address not in [None, ""]  
+                                and str(customer_address).strip() != ""
                             )
             document_check = (
-                                pd.notna(customer_document)  # First check for missing values
-                                and customer_document not in [None, ""]  # Then check for empty values
-                                and str(customer_document).strip() != ""  # Finally check for whitespace-only
+                                pd.notna(customer_document)  
+                                and customer_document not in [None, ""]  
+                                and str(customer_document).strip() != ""
                             )
             
             if address_check:
@@ -346,9 +345,9 @@ def paste_billcharges_with_json(start_date, end_date):
 
             unidade_omie = dados_da_unidade['unidade_omie']
             cidade = dados_da_unidade['cidade']
-            dados_aliquotas = aliquota_obj.get(cidade)
-            codigo_municipio = dados_aliquotas['codigo_municipio']
-            aliquota = dados_aliquotas['aliquota']
+            # dados_aliquotas = aliquota_obj.get(cidade)
+            # codigo_municipio = dados_aliquotas['codigo_municipio']
+            # aliquota = dados_aliquotas['aliquota']
             nCodServico = nCodServico_obj[unidade_omie]["nCodServ"]
 
             # Find account ID
@@ -358,16 +357,16 @@ def paste_billcharges_with_json(start_date, end_date):
             servico_obj = {
                 "cDadosAdicItem": f"Serviço Prestado - {billCharge_id}",
                 "nCodServico": nCodServico,
-                "cCodServMun": codigo_municipio,
+                # "cCodServMun": codigo_municipio,
                 "cCodServLC116": "6.02",
                 "nQtde": 1,
                 "nValUnit": bill_amount,
                 "cRetemISS": "N",
                 "nValorDesconto": 0,
                 "cTpDesconto": "V",
-                "impostos": {
-                    "nAliqISS": aliquota
-                }
+                # "impostos": {
+                #     "nAliqISS": aliquota
+                # }
             }
             servico_obj = json.dumps(servico_obj)
 
@@ -438,6 +437,8 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
+    time.sleep(1)
+
   resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
 
   return resultados_df
@@ -451,6 +452,7 @@ def subir_linha(dados_da_linha):
     observacoes = dados_da_linha["quote_id"]
     codigo_cliente_integracao = dados_da_linha["customer_id"]
     quantidade_de_parcelas = dados_da_linha["bill_installmentsQuantity"]
+    data_de_faturamento = pd.to_datetime(dados_da_linha["billcharge_paidAt"]).strftime("%d/%m/%Y")
 
     cDadosAdicNF = str(codigo_pedido)
     nCodCC = dados_da_linha["id_conta_corrente"]
@@ -482,13 +484,13 @@ def subir_linha(dados_da_linha):
             "nCodCC": nCodCC,
             "cNumPedido": codigo_pedido
         },
+        "InfoCadastro":{
+            "dDtFat":data_de_faturamento},
         "Observacoes": {
             "cObsOS": observacoes
         },
         "ServicosPrestados": servicos_array
     }
-
-    # json_string = json.dumps(dados_os)
 
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, dados_os)
@@ -500,7 +502,6 @@ def criar_clientes_selecionados(base_df):
   now = datetime.datetime.now()
   timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
   resultados = [["client_id","Resultado","Response","timestamp"]]
-  counter = 0
   codigo_integracao = pegar_dados_mongodb("id_clientes")
 
   for index,row in base_df.iterrows():
@@ -516,7 +517,6 @@ def criar_clientes_selecionados(base_df):
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
 
-    cadastro_novo = False
     result_status = "Error"
 
     try:
@@ -530,12 +530,11 @@ def criar_clientes_selecionados(base_df):
     id_cliente = dados_cliente["codigo_cliente_integracao"]
 
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
+    time.sleep(1)
     full_response = check_response(full_response)
 
     if full_response:
         if re.search(r"Cliente cadastrado com sucesso.", full_response):
-            # Checa se é cliente novo
-            cadastro_novo = True
             result_status = "Cliente Novo Cadastrado"
             dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
             subir_dados_mongodb("id_clientes",dados_mongodb)
@@ -551,6 +550,7 @@ def criar_clientes_selecionados(base_df):
           }
 
           associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
+          time.sleep(1)
           full_response = check_response(associar_cliente)
 
           if full_response:
@@ -560,21 +560,7 @@ def criar_clientes_selecionados(base_df):
           else:
             result_status = "Erro ao Associar Id do Cliente"
 
-    # if not cadastro_novo:
-    #     # Se não for cadastro novo, atualiza os dados do cliente
-    #     atualizar_dados = alterar_dados(dados_cliente, api_secret, api_key)
-    #     full_response = check_response(atualizar_dados)
-
-    #     if full_response:
-    #       result_status = "Cadastro do cliente atualizado"
-    #     else:
-    #       result_status = "Erro ao Atualizar Cadastro do Cliente"
-
-    if counter % 20 == 0:
-        time.sleep(5)  # Aguarda 5 segundos
-
     resultados.append([id_do_cliente,result_status,full_response,timestamp])
-    counter += 1
 
   resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
   return resultados_df
