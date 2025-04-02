@@ -330,3 +330,34 @@ def pegar_os(pagina_atual, api_secret, api_key):
             data=json.dumps(request_data))
         
     return response.json()     
+
+def pegar_todos_os():
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    os_list = []
+
+    for index, row in dados_unidade.iterrows():
+        api_secret = row["API Secret"]
+        api_key = row["API KEY"]
+        unidade_crm = row["Unidades CRM"]
+        
+        pagina_atual = 1
+        os_data = pegar_os(pagina_atual, api_secret, api_key)
+        pagina_total = os_data["total_de_paginas"]
+        
+        while pagina_atual <= pagina_total:
+            print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
+            todos_os = os_data["osCadastro"]
+
+            for os in todos_os:
+                cCodIntOS = os["Cabecalho"]["cCodIntOS"]
+                
+                if cCodIntOS != "":
+
+                    os_list.append(cCodIntOS)
+
+            pagina_atual += 1
+
+            if pagina_atual <= pagina_total:
+                os_data = pegar_os(pagina_atual, api_secret, api_key)            
+
+    return os_list

@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import *
+import math
 
 
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
@@ -196,7 +197,8 @@ if "dados_crm_df" in st.session_state:
       base_compilada = compilar_linhas_para_subir(selected_df)
       linhas_para_subir = base_compilada.shape[0]
       
-      st.write(f"Linhas para subir: {linhas_para_subir}")      
+      st.write(f"Itens pós compilação: {linhas_para_subir}")
+      st.write(f"Tempo estimado: {math.ceil(linhas_para_subir/30)} minutos")      
       
       st.write("Criando Clientes...")
       clientes_subidos = criar_clientes_selecionados(base_compilada)

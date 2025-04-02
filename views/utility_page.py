@@ -65,5 +65,4 @@ if atualizar_clientes_button:
     clientes_omie = atualizar_base_clientes()
     st.write(f"{len(clientes_omie)} clientes novos criados")
 
-
 st.write("Last Update - 27/03/2025")
