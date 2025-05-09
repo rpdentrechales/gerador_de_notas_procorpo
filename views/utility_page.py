@@ -58,7 +58,7 @@ else:
 
 
 st.title("Atualizar Base de Clientes")
-st.write("Atualiza a base de clientes no MongoDB que o script usa para verificar se há a necessidade de criar clientes novos")
+st.write("Baixa os ids de clientes do OMiE e atualiza a base de clientes no MongoDB que o script usa para verificar se há a necessidade de criar clientes novos")
 atualizar_clientes_button = st.button("Atualizar Base de Clientes")
 
 if atualizar_clientes_button:
