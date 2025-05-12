@@ -8,6 +8,7 @@ from auxiliar.omie_aux import *
 st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
 st.title("Deletar Base MongoDB")
+st.caption("Deleta dados das bases 'Log Clientes', 'Log OS' e 'OS Processados' do MongoDB")
 deletar_button = st.button("Deletar Base")
 
 if deletar_button:

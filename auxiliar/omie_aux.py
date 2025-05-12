@@ -136,8 +136,6 @@ def pegar_contas_teste():
     api_key = "2485921847409"
     unidade_omie = "BackOffice"
 
-
-
     nome_padrao_cc = load_dataframe("Auxiliar - Dados para Criar CC")
 
     pagina = 1
