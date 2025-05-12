@@ -505,6 +505,7 @@ def criar_clientes_selecionados(base_df):
   codigo_integracao = pegar_dados_mongodb("id_clientes")
 
   for index,row in base_df.iterrows():
+    print("Iterando na linha: ",index) ## Print para debug!!!!!!!!!!
 
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
@@ -517,6 +518,11 @@ def criar_clientes_selecionados(base_df):
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
 
+    ### DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNIDADE BackOffice #######
+    api_secret = "2fae495eb5679299260c3676fe88d291"
+    api_key = "2485921847409"
+    unidade = "BackOffice"
+
     result_status = "Error"
 
     try:
@@ -525,6 +531,7 @@ def criar_clientes_selecionados(base_df):
       result_status = "Erro ao converter JSON do cliente"
       full_response = "Erro ao converter JSON do cliente"
       resultados.append([id_do_cliente,result_status,full_response,timestamp])
+      print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
       continue  # Pula para a próxima iteração
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
@@ -560,6 +567,7 @@ def criar_clientes_selecionados(base_df):
           else:
             result_status = "Erro ao Associar Id do Cliente"
 
+    print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
     resultados.append([id_do_cliente,result_status,full_response,timestamp])
 
   resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
