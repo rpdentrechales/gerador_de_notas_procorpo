@@ -317,8 +317,8 @@ def pegar_os(pagina_atual, api_secret, api_key):
         "app_secret": api_secret,
         "param": [{
             "pagina": pagina_atual,
-            "registros_por_pagina": 500,
-            "apenas_importado_api": "N"
+            "registros_por_pagina": 1000,
+            "apenas_importado_api": "S"
         }]
     }
     
@@ -361,3 +361,6 @@ def pegar_todos_os():
                 os_data = pegar_os(pagina_atual, api_secret, api_key)            
 
     return os_list
+
+
+
