@@ -65,6 +65,7 @@ else:
     st.write("Não há unidades novas.")
     st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha}).")
 
+st.title("Deletar Contas Correntes:")
 if st.button("Deletar CC"):
     deletar_cc_dialog()
 
