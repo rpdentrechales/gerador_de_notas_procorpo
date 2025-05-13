@@ -66,7 +66,7 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
 
     lista_final = []
 
-    st.write(f"nome_padrao_cc: {nome_padrao_cc}")
+    st.write(nome_padrao_cc)
     
     while pagina <= paginas_total:
         pagina += 1
