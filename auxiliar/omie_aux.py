@@ -39,7 +39,7 @@ def pegar_contas_correntes(pagina_atual, api_secret, api_key):
         "param": [{
             "pagina": pagina_atual,
             "registros_por_pagina": 500,
-            "apenas_importado_api": "N"
+            "apenas_importado_api": "S"
         }]
     }
     
@@ -66,8 +66,6 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
 
     lista_final = []
 
-    st.write(nome_padrao_cc)
-    
     while pagina <= paginas_total:
         pagina += 1
 
@@ -80,9 +78,11 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
                 continue
     
             tipo = conta["tipo_conta_corrente"]
-            st.write(conta)
-            st.write(tipo)
-            nome_padrao = nome_padrao_cc.loc[nome_padrao_cc["tipo_conta_corrente"] == tipo,"Nome Padrão"].iloc[0]
+            tipo_mask = nome_padrao_cc["tipo_conta_corrente"] == tipo
+            if tipo_mask.sum() == 0:
+                continue
+            else:
+                nome_padrao = nome_padrao_cc.loc[tipo_mask,"Nome Padrão"].iloc[0]
 
             dados_da_conta = {
                                 "nCodCC":conta["nCodCC"],
