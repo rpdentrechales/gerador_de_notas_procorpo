@@ -66,7 +66,7 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
 
     lista_final = []
 
-    print(f"Total de páginas: {paginas_total}")
+    st.write(f"Total de páginas: {paginas_total}") 
     while pagina <= paginas_total:
         pagina += 1
 
