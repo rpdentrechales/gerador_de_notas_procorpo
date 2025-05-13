@@ -80,6 +80,8 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
                 continue
     
             tipo = conta["tipo_conta_corrente"]
+            st.write(conta)
+            st.write(tipo)
             nome_padrao = nome_padrao_cc.loc[nome_padrao_cc["tipo_conta_corrente"] == tipo,"Nome Padrão"].iloc[0]
 
             dados_da_conta = {
