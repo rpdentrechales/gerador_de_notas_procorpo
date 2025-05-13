@@ -109,9 +109,12 @@ def criar_contas_correntes(unidade_omie,codigo):
     api_key = str(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_omie,"API KEY"].iloc[0])
 
     dados_cc_para_criar = load_dataframe("Auxiliar - Dados para Criar CC")
-
+    
+    counter = 0
     for dados_para_criar in dados_cc_para_criar.to_dict(orient='records'):
-        
+        counter += 1
+        print(f"Contas Correntes: {counter}/{len(dados_cc_para_criar)}")
+        # print(dados_para_criar) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
         st.write(dados_para_criar) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
 
         id = dados_para_criar["id"]
@@ -119,7 +122,7 @@ def criar_contas_correntes(unidade_omie,codigo):
         codigo_banco = dados_para_criar["codigo_banco"]
         nome_padrao = dados_para_criar["Nome Padrão"]
         st.write(nome_padrao) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
-        
+
         dados_cc = {
                       "cCodCCInt": f"{codigo}-{id:02d}",
                       "tipo_conta_corrente": tipo_conta,
