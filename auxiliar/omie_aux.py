@@ -113,7 +113,7 @@ def criar_contas_correntes(unidade_omie,codigo):
     counter = 0
     for dados_para_criar in dados_cc_para_criar.to_dict(orient='records'):
         counter += 1
-        print(f"Contas Correntes: {counter}/{len(dados_cc_para_criar)}")
+        st.write(f"Contas Correntes: {counter}/{len(dados_cc_para_criar)}")
         # print(dados_para_criar) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
         st.write(dados_para_criar) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
 
