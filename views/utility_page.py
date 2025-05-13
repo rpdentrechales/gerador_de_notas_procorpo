@@ -13,7 +13,10 @@ def deletar_cc_dialog():
     contas_correntes = load_dataframe("Auxiliar - Contas Correntes")
     contas_correntes["contas para deletar"] = False
     selected_data = st.data_editor(contas_correntes, use_container_width=True, hide_index=True)
-    st.dataframe(selected_data, use_container_width=True)
+    
+    if st.button("Deletar CC selecionadas"):
+        contas_para_deletar = selected_data[selected_data["contas para deletar"] == True]
+        st.write(f"Contas Correntes deletadas: {contas_para_deletar}")
 
 
 st.title("Deletar Base MongoDB")
