@@ -134,6 +134,8 @@ def criar_contas_correntes(unidade_omie,codigo):
 
     atualizar_conta_correntes(api_secret,api_key,unidade_omie)
 
+    st.success(f"Contas Correntes criadas com sucesso na unidade {unidade_omie}!")
+
 
 def pegar_contas_teste():
     #Dados Backoffice Omie
