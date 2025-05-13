@@ -111,7 +111,7 @@ def criar_contas_correntes(unidade_omie,codigo):
     dados_cc_para_criar = load_dataframe("Auxiliar - Dados para Criar CC")
 
     for dados_para_criar in dados_cc_para_criar.to_dict(orient='records'):
-
+        st.write(dados_para_criar)
         id = dados_para_criar["id"]
         tipo_conta = dados_para_criar["tipo_conta_corrente"]
         codigo_banco = dados_para_criar["codigo_banco"]
@@ -360,5 +360,87 @@ def pegar_todos_os():
 
     return os_list
 
+def deletar_os(codigo_os, api_secret, api_key):
+    request_data = {
+        "call": "ExcluirOS",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [{
+            "cCodIntOS": codigo_os
+        }]
+    }
+    
+    headers = {"Content-Type": "application/json"}
 
+    response = requests.post(
+            "https://app.omie.com.br/api/v1/servicos/os/",
+            headers=headers,
+            data=json.dumps(request_data))
+        
+    return response.json()
 
+def to_native(x):
+    return x.item() if isinstance(x, np.generic) else x 
+
+def subir_linha_teste(dados_da_linha):
+    # Arruma os dados da linha para subir na API do Omie
+
+    unidade = to_native(dados_da_linha["store_name"])
+    codigo_pedido = to_native(dados_da_linha["os_id"])
+    codigo_integracao = codigo_pedido
+    observacoes = to_native(dados_da_linha["quote_id"])
+    codigo_cliente_integracao = to_native(dados_da_linha["customer_id"])
+    quantidade_de_parcelas = to_native(dados_da_linha["bill_installmentsQuantity"])
+    data_de_faturamento = to_native(dados_da_linha["billcharge_paidAt"])
+    data_de_faturamento = pd.to_datetime(data_de_faturamento).strftime("%d/%m/%Y")
+
+    cDadosAdicNF = str(codigo_pedido)
+    nCodCC = to_native(dados_da_linha["id_conta_corrente"])
+
+    servicos_jsons = to_native(dados_da_linha["servicos_json"]).split(";")
+    servicos_array = [json.loads(servico) for servico in servicos_jsons]
+
+    cDadosAdicNF = "Serviços prestados - " + cDadosAdicNF
+
+    # Dados Backoffice Omie Teste!!!!!!!!!!!!!!!!!!!!!
+    api_secret = "2fae495eb5679299260c3676fe88d291"
+    api_key = "2485921847409"
+
+    # Define a quantidade de parcelas e outras informações da OS
+    codigo_parcela = "000"
+
+    dados_os = {
+        "Cabecalho": {
+            "cCodIntOS": codigo_integracao,
+            "cCodIntCli": codigo_cliente_integracao,
+            "cEtapa": "50",
+            "cCodParc": codigo_parcela,
+            "nQtdeParc": quantidade_de_parcelas
+        },
+        "InformacoesAdicionais": {
+            "cDadosAdicNF": cDadosAdicNF,
+            "cCodCateg": "1.01.02",
+            "nCodCC": nCodCC,
+            "cNumPedido": codigo_pedido
+        },
+        "InfoCadastro":{
+            "dDtFat":data_de_faturamento},
+        "Observacoes": {
+            "cObsOS": observacoes
+        },
+        "ServicosPrestados": servicos_array
+    }
+    print(f"Subindo OS: {dados_os}")
+
+    request = {
+        "call": "IncluirOS",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [dados_os]
+    }
+
+    request_body = json.dumps(request)
+
+    # Envia a requisição para criar a OS
+    response = criar_os(api_secret, api_key, dados_os)
+    return response

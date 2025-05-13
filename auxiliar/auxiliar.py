@@ -509,6 +509,7 @@ def criar_clientes_selecionados(base_df):
 
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
+    unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     id_do_cliente = row["customer_id"]
 
     if not codigo_integracao.empty:
@@ -521,7 +522,7 @@ def criar_clientes_selecionados(base_df):
     ### DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNIDADE BackOffice #######
     api_secret = "2fae495eb5679299260c3676fe88d291"
     api_key = "2485921847409"
-    unidade = "BackOffice"
+    
 
     result_status = "Error"
 
