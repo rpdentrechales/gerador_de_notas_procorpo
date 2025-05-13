@@ -54,7 +54,7 @@ def pegar_contas_correntes(pagina_atual, api_secret, api_key):
 
 
 def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
-
+    # Atualiza a base de contas correntes do Omie na planilha do Google Sheets
     nome_padrao_cc = load_dataframe("Auxiliar - Dados para Criar CC")
 
     base_cc = load_dataframe("Auxiliar - Contas Correntes")
@@ -66,7 +66,9 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
 
     lista_final = []
 
+    st.write(f"dados_cc: {dados_cc}")
     st.write(f"Total de páginas: {paginas_total}") 
+    
     while pagina <= paginas_total:
         pagina += 1
 
@@ -115,10 +117,6 @@ def criar_contas_correntes(unidade_omie,codigo):
     counter = 0
     for dados_para_criar in dados_cc_para_criar.to_dict(orient='records'):
         counter += 1
-        st.write(f"Contas Correntes: {counter}/{len(dados_cc_para_criar)}")
-        # print(dados_para_criar) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
-        st.write(dados_para_criar) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
-
         id = dados_para_criar["id"]
         tipo_conta = dados_para_criar["tipo_conta_corrente"]
         codigo_banco = dados_para_criar["codigo_banco"]
