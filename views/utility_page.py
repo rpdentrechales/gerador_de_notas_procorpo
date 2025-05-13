@@ -10,13 +10,19 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 @st.dialog("Deletar CC", width=500)
 def deletar_cc_dialog():
     st.write("Deletar Conta Corrente")
-    contas_correntes = load_dataframe("Auxiliar - Contas Correntes")
     contas_correntes["contas para deletar"] = False
     selected_data = st.data_editor(contas_correntes, use_container_width=True, hide_index=True)
     
     if st.button("Deletar CC selecionadas"):
         contas_para_deletar = selected_data[selected_data["contas para deletar"] == True]
-        st.dataframe(contas_para_deletar)
+        for index, row in contas_para_deletar.iterrows():
+            unidade = row["Unidade"]
+            nCodCC = row["nCodCC"]
+            api_secret = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API Secret"].values[0]
+            api_key = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API Key"].values[0]
+            deletar_contas_correntes(api_secret, api_key, nCodCC)
+            st.write(f"Conta Corrente {nCodCC} da unidade {unidade} deletada com sucesso.")
+            
 
 
 st.title("Deletar Base MongoDB")

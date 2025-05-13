@@ -136,6 +136,25 @@ def criar_contas_correntes(unidade_omie,codigo):
 
     st.success(f"Contas Correntes criadas com sucesso na unidade {unidade_omie}!")
 
+def deletar_contas_correntes(api_secret, api_key, nCodCC):
+    request_data = {
+        "call": "ExcluirContaCorrente",
+        "app_key": api_key,
+        "app_secret": api_secret,
+        "param": [{
+            "nCodCC": nCodCC
+        }]
+    }
+    
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(
+            "https://app.omie.com.br/api/v1/geral/contacorrente/",
+            headers=headers,
+            data=json.dumps(request_data))
+        
+    return response.json()
+
 
 def pegar_contas_teste():
     #Dados Backoffice Omie
