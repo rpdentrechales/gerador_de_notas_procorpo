@@ -19,7 +19,7 @@ def deletar_cc_dialog():
             unidade = row["Unidade"]
             nCodCC = row["nCodCC"]
             api_secret = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API Secret"].values[0]
-            api_key = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API Key"].values[0]
+            api_key = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API KEY"].values[0]
             
             try:
                 deletar_contas_correntes(api_secret, api_key, nCodCC)
