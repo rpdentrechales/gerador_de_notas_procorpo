@@ -513,7 +513,9 @@ def criar_clientes_selecionados(base_df):
     id_do_cliente = row["customer_id"]
 
     if not codigo_integracao.empty:
-        if str(id_do_cliente) in codigo_integracao.loc[codigo_integracao["unidade"] == unidade,"codigo_cliente_integracao"].values:
+        mesmo_id  = codigo_integracao["codigo_cliente_integracao"].astype(str) == id_cliente
+        mesma_unidade = codigo_integracao["unidade"] == unidade
+        if (mesmo_id & mesma_unidade).any():
             continue
 
     api_secret = chaves_api[unidade]["api_secret"]
