@@ -7,6 +7,14 @@ from auxiliar.omie_aux import *
 
 st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 
+@st.dialog("Deletar CC", width=500)
+def deletar_cc_dialog():
+    st.write("Deletar Conta Corrente")
+    contas_correntes = load_dataframe("Auxiliar - Contas Correntes")
+    st.data_editor(contas_correntes, use_container_width=True, hide_index=True)
+
+
+
 st.title("Deletar Base MongoDB")
 st.caption("Deleta dados das bases 'Log Clientes', 'Log OS' e 'OS Processados' do MongoDB")
 deletar_button = st.button("Deletar Base")
@@ -56,6 +64,10 @@ else:
     
     st.write("Não há unidades novas.")
     st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha}).")
+
+if st.button("Deletar CC"):
+    deletar_cc_dialog()
+
 
 
 st.title("Atualizar Base de Clientes")
