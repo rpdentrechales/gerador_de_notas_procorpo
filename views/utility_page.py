@@ -20,10 +20,15 @@ def deletar_cc_dialog():
             nCodCC = row["nCodCC"]
             api_secret = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API Secret"].values[0]
             api_key = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade, "API Key"].values[0]
-            deletar_contas_correntes(api_secret, api_key, nCodCC)
-            st.write(f"Conta Corrente {nCodCC} da unidade {unidade} deletada com sucesso.")
             
-
+            try:
+                deletar_contas_correntes(api_secret, api_key, nCodCC)
+                st.write(f"Conta Corrente {nCodCC} da unidade {unidade} deletada com sucesso.")
+            except Exception as e:
+                st.write(f"Erro ao deletar a conta corrente {nCodCC} da unidade {unidade}: {e}")
+        
+        contas_para_manter = selected_data[selected_data["contas para deletar"] == False]
+        update_sheet("Auxiliar - Contas Correntes", contas_para_manter)           
 
 st.title("Deletar Base MongoDB")
 st.caption("Deleta dados das bases 'Log Clientes', 'Log OS' e 'OS Processados' do MongoDB")
