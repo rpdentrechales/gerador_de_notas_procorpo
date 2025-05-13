@@ -11,8 +11,9 @@ st.set_page_config(page_title="Utilitários", page_icon="💎",layout="wide")
 def deletar_cc_dialog():
     st.write("Deletar Conta Corrente")
     contas_correntes = load_dataframe("Auxiliar - Contas Correntes")
-    st.data_editor(contas_correntes, use_container_width=True, hide_index=True)
-
+    contas_correntes["contas para deletar"] = False
+    selected_data = st.data_editor(contas_correntes, use_container_width=True, hide_index=True)
+    st.dataframe(selected_data, use_container_width=True)
 
 
 st.title("Deletar Base MongoDB")
