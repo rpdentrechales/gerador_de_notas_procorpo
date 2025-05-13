@@ -67,7 +67,8 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
     lista_final = []
 
     st.write(f"dados_cc: {dados_cc}")
-    st.write(f"Total de páginas: {paginas_total}") 
+    st.write(f"Total de páginas: {paginas_total}")
+    st.write(f"nome_padrao_cc: {nome_padrao_cc}")
     
     while pagina <= paginas_total:
         pagina += 1
@@ -121,7 +122,6 @@ def criar_contas_correntes(unidade_omie,codigo):
         tipo_conta = dados_para_criar["tipo_conta_corrente"]
         codigo_banco = dados_para_criar["codigo_banco"]
         nome_padrao = dados_para_criar["Nome Padrão"]
-        st.write(nome_padrao) # debug teste!!!!!!!!!!!!!!!!!!!!!!!
 
         dados_cc = {
                       "cCodCCInt": f"{codigo}-{id:02d}",
