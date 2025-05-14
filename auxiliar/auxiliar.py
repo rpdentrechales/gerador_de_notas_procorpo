@@ -274,7 +274,6 @@ def paste_billcharges_with_json(start_date, end_date):
     
     # Main loop to process data
     while billcharges_data_length > 0:
-        st.write(f"Processando página {current_page} de {billcharges_data_length}...")
         for data_row in billcharges_data:
             quote_items = data_row['quote']['bill']['items']
 
