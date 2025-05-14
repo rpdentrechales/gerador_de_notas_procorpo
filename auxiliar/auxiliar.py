@@ -9,6 +9,7 @@ import time
 import pymongo
 from pymongo import MongoClient
 import numpy as np
+import unidecode
 
 def load_dataframe(worksheet):
 
@@ -249,6 +250,9 @@ def paste_billcharges_with_json(start_date, end_date):
     # Fetch dates and initialize variables
     current_page = 1
 
+    cidades_validas = load_dataframe("Auxiliar - Cidades")
+    cidades_validas = {unidecode(c).upper() for c in cidades_validas["cidade"].dropna()}
+
     # Load data from the other helper functions
     cc_obj_array = gerar_obj_cc()
     tipo_pagamento_obj = gerar_obj_tipo_pagamento()
@@ -288,6 +292,12 @@ def paste_billcharges_with_json(start_date, end_date):
             customer_document = data_row['quote']['customer']['taxvat']
             isPaid = data_row['isPaid']
 
+            dados_da_unidade = unidades_obj.get(store_name)
+            if not dados_da_unidade:
+                continue
+
+            unidade_omie = dados_da_unidade['unidade_omie']
+
             # Continue if conditions are not met
             if not isPaid or quote_status != "completed":
                 continue
@@ -315,6 +325,9 @@ def paste_billcharges_with_json(start_date, end_date):
 
             else:
                 customer_address = enderecos_obj[store_name]
+            
+            cidade_usuario = unidecode(customer_address["city"]).upper()
+            city_check = cidade_usuario in cidades_validas    
 
             if document_check:
 
@@ -337,14 +350,15 @@ def paste_billcharges_with_json(start_date, end_date):
             else:
 
                 dados_cliente = "Cadastro inválido - Sem CPF"
+                subir_cliente_invalido(unidade_omie, customer_id, dados_cliente)
+
+            if not city_check:
+                dados_cliente = "Cadastro inválido - Cidade inválida"
+                subir_cliente_invalido(unidade_omie, customer_id, dados_cliente)
 
             # Process unit and aliquota data
-            dados_da_unidade = unidades_obj.get(store_name)
-            if not dados_da_unidade:
-                continue
 
-            unidade_omie = dados_da_unidade['unidade_omie']
-            cidade = dados_da_unidade['cidade']
+            # cidade = dados_da_unidade['cidade']
             # dados_aliquotas = aliquota_obj.get(cidade)
             # codigo_municipio = dados_aliquotas['codigo_municipio']
             # aliquota = dados_aliquotas['aliquota']
@@ -553,8 +567,7 @@ def criar_clientes_selecionados(base_df):
             return
         
         else:
-            dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente,'erro': mensagem_errro}]
-            subir_dados_mongodb("clientes_com_erros",dados_mongodb)
+            subir_cliente_invalido(unidade, id_cliente, mensagem_errro)
         
         if contar_erros >= 5:
             print(full_response["faultstring"])
@@ -804,3 +817,24 @@ def deletar_todos_documentos(collection_name, query=None):
     
     st.write(f"Documentos deletados: {result.deleted_count}")
     client.close()
+
+def atualizar_base_cidades():
+
+    ibge_json = requests.get(
+        "https://servicodados.ibge.gov.br/api/v1/localidades/municipios",
+        timeout=30
+    ).json()
+
+    lista_cidades = [
+        unidecode.unidecode(m["nome"]).upper()
+        for m in ibge_json
+    ]
+
+    cidades_df = pd.DataFrame(lista_cidades, columns=["cidade"])
+
+    update_sheet("auxiliar - cidades", cidades_df)
+
+def subir_cliente_invalido(unidade, id_cliente, mensagem_errro):
+    dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente,'erro': mensagem_errro}]
+    subir_dados_mongodb("clientes_com_erros",dados_mongodb)
+    return

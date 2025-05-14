@@ -4,3 +4,4 @@ pandas
 st-gsheets-connection
 datetime
 pymongo
+unidecode
