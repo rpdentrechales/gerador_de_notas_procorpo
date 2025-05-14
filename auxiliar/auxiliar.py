@@ -251,7 +251,7 @@ def paste_billcharges_with_json(start_date, end_date):
     current_page = 1
 
     cidades_validas = load_dataframe("auxiliar - cidades validas")
-    cidades_validas = {unidecode(c).upper() for c in cidades_validas["cidade"].dropna()}
+    cidades_validas = {unidecode.unidecode(c).upper() for c in cidades_validas["cidade"].dropna()}
 
     # Load data from the other helper functions
     cc_obj_array = gerar_obj_cc()
@@ -326,7 +326,7 @@ def paste_billcharges_with_json(start_date, end_date):
             else:
                 customer_address = enderecos_obj[store_name]
             
-            cidade_usuario = unidecode(customer_address["city"]).upper()
+            cidade_usuario = unidecode.unidecode(customer_address["city"]).upper()
             city_check = cidade_usuario in cidades_validas    
 
             if document_check:
