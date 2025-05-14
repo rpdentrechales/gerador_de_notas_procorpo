@@ -250,7 +250,7 @@ def paste_billcharges_with_json(start_date, end_date):
     # Fetch dates and initialize variables
     current_page = 1
 
-    cidades_validas = load_dataframe("Auxiliar - Cidades")
+    cidades_validas = load_dataframe("auxiliar - cidades validas")
     cidades_validas = {unidecode(c).upper() for c in cidades_validas["cidade"].dropna()}
 
     # Load data from the other helper functions
