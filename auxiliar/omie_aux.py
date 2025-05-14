@@ -65,7 +65,7 @@ def atualizar_conta_correntes(api_secret,api_key,unidade_omie):
     paginas_total = dados_cc["total_de_paginas"]
 
     lista_final = []
-
+    
     while pagina <= paginas_total:
         pagina += 1
 

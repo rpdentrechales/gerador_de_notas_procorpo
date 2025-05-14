@@ -503,9 +503,11 @@ def criar_clientes_selecionados(base_df):
   timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
   resultados = [["client_id","Resultado","Response","timestamp"]]
   codigo_integracao = pegar_dados_mongodb("id_clientes")
+  
+  contar_erros = 0
+  relatorio_de_erros = []
 
   for index,row in base_df.iterrows():
-    print("Iterando na linha: ",index) ## Print para debug!!!!!!!!!!
 
     dados_cliente = row["dados_cliente"]
     unidade = row["store_name"]
@@ -513,7 +515,7 @@ def criar_clientes_selecionados(base_df):
     id_do_cliente = row["customer_id"]
 
     if not codigo_integracao.empty:
-        mesmo_id  = codigo_integracao["codigo_cliente_integracao"].astype(str) == id_cliente
+        mesmo_id  = codigo_integracao["codigo_cliente_integracao"] == id_do_cliente
         mesma_unidade = codigo_integracao["unidade"] == unidade
         if (mesmo_id & mesma_unidade).any():
             continue
@@ -534,12 +536,34 @@ def criar_clientes_selecionados(base_df):
       result_status = "Erro ao converter JSON do cliente"
       full_response = "Erro ao converter JSON do cliente"
       resultados.append([id_do_cliente,result_status,full_response,timestamp])
-      print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
       continue  # Pula para a próxima iteração
 
     id_cliente = dados_cliente["codigo_cliente_integracao"]
 
     full_response = criar_cliente(api_secret,api_key,dados_cliente)
+
+    if 'faultstring' in full_response:
+        mensagem_errro = full_response["faultstring"]
+        contar_erros += 1
+        relatorio_de_erros.append(mensagem_errro)
+
+        if re.search(r"API bloqueada por consumo indevido", mensagem_errro):
+            print("API bloqueada por consumo indevido")
+            print("Parando a execução.")
+            return
+        
+        else:
+            dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente,'erro': mensagem_errro}]
+            subir_dados_mongodb("clientes_com_erros",dados_mongodb)
+        
+        if contar_erros >= 5:
+            print(full_response["faultstring"])
+            print("Muitos erros, parando a execução.")
+            print(relatorio_de_erros)
+            return
+    else:
+        contar_erros = 0
+        
     time.sleep(1)
     full_response = check_response(full_response)
 
@@ -575,6 +599,7 @@ def criar_clientes_selecionados(base_df):
 
   resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
   return resultados_df
+
 
 def criar_cliente(api_secret, api_key, dados_cliente):
 
