@@ -221,19 +221,3 @@ if "dados_crm_df" in st.session_state:
       status.update(
           label="Notas Criadas!", state="complete", expanded=False
       )
-
-
-  baixar_planilha_botao = st.button("Baixar Planilha para testes",type="tertiary")
-                                    
-  if baixar_planilha_botao:
-      st.write("Preparando planilha para testes.")
-      selected_df = edited_df.loc[edited_df["Selecionar notas para subir"] == True]
-      base_compilada = compilar_linhas_para_subir(selected_df)
-      st.write("Planilha criada com sucesso.")
-      
-      st.download_button(
-          label="Baixar Planilha",
-          data=base_compilada.to_csv(index=False).encode('utf-8'),
-          file_name='dados_testes.csv',
-          mime='text/csv',
-          )

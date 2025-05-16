@@ -6,8 +6,8 @@ import requests
 import json
 import re
 import time
-import pymongo
-from pymongo import MongoClient
+from pymongo import MongoClient, UpdateOne
+from pymongo.errors import OperationFailure, NetworkTimeout, ServerSelectionTimeoutError
 import numpy as np
 import unidecode
 
@@ -324,10 +324,15 @@ def paste_billcharges_with_json(start_date, end_date):
                 pass
 
             else:
+                print(f"Erro Cliente: {customer_id} - Sem Endereço")
                 customer_address = enderecos_obj[store_name]
-            
-            cidade_usuario = unidecode.unidecode(customer_address["city"]).upper()
+                        
+            cidade_usuario = unidecode.unidecode(customer_address["city"]).upper().strip()
             city_check = cidade_usuario in cidades_validas    
+            
+            if not city_check:
+                print(f"Erro Cliente: {customer_id} - Cidade Inválida")
+                customer_address = enderecos_obj[store_name]
 
             if document_check:
 
@@ -341,21 +346,25 @@ def paste_billcharges_with_json(start_date, end_date):
                     "bairro": customer_address['neighborhood'],
                     "complemento": customer_address['additional'],
                     "estado": customer_address['state']['abbreviation'],
-                    "cidade": customer_address['city'],
+                    "cidade": customer_address['city'].strip(),
                     "cep": customer_address['postcode'],
-                    "email": data_row['quote']['customer']['email']
+                    "email": data_row['quote']['customer']['email'].strip(),
                 }
-                dados_cliente = json.dumps(dados_cliente)
 
             else:
 
                 dados_cliente = "Cadastro inválido - Sem CPF"
+                print(f"Erro Cliente: {customer_id} - CPF Inválido")
                 subir_cliente_invalido(unidade_omie, customer_id, dados_cliente)
 
-            if not city_check:
-                dados_cliente = "Cadastro inválido - Cidade inválida"
-                subir_cliente_invalido(unidade_omie, customer_id, dados_cliente)
+            email_cliente = data_row['quote']['customer']['email'].strip()
+            email_check = is_valid_email(email_cliente)
 
+            if not email_check:
+                print(f"Erro Cliente: {customer_id} - E-mail Inválido")
+                dados_cliente["email"] = "email@invalido.com.br"
+            
+            dados_cliente = json.dumps(dados_cliente)
             # Process unit and aliquota data
 
             # cidade = dados_da_unidade['cidade']
@@ -512,106 +521,115 @@ def subir_linha(dados_da_linha):
 
 def criar_clientes_selecionados(base_df):
 
-  chaves_api = gerar_obj_api()
-  now = datetime.datetime.now()
-  timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
-  resultados = [["client_id","Resultado","Response","timestamp"]]
-  codigo_integracao = pegar_dados_mongodb("id_clientes")
-  
-  contar_erros = 0
-  relatorio_de_erros = []
+    chaves_api = gerar_obj_api()
+    now = datetime.datetime.now()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+    resultados = [["client_id","Resultado","Response","timestamp"]]
+    codigo_integracao = pegar_dados_mongodb("id_clientes")
+    clientes_com_erros = pegar_dados_mongodb("clientes_com_erros")
 
-  for index,row in base_df.iterrows():
+    codigo_integracao["codigo_cliente_integracao"] = codigo_integracao["codigo_cliente_integracao"].astype(str)
 
-    dados_cliente = row["dados_cliente"]
-    unidade = row["store_name"]
-    unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    id_do_cliente = row["customer_id"]
+    contar_erros = 0
+    relatorio_de_erros = []
 
-    if not codigo_integracao.empty:
-        mesmo_id  = codigo_integracao["codigo_cliente_integracao"] == id_do_cliente
-        mesma_unidade = codigo_integracao["unidade"] == unidade
-        if (mesmo_id & mesma_unidade).any():
-            continue
+    for index,row in base_df.iterrows():
 
-    api_secret = chaves_api[unidade]["api_secret"]
-    api_key = chaves_api[unidade]["api_key"]
+        dados_cliente = row["dados_cliente"]
+        unidade = row["store_name"]
+        unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        id_do_cliente = str(row["customer_id"])
 
-    ### DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNIDADE BackOffice #######
-    api_secret = "2fae495eb5679299260c3676fe88d291"
-    api_key = "2485921847409"
-    
+        if not codigo_integracao.empty:
+            mesmo_id  = codigo_integracao["codigo_cliente_integracao"] == id_do_cliente
+            mesma_unidade = codigo_integracao["unidade"] == unidade
+            if (mesmo_id & mesma_unidade).any():
+                print(f"{id_do_cliente} - Cliente já existe na base")
+                continue
 
-    result_status = "Error"
+        if not clientes_com_erros.empty:
+            mesmo_id  = clientes_com_erros["codigo_cliente_integracao"] == id_do_cliente
+            if (mesmo_id).any():
+                print("Cliente já existe na base de erros")
+                continue
 
-    try:
-      dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
-    except json.JSONDecodeError:
-      result_status = "Erro ao converter JSON do cliente"
-      full_response = "Erro ao converter JSON do cliente"
-      resultados.append([id_do_cliente,result_status,full_response,timestamp])
-      continue  # Pula para a próxima iteração
+        api_secret = chaves_api[unidade]["api_secret"]
+        api_key = chaves_api[unidade]["api_key"]
 
-    id_cliente = dados_cliente["codigo_cliente_integracao"]
+        ### DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNIDADE BackOffice #######
+        api_secret = "2fae495eb5679299260c3676fe88d291"
+        api_key = "2485921847409"
 
-    full_response = criar_cliente(api_secret,api_key,dados_cliente)
+        result_status = "Error"
 
-    if 'faultstring' in full_response:
-        mensagem_errro = full_response["faultstring"]
-        contar_erros += 1
-        relatorio_de_erros.append(mensagem_errro)
+        try:
+            dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
+        except json.JSONDecodeError:
+            result_status = "Erro ao converter JSON do cliente"
+            full_response = "Erro ao converter JSON do cliente"
+            print(f"{dados_cliente} - Erro ao converter JSON do cliente")
+            resultados.append([id_do_cliente,result_status,full_response,timestamp])
+            continue  # Pula para a próxima iteração
 
-        if re.search(r"API bloqueada por consumo indevido", mensagem_errro):
-            print("API bloqueada por consumo indevido")
-            print("Parando a execução.")
-            return
+        id_cliente = dados_cliente["codigo_cliente_integracao"]
         
-        else:
-            subir_cliente_invalido(unidade, id_cliente, mensagem_errro)
-        
-        if contar_erros >= 5:
-            print(full_response["faultstring"])
-            print("Muitos erros, parando a execução.")
-            print(relatorio_de_erros)
-            return
-    else:
-        contar_erros = 0
-        
-    time.sleep(1)
-    full_response = check_response(full_response)
+        print(f"Sunbindo - {id_cliente}")
+        full_response = criar_cliente(api_secret,api_key,dados_cliente)
 
-    if full_response:
-        if re.search(r"Cliente cadastrado com sucesso.", full_response):
-            result_status = "Cliente Novo Cadastrado"
-            dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
-            subir_dados_mongodb("id_clientes",dados_mongodb)
+        if 'faultstring' in full_response:
+            mensagem_errro = full_response["faultstring"]
+            contar_erros += 1
+            relatorio_de_erros.append(mensagem_errro)
 
-        if re.search(r"código de integração \[\]", full_response):
-          regex = r"com o Id \[([0-9]+)\]"
-          match = re.search(regex, full_response)
-          codigo_omie = match.group(1)
+            if re.search(r"API bloqueada por consumo indevido", mensagem_errro):
+                print("API bloqueada por consumo indevido")
+                print("Parando a execução.")
+                return
+            
+            else:
+                subir_cliente_invalido(unidade, id_cliente, mensagem_errro)
+            
+            if contar_erros >= 2:
+                print(full_response["faultstring"])
+                print("Muitos erros, parando a execução.")
+                print(relatorio_de_erros)
+                return
+            
+        time.sleep(1)
+        full_response = check_response(full_response)
 
-          dados_cliente = {
-              "codigo_cliente_omie": codigo_omie,
-              "codigo_cliente_integracao": id_cliente
-          }
+        if full_response:
+            if re.search(r"Cliente cadastrado com sucesso.", full_response):
+                result_status = "Cliente Novo Cadastrado"
+                dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
+                subir_dados_mongodb("id_clientes",dados_mongodb)
 
-          associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
-          time.sleep(1)
-          full_response = check_response(associar_cliente)
+            if re.search(r"código de integração \[\]", full_response):
+                regex = r"com o Id \[([0-9]+)\]"
+                match = re.search(regex, full_response)
+                codigo_omie = match.group(1)
 
-          if full_response:
-            result_status = "Id do Cliente Associado"
-            dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
-            subir_dados_mongodb("id_clientes",dados_mongodb)
-          else:
-            result_status = "Erro ao Associar Id do Cliente"
+                dados_cliente = {
+                    "codigo_cliente_omie": codigo_omie,
+                    "codigo_cliente_integracao": id_cliente
+                }
 
-    print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
-    resultados.append([id_do_cliente,result_status,full_response,timestamp])
+                associar_cliente = associar_id_cliente(dados_cliente, api_secret, api_key)
+                time.sleep(1)
+                full_response = check_response(associar_cliente)
 
-  resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
-  return resultados_df
+            if full_response:
+                result_status = "Id do Cliente Associado"
+                dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
+                subir_dados_mongodb("id_clientes",dados_mongodb)
+            else:
+                result_status = "Erro ao Associar Id do Cliente"
+
+        print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
+        resultados.append([id_do_cliente,result_status,full_response,timestamp])
+
+    resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
+    return resultados_df
 
 
 def criar_cliente(api_secret, api_key, dados_cliente):
@@ -834,7 +852,95 @@ def atualizar_base_cidades():
 
     update_sheet("auxiliar - cidades", cidades_df)
 
-def subir_cliente_invalido(unidade, id_cliente, mensagem_errro):
-    dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente,'erro': mensagem_errro}]
-    subir_dados_mongodb("clientes_com_erros",dados_mongodb)
-    return
+def subir_cliente_invalido(unidade: str, id_cliente: int | str, mensagem_erro: str):
+    """
+    Insert (or update) one invalid-client record without creating duplicates.
+    """
+    doc = {
+        "unidade": unidade,
+        "codigo_cliente_integracao": id_cliente,
+        "erro": mensagem_erro,
+    }
+    subir_dados_mongodb_erros("clientes_com_erros", [doc])
+    
+URI = (
+"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/"
+"?retryWrites=true&w=majority&appName=Cluster0"
+)
+
+def _get_coll(name: str):
+    
+    # Longer timeouts + faster server selection
+    return (
+        MongoClient(
+            URI,
+            connectTimeoutMS=30000,          # 30 s for DNS/TLS handshake
+            serverSelectionTimeoutMS=30000,  # 30 s to find a primary
+            socketTimeoutMS=30000,           # 30 s per I/O op
+        )
+        .get_database("notas_omie")
+        .get_collection(name)
+    )
+
+
+def _get_coll(name: str):
+    return (
+        MongoClient(
+            URI,
+            connectTimeoutMS=30000,
+            serverSelectionTimeoutMS=30000,
+            socketTimeoutMS=30000,
+        )
+        .get_database("notas_omie")
+        .get_collection(name)
+    )
+
+def subir_dados_mongodb_erros(collection_name: str, docs: list[dict]):
+    if not docs:
+        return None
+
+    coll = _get_coll(collection_name)
+
+    # ── create the unique index once, ignore “already exists” ──────────────
+    try:
+        coll.create_index(
+            [("unidade", 1), ("codigo_cliente_integracao", 1)],
+            unique=True,
+            background=True,              # non-blocking build
+            # no explicit “name” → defaults to
+            # “unidade_1_codigo_cliente_integracao_1” (the one you already have)
+        )
+    except OperationFailure as exc:
+        # code 85 = IndexOptionsConflict → the exact same key pattern exists
+        if exc.code != 85:
+            raise
+
+    # ── de-duplicate incoming docs ────────────────────────────────────────
+    uniq = {(d["unidade"], d["codigo_cliente_integracao"]): d for d in docs}
+
+    ops = [
+        UpdateOne(
+            {"unidade": u, "codigo_cliente_integracao": c},
+            {"$set": doc},
+            upsert=True,
+        )
+        for (u, c), doc in uniq.items()
+    ]
+
+    try:
+        return coll.bulk_write(ops, ordered=False)
+    except (NetworkTimeout, ServerSelectionTimeoutError) as exc:
+        raise RuntimeError("Bulk upsert failed: connection to MongoDB timed out.") from exc
+
+
+
+def is_valid_email(text):
+    email_re = re.compile(
+        r"^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+"
+        r"(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+        r"(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+"
+        r"[A-Za-z]{2,}$"
+    )
+
+    is_email = bool(email_re.fullmatch(text))
+    return is_email

@@ -73,7 +73,7 @@ if len(unidade_novas) > 0:
     if criar_contas_botao:
         criar_contas_correntes(unidade_selecionada,sigla_selecionada)
     
-    st.markdown(f"[Link para cadastrar Unidades Novas]({link_da_planilha})")
+    st.markdown(f"[Link para cadastrar Unidades Novas]({link_da_planilha}) - Não esqueça de adicionar o endereço da unidade na aba 'Auxiliar - Endereço Unidades'")
 
 else:
     
@@ -81,9 +81,10 @@ else:
     st.markdown(f"Para adicionar novas contas correntes, primeiro adicione os dados da Unidade na [planilha]({link_da_planilha}).")
 
 st.title("Deletar Contas Correntes:")
-if st.button("Deletar CC"):
-    deletar_cc_dialog()
+st.caption("Deleta contas correntes do OMIE")
 
+if st.button("Selecionar CC para Deletar"):
+    deletar_cc_dialog()
 
 
 st.title("Atualizar Base de Clientes")
@@ -93,5 +94,6 @@ atualizar_clientes_button = st.button("Atualizar Base de Clientes")
 if atualizar_clientes_button:
     clientes_omie = atualizar_base_clientes()
     st.write(f"{len(clientes_omie)} clientes novos criados")
+    st.write(f"{clientes_omie})")
 
 st.write("Last Update - 27/03/2025")
