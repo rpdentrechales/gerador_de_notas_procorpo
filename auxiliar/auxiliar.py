@@ -520,6 +520,8 @@ def subir_linha(dados_da_linha):
     return response
 
 def criar_clientes_selecionados(base_df):
+    
+    base_df = base_df.drop_duplicates(subset=["store_name", "customer_id"])
 
     chaves_api = gerar_obj_api()
     now = datetime.datetime.now()
@@ -567,13 +569,13 @@ def criar_clientes_selecionados(base_df):
         except json.JSONDecodeError:
             result_status = "Erro ao converter JSON do cliente"
             full_response = "Erro ao converter JSON do cliente"
-            print(f"{dados_cliente} - Erro ao converter JSON do cliente")
+            print(f"{id_do_cliente} - {dados_cliente} - Erro ao converter JSON do cliente")
             resultados.append([id_do_cliente,result_status,full_response,timestamp])
             continue  # Pula para a próxima iteração
 
         id_cliente = dados_cliente["codigo_cliente_integracao"]
         
-        print(f"Sunbindo - {id_cliente}")
+        print(f"Subindo - {id_cliente}")
         full_response = criar_cliente(api_secret,api_key,dados_cliente)
         
         response_dic = check_response(full_response)
@@ -602,11 +604,11 @@ def criar_clientes_selecionados(base_df):
                 return
             
             # Erro CPF
-            erro_cpf = erro_cpf(message)
+            erro_cpf = erro_cpf_ja_cadastrado(message)
 
             if erro_cpf:
 
-                print(f"Erro CPF: {erro_cpf}")
+                print(f"{id_cliente} - Erro CPF: {erro_cpf}")
                 dados_cliente = {
                     "codigo_cliente_omie": erro_cpf,
                     "codigo_cliente_integracao": id_cliente
@@ -656,7 +658,7 @@ def erro_integracao_ja_existe(msg: str) -> int | None:
     )
     return int(m.group(1)) if m else None
 
-def erro_cpf(msg: str) -> int | None:
+def erro_cpf_ja_cadastrado(msg: str) -> int | None:
     """
     Return the numeric Id when the message is a CPF-duplicate error
     *and* the integration code is empty; otherwise return None.
