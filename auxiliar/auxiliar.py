@@ -630,15 +630,15 @@ def criar_clientes_selecionados(base_df):
             if erro_integracao:
                 dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
                 subir_dados_mongodb("id_clientes",dados_mongodb)
+            time.sleep(1)
 
         # Trata os sucessos
         else:
             if re.search(r"Cliente cadastrado com sucesso.", message):
                 result_status = "Cliente Novo Cadastrado"
                 dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
-                subir_dados_mongodb("id_clientes",dados_mongodb)  
-            
-        time.sleep(1)
+                subir_dados_mongodb("id_clientes",dados_mongodb)
+                time.sleep(1) 
         
         print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
         resultados.append([id_do_cliente,result_status,full_response,timestamp])
