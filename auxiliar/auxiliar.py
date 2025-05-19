@@ -575,42 +575,40 @@ def criar_clientes_selecionados(base_df):
         
         print(f"Sunbindo - {id_cliente}")
         full_response = criar_cliente(api_secret,api_key,dados_cliente)
+        
+        response_dic = check_response(full_response)
+        message = response_dic["message"]
+        has_error = response_dic["has_error"]
 
-        if 'faultstring' in full_response:
-            mensagem_errro = full_response["faultstring"]
+        contar_erros = 0
+
+        # Trata os erros:
+
+        if has_error:
             contar_erros += 1
-            relatorio_de_erros.append(mensagem_errro)
-
-            if re.search(r"API bloqueada por consumo indevido", mensagem_errro):
+            relatorio_de_erros.append(message)
+            
+            # Consumo indevido
+            if re.search(r"API bloqueada por consumo indevido", message):
                 print("API bloqueada por consumo indevido")
                 print("Parando a execução.")
                 return
             
-            else:
-                subir_cliente_invalido(unidade, id_cliente, mensagem_errro)
-            
+            # Muitos erros
             if contar_erros >= 2:
                 print(full_response["faultstring"])
                 print("Muitos erros, parando a execução.")
                 print(relatorio_de_erros)
                 return
             
-        time.sleep(1)
-        full_response = check_response(full_response)
+            # Erro CPF
+            erro_cpf = erro_cpf(message)
 
-        if full_response:
-            if re.search(r"Cliente cadastrado com sucesso.", full_response):
-                result_status = "Cliente Novo Cadastrado"
-                dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
-                subir_dados_mongodb("id_clientes",dados_mongodb)
+            if erro_cpf:
 
-            if re.search(r"código de integração \[\]", full_response):
-                regex = r"com o Id \[([0-9]+)\]"
-                match = re.search(regex, full_response)
-                codigo_omie = match.group(1)
-
+                print(f"Erro CPF: {erro_cpf}")
                 dados_cliente = {
-                    "codigo_cliente_omie": codigo_omie,
+                    "codigo_cliente_omie": erro_cpf,
                     "codigo_cliente_integracao": id_cliente
                 }
 
@@ -618,18 +616,59 @@ def criar_clientes_selecionados(base_df):
                 time.sleep(1)
                 full_response = check_response(associar_cliente)
 
-            if full_response:
-                result_status = "Id do Cliente Associado"
+                if full_response:
+                    result_status = "Id do Cliente Associado"
+                    dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
+                    subir_dados_mongodb("id_clientes",dados_mongodb)
+                else:
+                    result_status = "Erro ao Associar Id do Cliente"
+            
+            erro_integracao = erro_integracao_ja_existe(message)
+
+            if erro_integracao:
                 dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
                 subir_dados_mongodb("id_clientes",dados_mongodb)
-            else:
-                result_status = "Erro ao Associar Id do Cliente"
 
+        # Trata os sucessos
+        else:
+            if re.search(r"Cliente cadastrado com sucesso.", message):
+                result_status = "Cliente Novo Cadastrado"
+                dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
+                subir_dados_mongodb("id_clientes",dados_mongodb)  
+            
+        time.sleep(1)
+        
         print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
         resultados.append([id_do_cliente,result_status,full_response,timestamp])
 
     resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
+
     return resultados_df
+
+def erro_integracao_ja_existe(msg: str) -> int | None:
+    """
+    Return the numeric “código de integração” when the message reports
+    a duplicate-integration error; otherwise return None.
+    """
+    m = re.search(
+        r"Cliente já cadastrado para o Código de Integração\s*\[(\d+)\]",
+        msg,
+    )
+    return int(m.group(1)) if m else None
+
+def erro_cpf(msg: str) -> int | None:
+    """
+    Return the numeric Id when the message is a CPF-duplicate error
+    *and* the integration code is empty; otherwise return None.
+    """
+    m = re.search(
+        r"Cliente já cadastrado para o CPF/CNPJ"   # CPF/CNPJ duplicate flag
+        r".*?Id\s*\[(\d+)\]"                       # capture digits inside [ ]
+        r".*?código de integração\s*\[\s*\]",      # brackets must be empty
+        msg,
+        flags=re.S,
+    )
+    return int(m.group(1)) if m else None
 
 
 def criar_cliente(api_secret, api_key, dados_cliente):
@@ -703,13 +742,21 @@ def alterar_dados(dados_cliente, api_secret, api_key):
 def check_response(response):
 
   # Check if response is fault or sucessfull
-
+    has_error = False
     if 'faultstring' in response:
-        return response['faultstring']
+        message =  response['faultstring']
+        has_error = True
     elif 'descricao_status' in response:
-        return response['descricao_status']
+        message = response['descricao_status']
     else:
-        return None
+        message = response
+    
+    response_dic = {
+        "has_error": has_error,
+        "message": message
+    }
+
+    return response_dic
 
 def update_value_json(row):
 
