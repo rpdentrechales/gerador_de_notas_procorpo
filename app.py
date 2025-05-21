@@ -26,19 +26,13 @@ utility_page = st.Page(
 )
 
 
-clientes_erros_page = st.Page(
-    "views/clientes_erros.py",
-    title="Clientes com Erros",
-    icon=":material/summarize:",
-)
-
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
 # pg = st.navigation(pages=[about_page, project_1_page, project_2_page])
 
 # --- NAVIGATION SETUP [WITH SECTIONS]---
 pg = st.navigation(
     {
-        "Notas Omie": [subir_notas_page,log_page,processadas_page,utility_page,clientes_erros_page]
+        "Notas Omie": [subir_notas_page,log_page,processadas_page,utility_page]
     }
 )
 

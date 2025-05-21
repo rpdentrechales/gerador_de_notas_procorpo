@@ -334,6 +334,14 @@ def paste_billcharges_with_json(start_date, end_date):
                 print(f"Erro Cliente: {customer_id} - Cidade Inválida")
                 customer_address = enderecos_obj[store_name]
 
+            if len(customer_address['street'])> 60:
+                customer_address['street'] = customer_address['street'][:60]
+                print(f"Erro Cliente: {customer_id} - Endereço muito longo, cortando para 60 caracteres")
+
+            if len(customer_address['postcode'])> 10:
+                customer_address['postcode'] = customer_address['postcode'][:10]
+                print(f"Erro Cliente: {customer_id} - CEP muito longo, cortando para 10 caracteres")
+
             if document_check:
 
                 dados_cliente = {
@@ -355,7 +363,6 @@ def paste_billcharges_with_json(start_date, end_date):
 
                 dados_cliente = "Cadastro inválido - Sem CPF"
                 print(f"Erro Cliente: {customer_id} - CPF Inválido")
-                subir_cliente_invalido(unidade_omie, customer_id, dados_cliente)
 
             email_cliente = data_row['quote']['customer']['email'].strip()
             email_check = is_valid_email(email_cliente)
@@ -528,7 +535,6 @@ def criar_clientes_selecionados(base_df):
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
     resultados = [["client_id","Resultado","Response","timestamp"]]
     codigo_integracao = pegar_dados_mongodb("id_clientes")
-    clientes_com_erros = pegar_dados_mongodb("clientes_com_erros")
 
     codigo_integracao["codigo_cliente_integracao"] = codigo_integracao["codigo_cliente_integracao"].astype(str)
 
@@ -549,12 +555,6 @@ def criar_clientes_selecionados(base_df):
                 print(f"{id_do_cliente} - Cliente já existe na base")
                 continue
 
-        if not clientes_com_erros.empty:
-            mesmo_id  = clientes_com_erros["codigo_cliente_integracao"] == id_do_cliente
-            if (mesmo_id).any():
-                print("Cliente já existe na base de erros")
-                continue
-
         api_secret = chaves_api[unidade]["api_secret"]
         api_key = chaves_api[unidade]["api_key"]
 
@@ -565,17 +565,23 @@ def criar_clientes_selecionados(base_df):
         result_status = "Error"
 
         try:
-            dados_cliente = json.loads(dados_cliente)  # Tenta converter a string JSON para um dicionário Python
-        except json.JSONDecodeError:
-            result_status = "Erro ao converter JSON do cliente"
-            full_response = "Erro ao converter JSON do cliente"
-            print(f"{id_do_cliente} - {dados_cliente} - Erro ao converter JSON do cliente")
-            resultados.append([id_do_cliente,result_status,full_response,timestamp])
-            continue  # Pula para a próxima iteração
+            # tenta transformar em dicionário
+            dados_cliente = json.loads(dados_cliente)
 
+            # JSON válido, mas não é objeto → força erro tratado abaixo
+            if not isinstance(dados_cliente, dict):
+                raise ValueError("JSON não é objeto")
+
+        except (json.JSONDecodeError, ValueError) as err:
+            # cai aqui tanto para JSON mal-formado quanto para tipo inesperado
+            result_status = "Erro ao converter JSON do cliente"
+            full_response = str(err)
+            print(f"{id_do_cliente} - {dados_cliente} - {full_response}")
+            resultados.append([id_do_cliente, result_status, full_response, timestamp])
+            continue  # vai para a próxima iteração do loop
+        
         id_cliente = dados_cliente["codigo_cliente_integracao"]
         
-        print(f"Subindo - {id_cliente}")
         full_response = criar_cliente(api_secret,api_key,dados_cliente)
         
         response_dic = check_response(full_response)
@@ -588,7 +594,7 @@ def criar_clientes_selecionados(base_df):
 
         if has_error:
             contar_erros += 1
-            relatorio_de_erros.append(message)
+            relatorio_de_erros.append(f"id_cliente: {id_do_cliente} - Mensagem: {message}")
             
             # Consumo indevido
             if re.search(r"API bloqueada por consumo indevido", message):
@@ -608,7 +614,6 @@ def criar_clientes_selecionados(base_df):
 
             if erro_cpf:
 
-                print(f"{id_cliente} - Erro CPF: {erro_cpf}")
                 dados_cliente = {
                     "codigo_cliente_omie": erro_cpf,
                     "codigo_cliente_integracao": id_cliente
@@ -643,26 +648,22 @@ def criar_clientes_selecionados(base_df):
         print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
         resultados.append([id_do_cliente,result_status,full_response,timestamp])
 
+    print(relatorio_de_erros)
     resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
 
     return resultados_df
 
 def erro_integracao_ja_existe(msg: str) -> int | None:
-    """
-    Return the numeric “código de integração” when the message reports
-    a duplicate-integration error; otherwise return None.
-    """
+
     m = re.search(
         r"Cliente já cadastrado para o Código de Integração\s*\[(\d+)\]",
         msg,
     )
+
     return int(m.group(1)) if m else None
 
 def erro_cpf_ja_cadastrado(msg: str) -> int | None:
-    """
-    Return the numeric Id when the message is a CPF-duplicate error
-    *and* the integration code is empty; otherwise return None.
-    """
+    print(msg)
     m = re.search(
         r"Cliente já cadastrado para o CPF/CNPJ"   # CPF/CNPJ duplicate flag
         r".*?Id\s*\[(\d+)\]"                       # capture digits inside [ ]
@@ -670,6 +671,7 @@ def erro_cpf_ja_cadastrado(msg: str) -> int | None:
         msg,
         flags=re.S,
     )
+
     return int(m.group(1)) if m else None
 
 
@@ -900,88 +902,6 @@ def atualizar_base_cidades():
     cidades_df = pd.DataFrame(lista_cidades, columns=["cidade"])
 
     update_sheet("auxiliar - cidades", cidades_df)
-
-def subir_cliente_invalido(unidade: str, id_cliente: int | str, mensagem_erro: str):
-    """
-    Insert (or update) one invalid-client record without creating duplicates.
-    """
-    doc = {
-        "unidade": unidade,
-        "codigo_cliente_integracao": id_cliente,
-        "erro": mensagem_erro,
-    }
-    subir_dados_mongodb_erros("clientes_com_erros", [doc])
-    
-URI = (
-"mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/"
-"?retryWrites=true&w=majority&appName=Cluster0"
-)
-
-def _get_coll(name: str):
-    
-    # Longer timeouts + faster server selection
-    return (
-        MongoClient(
-            URI,
-            connectTimeoutMS=30000,          # 30 s for DNS/TLS handshake
-            serverSelectionTimeoutMS=30000,  # 30 s to find a primary
-            socketTimeoutMS=30000,           # 30 s per I/O op
-        )
-        .get_database("notas_omie")
-        .get_collection(name)
-    )
-
-
-def _get_coll(name: str):
-    return (
-        MongoClient(
-            URI,
-            connectTimeoutMS=30000,
-            serverSelectionTimeoutMS=30000,
-            socketTimeoutMS=30000,
-        )
-        .get_database("notas_omie")
-        .get_collection(name)
-    )
-
-def subir_dados_mongodb_erros(collection_name: str, docs: list[dict]):
-    if not docs:
-        return None
-
-    coll = _get_coll(collection_name)
-
-    # ── create the unique index once, ignore “already exists” ──────────────
-    try:
-        coll.create_index(
-            [("unidade", 1), ("codigo_cliente_integracao", 1)],
-            unique=True,
-            background=True,              # non-blocking build
-            # no explicit “name” → defaults to
-            # “unidade_1_codigo_cliente_integracao_1” (the one you already have)
-        )
-    except OperationFailure as exc:
-        # code 85 = IndexOptionsConflict → the exact same key pattern exists
-        if exc.code != 85:
-            raise
-
-    # ── de-duplicate incoming docs ────────────────────────────────────────
-    uniq = {(d["unidade"], d["codigo_cliente_integracao"]): d for d in docs}
-
-    ops = [
-        UpdateOne(
-            {"unidade": u, "codigo_cliente_integracao": c},
-            {"$set": doc},
-            upsert=True,
-        )
-        for (u, c), doc in uniq.items()
-    ]
-
-    try:
-        return coll.bulk_write(ops, ordered=False)
-    except (NetworkTimeout, ServerSelectionTimeoutError) as exc:
-        raise RuntimeError("Bulk upsert failed: connection to MongoDB timed out.") from exc
-
-
 
 def is_valid_email(text):
     email_re = re.compile(
