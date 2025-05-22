@@ -10,6 +10,7 @@ from pymongo import MongoClient, UpdateOne
 from pymongo.errors import OperationFailure, NetworkTimeout, ServerSelectionTimeoutError
 import numpy as np
 import unidecode
+from auxiliar.omie_aux import *
 
 def load_dataframe(worksheet):
 
@@ -217,7 +218,7 @@ def find_cc_id(cc_obj_array, tipo_pagamento_obj, unidade_planilha, forma_pagamen
             if tipo_pagamento_planilha == tipo_pagamento:
                 return id_conta
 
-    return "Tipo de Pagamento inválido"
+    return "Tipo de Pagamento invalido"
 
 def gerar_obj_unidades():
     unidades_data = load_dataframe("Auxiliar - Chave das APIs por Unidade")
@@ -270,11 +271,13 @@ def paste_billcharges_with_json(start_date, end_date):
     sheet_array = [["quote_id", "billCharge_id", "customer_id", "customer_name", "store_name", "quote_status",
                     "paymentMethod_name", "billcharge_paidAt", "bill_installmentsQuantity", "bill_amount",
                     "servicos_json", "os_id", "id_conta_corrente", "dados_cliente", "isPaid", "Tipo de Pagamento",
-                    "billcharge_dueAt", "amount"]]
+                    "billcharge_dueAt", "amount","linha_com_erros"]]
+    
     
     # Main loop to process data
     while billcharges_data_length > 0:
         for data_row in billcharges_data:
+            linha_com_erros = False
             quote_items = data_row['quote']['bill']['items']
 
             # Extract necessary fields
@@ -291,6 +294,8 @@ def paste_billcharges_with_json(start_date, end_date):
             bill_amount = data_row['amount'] / 100
             customer_document = data_row['quote']['customer']['taxvat']
             isPaid = data_row['isPaid']
+            
+            store_name = "BackOffice" ## DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             dados_da_unidade = unidades_obj.get(store_name)
             if not dados_da_unidade:
@@ -338,9 +343,13 @@ def paste_billcharges_with_json(start_date, end_date):
                 customer_address['street'] = customer_address['street'][:60]
                 print(f"Erro Cliente: {customer_id} - Endereço muito longo, cortando para 60 caracteres")
 
-            if len(customer_address['postcode'])> 10:
-                customer_address['postcode'] = customer_address['postcode'][:10]
+            if len(customer_address['postcode'])> 8:
+                customer_address['postcode'] = customer_address['postcode'][:8]
                 print(f"Erro Cliente: {customer_id} - CEP muito longo, cortando para 10 caracteres")
+
+            if len(customer_address['postcode']) < 8:
+                customer_address['postcode'] = customer_address['postcode'].zfill(8)
+                print(f"Erro Cliente: {customer_id} - CEP muito curto, completando com zeros à esquerda")
 
             if document_check:
 
@@ -361,15 +370,17 @@ def paste_billcharges_with_json(start_date, end_date):
 
             else:
 
-                dados_cliente = "Cadastro inválido - Sem CPF"
-                print(f"Erro Cliente: {customer_id} - CPF Inválido")
+                dados_cliente = "Cadastro invalido - Sem CPF"
+                linha_com_erros = True
+                print(f"Erro Cliente: {customer_id} - CPF invalido")
 
             email_cliente = data_row['quote']['customer']['email'].strip()
             email_check = is_valid_email(email_cliente)
 
             if not email_check:
-                print(f"Erro Cliente: {customer_id} - E-mail Inválido")
-                dados_cliente["email"] = "email@invalido.com.br"
+                if isinstance(dados_cliente, dict):
+                    print(f"Erro Cliente: {customer_id} - E-mail invalido")
+                    dados_cliente["email"] = "email@invalido.com.br"
             
             dados_cliente = json.dumps(dados_cliente)
             # Process unit and aliquota data
@@ -418,7 +429,7 @@ def paste_billcharges_with_json(start_date, end_date):
             # Add processed row to sheet array
             sheet_row = [quote_id, billCharge_id, customer_id, customer_name, store_name, quote_status, paymentMethod_name,
                          billcharge_paidAt, bill_installmentsQuantity, bill_amount, servico_obj, os_id, id_conta_corrente,
-                         dados_cliente, isPaid, tipo_de_pagamento, billcharge_dueAt, bill_amount]
+                         dados_cliente, isPaid, tipo_de_pagamento, billcharge_dueAt, bill_amount,linha_com_erros]
             sheet_array.append(sheet_row)
 
         # Fetch the next page of results
@@ -456,15 +467,35 @@ def criar_os(api_secret, api_key, dados_ordem):
 
 def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
   resultados = []
-
+  chaves_api = gerar_obj_api()
+  os_back_office = pegar_os_backoffice()
+  contar_os = 0  
   for index, linha in linhas_selecionadas.iterrows():
 
-    resposta = subir_linha(linha)
+    id_os = linha["os_id"]
+
+    if id_os in os_back_office:
+        print(f"Ordem de Serviço já existe: {id_os}")
+        continue
+
+    linha_com_erro = linha["linha_com_erros"]
+    
+    if linha_com_erro:
+        print(f"Pulando Linha com erro: {linha}")
+        continue
+
+    resposta = subir_linha(linha,chaves_api)
+    contar_os += 1
+    
+    if   contar_os >= 3:
+        break
+
     quote_id = linha["quote_id"]
     unidade = linha["store_name"]
     os_id = linha["os_id"]
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+    
     resultados.append([os_id,quote_id,unidade,resposta,timestamp])
 
     time.sleep(1)
@@ -473,8 +504,9 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
 
   return resultados_df
 
-def subir_linha(dados_da_linha):
+def subir_linha(dados_da_linha,chaves_api):
     # Arruma os dados da linha para subir na API do Omie
+    print(f"Subindo OS ID: {dados_da_linha['os_id']}")
 
     unidade = dados_da_linha["store_name"]
     codigo_pedido = dados_da_linha["os_id"]
@@ -492,8 +524,9 @@ def subir_linha(dados_da_linha):
 
     cDadosAdicNF = "Serviços prestados - " + cDadosAdicNF
 
+    unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     # Busca as chaves da API
-    chaves_api = gerar_obj_api()
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
 
@@ -524,6 +557,7 @@ def subir_linha(dados_da_linha):
 
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, dados_os)
+    print(f"Código de integração: {codigo_cliente_integracao} - Resposta da API: {response}")
     return response
 
 def criar_clientes_selecionados(base_df):
@@ -537,6 +571,7 @@ def criar_clientes_selecionados(base_df):
     codigo_integracao = pegar_dados_mongodb("id_clientes")
 
     codigo_integracao["codigo_cliente_integracao"] = codigo_integracao["codigo_cliente_integracao"].astype(str)
+    codigo_integracao['cpf'] = codigo_integracao['cpf'].str.replace(r'\D', '', regex=True)
 
     contar_erros = 0
     relatorio_de_erros = []
@@ -547,12 +582,12 @@ def criar_clientes_selecionados(base_df):
         unidade = row["store_name"]
         unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         id_do_cliente = str(row["customer_id"])
-
+        
         if not codigo_integracao.empty:
             mesmo_id  = codigo_integracao["codigo_cliente_integracao"] == id_do_cliente
             mesma_unidade = codigo_integracao["unidade"] == unidade
             if (mesmo_id & mesma_unidade).any():
-                print(f"{id_do_cliente} - Cliente já existe na base")
+                # print(f"{id_do_cliente} - Cliente já existe na base")
                 continue
 
         api_secret = chaves_api[unidade]["api_secret"]
@@ -581,7 +616,23 @@ def criar_clientes_selecionados(base_df):
             continue  # vai para a próxima iteração do loop
         
         id_cliente = dados_cliente["codigo_cliente_integracao"]
+
+        cpf_cliente = dados_cliente["cnpj_cpf"]
+        cpf_cliente = re.sub(r'\D', '', cpf_cliente)
         
+        if not codigo_integracao.empty:
+
+            mesmo_cpf = codigo_integracao["cpf"] == cpf_cliente
+            mesma_unidade = codigo_integracao["unidade"] == unidade
+            if (mesmo_cpf & mesma_unidade).any():
+                log_erro = {"id_cliente": id_do_cliente,
+                "mensagem de erro": "Cliente já existe na base com o mesmo CPF."}
+                print(log_erro)
+                relatorio_de_erros.append(log_erro)
+                resultados.append([id_do_cliente, result_status, log_erro, timestamp])
+                # print(f"{id_do_cliente} - Cliente já existe na base")
+                continue
+
         full_response = criar_cliente(api_secret,api_key,dados_cliente)
         
         response_dic = check_response(full_response)
@@ -594,12 +645,17 @@ def criar_clientes_selecionados(base_df):
 
         if has_error:
             contar_erros += 1
-            relatorio_de_erros.append(f"id_cliente: {id_do_cliente} - Mensagem: {message}")
+            log_erro = {"id_cliente": id_do_cliente,
+                         "mensagem de erro": message}
+            print(log_erro)
+            relatorio_de_erros.append(log_erro)
+            resultados.append([id_do_cliente, result_status, log_erro, timestamp])
             
             # Consumo indevido
             if re.search(r"API bloqueada por consumo indevido", message):
-                print("API bloqueada por consumo indevido")
+                print(f"API bloqueada por consumo indevido - {message}")
                 print("Parando a execução.")
+                print(relatorio_de_erros)
                 return
             
             # Muitos erros
@@ -629,6 +685,11 @@ def criar_clientes_selecionados(base_df):
                     subir_dados_mongodb("id_clientes",dados_mongodb)
                 else:
                     result_status = "Erro ao Associar Id do Cliente"
+                    log_erro = {"id_cliente": id_do_cliente,
+                                "mensagem de erro": "Erro ao Associar Id do Cliente"}
+                    print(log_erro)
+                    relatorio_de_erros.append(log_erro)
+                    result_status = log_erro
             
             erro_integracao = erro_integracao_ja_existe(message)
 
@@ -643,15 +704,20 @@ def criar_clientes_selecionados(base_df):
                 result_status = "Cliente Novo Cadastrado"
                 dados_mongodb = [{"unidade":unidade,"codigo_cliente_integracao":id_cliente}]
                 subir_dados_mongodb("id_clientes",dados_mongodb)
-                time.sleep(1) 
+                time.sleep(1)
+            else:
+                print(f"Mensagem inesperada - id_cliente: {id_do_cliente} - Mensagem: {message}") 
         
         print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
         resultados.append([id_do_cliente,result_status,full_response,timestamp])
 
     print(relatorio_de_erros)
     resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
-
-    return resultados_df
+    clientes_subidos = resultados_df.to_dict(orient='records')
+    st.write(f"{len(clientes_subidos)} clientes novos criados")
+    subir_dados_mongodb("log_clientes",clientes_subidos)
+    
+    return relatorio_de_erros
 
 def erro_integracao_ja_existe(msg: str) -> int | None:
 
@@ -837,39 +903,7 @@ def pega_dados_do_cliente_omie(api_secret, api_key,pagina):
     data = response.json()
 
     return data
-
-def atualizar_base_de_clientes():
-  dados_unidade = gerar_obj_api()
-
-  todos_dados_clientes = {}
-
-  for unidade, credentials in dados_unidade.items():
-    api_secret = credentials['api_secret']
-    api_key = credentials['api_key']
-    pagina = 1
-
-    loop_paginas = True
-    resultados = []
-
-    while loop_paginas:
-
-      response = pega_dados_do_cliente_omie(api_secret, api_key,pagina)
-      dados_cliente = response["clientes_cadastro_resumido"]
-      total_paginas = response["total_de_paginas"]
-      resultados.extend(dados_cliente)
-
-      if pagina == total_paginas:
-        loop_paginas = False
-      else:
-        pagina += 1
-
-
-    todos_dados_clientes[unidade] = resultados
-
-  codigo_integracao_omie_mongodb = pegar_dados_mongodb("id_clientes")
-
-  return (codigo_integracao_omie_mongodb,todos_dados_clientes)
-
+    
 
 def deletar_todos_documentos(collection_name, query=None):
     client = MongoClient("mongodb+srv://rpdprocorpo:iyiawsSCfCsuAzOb@cluster0.lu6ce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")

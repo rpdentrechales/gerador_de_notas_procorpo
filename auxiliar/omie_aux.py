@@ -225,7 +225,6 @@ def pegar_servicos(pagina_atual, api_secret, api_key):
         
     return response.json()       
 
-
 def atualizar_servicos():
     dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
 
@@ -309,11 +308,13 @@ def atualizar_base_clientes():
 
             for cliente in todos_clientes:
                 codigo_cliente_integracao = cliente["codigo_cliente_integracao"]
+                cpf = cliente["cnpj_cpf"]
                 
                 if codigo_cliente_integracao != "":
 
                     cliente_data = {"unidade":unidade_crm,
-                                    "codigo_cliente_integracao":codigo_cliente_integracao}
+                                    "codigo_cliente_integracao":codigo_cliente_integracao,
+                                    "cpf":cpf}
                     
                     clientes_omie_list.append(cliente_data)
 
@@ -324,16 +325,18 @@ def atualizar_base_clientes():
 
     clientes_omie_df = pd.DataFrame(clientes_omie_list)
 
-    merged = clientes_omie_df.merge(base_mongo, on=['unidade', 'codigo_cliente_integracao'], how='left', indicator=True)
-    missing_rows = merged.loc[merged['_merge'] == 'left_only',['unidade', 'codigo_cliente_integracao']]
-    clientes_para_criar = missing_rows.to_dict('records')
+    if base_mongo.empty:
+        clientes_para_criar = clientes_omie_df.to_dict('records')
+    else:
+        merged = clientes_omie_df.merge(base_mongo, on=['unidade', 'codigo_cliente_integracao','cpf'], how='left', indicator=True)
+        missing_rows = merged.loc[merged['_merge'] == 'left_only',['unidade', 'codigo_cliente_integracao', 'cpf']]
+        clientes_para_criar = missing_rows.to_dict('records')
 
     if len(clientes_para_criar) > 0:
         subir_dados_mongodb("id_clientes",clientes_para_criar)
 
     return clientes_para_criar
-    
-        
+         
 def pegar_os(pagina_atual, api_secret, api_key):
     # Por enquanto não estamos usando, mas já deixei pronta, porque talvez tenha que usar.
     request_data = {
@@ -406,10 +409,61 @@ def deletar_os(codigo_os, api_secret, api_key):
         
     return response.json()
 
+
+def pegar_os_backoffice():
+    print("Pegando OS Backoffice")
+    # Dados Backoffice Omie Teste!!!!!!!!!!!!!!!!!!!!!
+    api_secret = "2fae495eb5679299260c3676fe88d291"
+    api_key = "2485921847409"
+    unidade_crm = "BackOffice"
+
+    os_list = []
+    pagina_atual = 1
+    os_data = pegar_os(pagina_atual, api_secret, api_key)
+
+    if 'faultstring' in os_data:
+        print(f"Erro: {os_data['faultstring']}")
+        return os_list
+
+    pagina_total = os_data["total_de_paginas"]
+        
+    while pagina_atual <= pagina_total:
+        print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
+        todos_os = os_data["osCadastro"]
+
+        for os in todos_os:
+            cCodIntOS = os["Cabecalho"]["cCodIntOS"]
+            
+            if cCodIntOS != "":
+
+                os_list.append(cCodIntOS)
+
+        pagina_atual += 1
+
+        if pagina_atual <= pagina_total:
+            os_data = pegar_os(pagina_atual, api_secret, api_key)            
+    print(f"Total de OS Backoffice: {len(os_list)}")
+    return os_list
+
+def deletar_todas_os_backoffice(lista_de_os):
+    # Dados Backoffice Omie Teste!!!!!!!!!!!!!!!!!!!!!
+    api_secret = "2fae495eb5679299260c3676fe88d291"
+    api_key = "2485921847409"
+
+    tamanho = len(lista_de_os)
+    nota_index = 1
+    for os in lista_de_os:
+        response = deletar_os(os, api_secret, api_key)
+        print(f"Deletando OS {nota_index}/{tamanho}: {os}")
+        time.sleep(1)
+        nota_index+=1
+
+
 def to_native(x):
     return x.item() if isinstance(x, np.generic) else x 
 
 def subir_linha_teste(dados_da_linha):
+
     # Arruma os dados da linha para subir na API do Omie
 
     unidade = to_native(dados_da_linha["store_name"])
@@ -471,3 +525,42 @@ def subir_linha_teste(dados_da_linha):
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, dados_os)
     return response
+
+def listar_clientes():
+    # Pega todos os clientes do Omie
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    base_mongo = pegar_dados_mongodb("id_clientes")
+
+    clientes_omie_list = []
+
+    for index, row in dados_unidade.iterrows():
+        unidade_crm = row["Unidades CRM"]
+        api_secret = row["API Secret"]
+        api_key = row["API KEY"]
+        
+        pagina_atual = 1
+        clientes_data = pegar_clientes(pagina_atual, api_secret, api_key)
+        pagina_total = clientes_data["total_de_paginas"]
+
+        while pagina_atual <= pagina_total:
+            todos_clientes = clientes_data["clientes_cadastro_resumido"]
+
+            for cliente in todos_clientes:
+                codigo_cliente_integracao = cliente["codigo_cliente_integracao"]
+                
+                if codigo_cliente_integracao != "":
+
+                    cliente_data = {"unidade":unidade_crm,
+                                    "codigo_cliente_integracao":codigo_cliente_integracao}
+                    
+                    clientes_omie_list.append(cliente_data)
+
+            pagina_atual += 1
+
+            if pagina_atual <= pagina_total:
+                clientes_data = pegar_clientes(pagina_atual, api_secret, api_key)            
+
+    clientes_omie_df = pd.DataFrame(clientes_omie_list)
+
+    return clientes_omie_df
+
