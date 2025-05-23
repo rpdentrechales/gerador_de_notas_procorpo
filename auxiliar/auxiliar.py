@@ -487,7 +487,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     resposta = subir_linha(linha,chaves_api)
     contar_os += 1
     
-    if   contar_os >= 3:
+    if  contar_os >= 50:
         break
 
     quote_id = linha["quote_id"]
