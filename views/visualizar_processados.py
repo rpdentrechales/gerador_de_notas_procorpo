@@ -18,10 +18,10 @@ data_seletor = st.date_input(
 )
 
 if len(data_seletor) == 2:
-    data_inicial = pd.to_datetime(data_seletor[0])
-    data_final = pd.to_datetime(data_seletor[1])
+    data_inicial = pd.to_datetime(data_seletor[0]).strftime("%d/%m/%Y")
+    data_final = pd.to_datetime(data_seletor[1]).strftime("%d/%m/%Y")
 else:
-    data_inicial = pd.to_datetime(data_seletor[0])
+    data_inicial = pd.to_datetime(data_seletor[0]).strftime("%d/%m/%Y")
     data_final = data_inicial
 
 pegar_os_botao = st.button("Pegar OS Processadas", type="primary")
