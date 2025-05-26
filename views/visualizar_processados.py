@@ -27,5 +27,6 @@ else:
 pegar_os_botao = st.button("Pegar OS Processadas", type="primary")
 
 if pegar_os_botao:
+    st.write(f"Buscando OS processadas entre {data_inicial} e {data_final}...")
     os_processados = pegar_todos_os(data_inicial, data_final)
     st.write(os_processados)
