@@ -18,28 +18,14 @@ data_seletor = st.date_input(
 )
 
 if len(data_seletor) == 2:
-    data_inicial = pd.to_datetime(data_seletor[0])
-    data_final = pd.to_datetime(data_seletor[1])
+    data_inicial = pd.to_datetime(data_seletor[0]).strftime("dd/MM/yyyy")
+    data_final = pd.to_datetime(data_seletor[1]).strftime("dd/MM/yyyy")
 else:
-    data_inicial = pd.to_datetime(data_seletor[0])
+    data_inicial = pd.to_datetime(data_seletor[0]).strftime("dd/MM/yyyy")
     data_final = data_inicial
 
-colunas = ['os_id','quote_id', 'billCharge_id', 'customer_id', 'customer_name',
-       'store_name', 'quote_status', 'paymentMethod_name', 'billcharge_paidAt',
-       'bill_installmentsQuantity', 'bill_amount', 'servicos_json',
-       'id_conta_corrente', 'dados_cliente', 'isPaid', 'Tipo de Pagamento',
-       'billcharge_dueAt', 'amount']
-    
-os_processados = pegar_dados_mongodb("os_processados")
+pegar_os_botao = st.button("Pegar OS Processadas", type="primary")
 
-if os_processados.empty:
-    pass
-
-else:
-    os_processados['billcharge_paidAt'] = pd.to_datetime(os_processados['billcharge_paidAt'])
-
-    os_processados = os_processados.loc[
-        (os_processados['billcharge_paidAt'] >= data_inicial) & 
-        (os_processados['billcharge_paidAt'] <= data_final)]
-
-    st.dataframe(os_processados[colunas],hide_index=True)
+if pegar_os_botao:
+    os_processados = pegar_todos_os(data_inicial, data_final)
+    st.write(os_processados)

@@ -5,7 +5,6 @@ from streamlit_gsheets import GSheetsConnection
 from auxiliar.auxiliar import *
 import math
 
-
 st.set_page_config(page_title="Subir Notas", page_icon="💎",layout="wide")
 
 st.title("Subir Notas")
