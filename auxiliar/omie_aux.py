@@ -9,7 +9,7 @@ import time
 import pymongo
 from pymongo import MongoClient
 import numpy as np
-from auxiliar.auxiliar import *
+from auxiliar.sheets_aux import *
 
 def criar_cc(api_secret, api_key, dados_cc):
 
@@ -337,7 +337,7 @@ def atualizar_base_clientes():
 
     return clientes_para_criar
          
-def pegar_os(pagina_atual, api_secret, api_key):
+def pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max):
     # Por enquanto não estamos usando, mas já deixei pronta, porque talvez tenha que usar.
     request_data = {
         "call": "ListarOS",
@@ -346,7 +346,9 @@ def pegar_os(pagina_atual, api_secret, api_key):
         "param": [{
             "pagina": pagina_atual,
             "registros_por_pagina": 1000,
-            "apenas_importado_api": "S"
+            "apenas_importado_api": "S",
+            "filtrar_por_data_previsao_de": data_de_faturamento_min,
+            "filtrar_por_data_previsao_ate": data_de_faturamento_max
         }]
     }
     
@@ -359,7 +361,7 @@ def pegar_os(pagina_atual, api_secret, api_key):
         
     return response.json()     
 
-def pegar_todos_os():
+def pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max):
     dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
     os_list = []
 
@@ -369,7 +371,12 @@ def pegar_todos_os():
         unidade_crm = row["Unidades CRM"]
         
         pagina_atual = 1
-        os_data = pegar_os(pagina_atual, api_secret, api_key)
+        os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)
+
+        if 'faultstring' in os_data:
+            print(f"Erro: {os_data['faultstring']}")
+            continue
+
         pagina_total = os_data["total_de_paginas"]
         
         while pagina_atual <= pagina_total:
@@ -386,7 +393,7 @@ def pegar_todos_os():
             pagina_atual += 1
 
             if pagina_atual <= pagina_total:
-                os_data = pegar_os(pagina_atual, api_secret, api_key)            
+                os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)            
 
     return os_list
 

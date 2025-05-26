@@ -10,19 +10,8 @@ from pymongo import MongoClient, UpdateOne
 from pymongo.errors import OperationFailure, NetworkTimeout, ServerSelectionTimeoutError
 import numpy as np
 import unidecode
+from auxiliar.sheets_aux import *
 from auxiliar.omie_aux import *
-
-def load_dataframe(worksheet):
-
-  conn = st.connection("gsheets", type=GSheetsConnection)
-  df = conn.read(worksheet=worksheet)
-
-  return df
-
-def update_sheet(worksheet, df):
-    conn = st.connection("gsheets", type=GSheetsConnection)
-    conn.update(data=df,worksheet=worksheet)
-    return df
 
 def query_BillCharges(current_page, start_date, end_date):
 
@@ -466,43 +455,50 @@ def criar_os(api_secret, api_key, dados_ordem):
     return data
 
 def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
-  resultados = []
-  chaves_api = gerar_obj_api()
-  os_back_office = pegar_os_backoffice()
-  contar_os = 0  
-  for index, linha in linhas_selecionadas.iterrows():
+    resultados = []
+    chaves_api = gerar_obj_api()
 
-    id_os = linha["os_id"]
+    data_de_faturamento = pd.to_datetime(linhas_selecionadas["billcharge_paidAt"], errors="coerce")
 
-    if id_os in os_back_office:
-        print(f"Ordem de Serviço já existe: {id_os}")
-        continue
+    data_de_faturamento_max = data_de_faturamento.max().strftime("%d/%m/%Y")
+    data_de_faturamento_min = data_de_faturamento.min().strftime("%d/%m/%Y")
 
-    linha_com_erro = linha["linha_com_erros"]
-    
-    if linha_com_erro:
-        print(f"Pulando Linha com erro: {linha}")
-        continue
+    os_na_base = pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max)
+    contar_os = 0
 
-    resposta = subir_linha(linha,chaves_api)
-    contar_os += 1
-    
-    if  contar_os >= 50:
-        break
+    for index, linha in linhas_selecionadas.iterrows():
 
-    quote_id = linha["quote_id"]
-    unidade = linha["store_name"]
-    os_id = linha["os_id"]
-    now = datetime.datetime.now()
-    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
-    
-    resultados.append([os_id,quote_id,unidade,resposta,timestamp])
+        id_os = linha["os_id"]
 
-    time.sleep(1)
+        if id_os in os_na_base:
+            print(f"Ordem de Serviço já existe: {id_os}")
+            continue
 
-  resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
+        linha_com_erro = linha["linha_com_erros"]
+        
+        if linha_com_erro:
+            print(f"Pulando Linha com erro: {linha}")
+            continue
 
-  return resultados_df
+        resposta = subir_linha(linha,chaves_api)
+        contar_os += 1
+        
+        if  contar_os >= 2:
+            break
+
+        quote_id = linha["quote_id"]
+        unidade = linha["store_name"]
+        os_id = linha["os_id"]
+        now = datetime.datetime.now()
+        timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+        
+        resultados.append([os_id,quote_id,unidade,resposta,timestamp])
+
+        time.sleep(1)
+
+    resultados_df = pd.DataFrame(resultados,columns=["os_id","quote_id","store_name","resposta","timestamp"])
+
+    return resultados_df
 
 def subir_linha(dados_da_linha,chaves_api):
     # Arruma os dados da linha para subir na API do Omie
@@ -537,21 +533,18 @@ def subir_linha(dados_da_linha,chaves_api):
         "Cabecalho": {
             "cCodIntOS": codigo_integracao,
             "cCodIntCli": codigo_cliente_integracao,
-            "cEtapa": "50",
-            "cCodParc": codigo_parcela,
-            "nQtdeParc": quantidade_de_parcelas
+            "cEtapa": "50",                
+            "cCodParc": "000",
+            "nQtdeParc": quantidade_de_parcelas,
+            "dDtPrevisao": data_de_faturamento  
         },
         "InformacoesAdicionais": {
-            "cDadosAdicNF": cDadosAdicNF,
+            "cDadosAdicNF": f"Serviços prestados - {codigo_pedido}",
             "cCodCateg": "1.01.02",
             "nCodCC": nCodCC,
             "cNumPedido": codigo_pedido
         },
-        "InfoCadastro":{
-            "dDtFat":data_de_faturamento},
-        "Observacoes": {
-            "cObsOS": observacoes
-        },
+        "Observacoes": { "cObsOS": observacoes },
         "ServicosPrestados": servicos_array
     }
 
@@ -561,7 +554,8 @@ def subir_linha(dados_da_linha,chaves_api):
     return response
 
 def criar_clientes_selecionados(base_df):
-    
+    print("Subindo clientes selecionados...")
+
     base_df = base_df.drop_duplicates(subset=["store_name", "customer_id"])
 
     chaves_api = gerar_obj_api()
