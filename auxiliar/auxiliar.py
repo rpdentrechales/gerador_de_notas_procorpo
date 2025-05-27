@@ -283,8 +283,6 @@ def paste_billcharges_with_json(start_date, end_date):
             bill_amount = data_row['amount'] / 100
             customer_document = data_row['quote']['customer']['taxvat']
             isPaid = data_row['isPaid']
-            
-            store_name = "BackOffice" ## DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             dados_da_unidade = unidades_obj.get(store_name)
             if not dados_da_unidade:
@@ -519,9 +517,6 @@ def subir_linha(dados_da_linha,chaves_api):
     servicos_array = [json.loads(servico) for servico in servicos_jsons]
 
     cDadosAdicNF = "Serviços prestados - " + cDadosAdicNF
-
-    unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     # Busca as chaves da API
     api_secret = chaves_api[unidade]["api_secret"]
     api_key = chaves_api[unidade]["api_key"]
@@ -574,7 +569,6 @@ def criar_clientes_selecionados(base_df):
 
         dados_cliente = row["dados_cliente"]
         unidade = row["store_name"]
-        unidade = "BackOffice" ## Para teste!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         id_do_cliente = str(row["customer_id"])
         
         if not codigo_integracao.empty:
@@ -586,10 +580,6 @@ def criar_clientes_selecionados(base_df):
 
         api_secret = chaves_api[unidade]["api_secret"]
         api_key = chaves_api[unidade]["api_key"]
-
-        ### DADOS PARA TESTE!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNIDADE BackOffice #######
-        api_secret = "2fae495eb5679299260c3676fe88d291"
-        api_key = "2485921847409"
 
         result_status = "Error"
 

@@ -23,10 +23,16 @@ with col_data_1:
 
   if len(data_seletor) == 2:
     data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+    data_inicial_br  = data_seletor[0].strftime('%d/%m/%Y')
+
     data_final = data_seletor[1].strftime('%Y-%m-%d')
+    data_final_br  = data_seletor[1].strftime('%d/%m/%Y')
   else:
     data_inicial = data_seletor[0].strftime('%Y-%m-%d')
+    data_inicial_br  = data_seletor[0].strftime('%d/%m/%Y')
+
     data_final = data_inicial
+    data_final_br = data_inicial_br
 
 with col_data_2:
   st.write("**Pegar dados do CRM**")
@@ -34,7 +40,7 @@ with col_data_2:
 
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
-  ids_os_subidos = pegar_dados_mongodb("log_os")
+  ids_os_subidos = pegar_todos_os(data_inicial_br,data_final_br)
   
   if ids_os_subidos.empty:
     dados_crm_df['os_na_base'] = False
@@ -92,10 +98,11 @@ if "dados_crm_df" in st.session_state:
             "Tipo de Pagamento",
             "billcharge_dueAt",
             "amount",
-            "os_na_base"
+            "os_na_base",
+            "linha_com_erros"
             ]
 
-  clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["dados_cliente"].str.contains("Cadastro inválido", na=False)]
+  clientes_sem_cadastro_df = dados_crm_df.loc[dados_crm_df["linha_com_erros"] == True]
   colunas_cliente_sem_cadastro = ["quote_id","customer_id","customer_name","store_name","paymentMethod_name","dados_cliente"]
   visualisar_clientes_sem_cadastro = clientes_sem_cadastro_df[colunas_cliente_sem_cadastro].drop_duplicates()
   quantidade_clientes_sem_cadastro = len(visualisar_clientes_sem_cadastro)
