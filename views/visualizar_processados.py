@@ -32,10 +32,10 @@ if pegar_os_botao:
     st.data_editor(
         os_processados,
         column_config={
-            "id_os": st.column_config.NumberColumn("id_os", format="%d"),
-            "data_faturamento": st.column_config.DateColumn("data_faturamento", format="DD/MM/YYYY"),
-            "valor_total": st.column_config.NumberColumn("valor_total", format="R$ %.2f"),
-            "unidade": st.column_config.TextColumn("unidade"),
+            "id_os": st.column_config.NumberColumn("Id OS", format="%d"),
+            "data_faturamento": st.column_config.DateColumn("Data de Faturamento"),
+            "valor_total": st.column_config.NumberColumn("Valor", format="R$ %.2f"),
+            "unidade": st.column_config.TextColumn("Unidade"),
             "Deletar": st.column_config.SelectboxColumn("Deletar OS", options=["True", "False"], default="False"),
         },
         hide_index=True,
