@@ -399,8 +399,12 @@ def pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max):
 
 def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
     dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
-    os_list = []
-
+    
+    id_os = []
+    data_faturmaento = []
+    valor_total = []
+    unidade = []
+    
     for index, row in dados_unidade.iterrows():
         api_secret = row["API Secret"]
         api_key = row["API KEY"]
@@ -408,11 +412,6 @@ def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
         
         pagina_atual = 1
         os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)
-
-        id_os = []
-        data_faturmaento = []
-        valor_total = []
-        unidade = []
 
         if 'faultstring' in os_data:
             print(f"Erro: {os_data['faultstring']}")
