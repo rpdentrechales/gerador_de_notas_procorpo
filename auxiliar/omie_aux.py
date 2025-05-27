@@ -443,8 +443,10 @@ def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
             if pagina_atual <= pagina_total:
                 os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)
 
-        # Cria um DataFrame com os dados coletados 
-        os_df = pd.DataFrame({
+    
+    # Cria um DataFrame com os dados coletados 
+    
+    os_df = pd.DataFrame({
             "id_os": id_os,
             "data_faturamento": data_faturmaento,
             "valor_total": valor_total,
