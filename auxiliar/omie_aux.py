@@ -399,7 +399,7 @@ def pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max):
 
 def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
     dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
-    
+
     id_os = []
     data_faturmaento = []
     valor_total = []
@@ -432,10 +432,6 @@ def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
                 data_faturmaento.append(dDtPrevisao)
                 valor_total.append(nValorTotal)
                 unidade.append(unidade_crm)
-                
-                if cCodIntOS != "":
-
-                    os_list.append(cCodIntOS)
 
             pagina_atual += 1
 
