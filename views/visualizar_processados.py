@@ -29,16 +29,16 @@ pegar_os_botao = st.button("Pegar OS Processadas", type="primary")
 if pegar_os_botao:
     st.write(f"Buscando OS processadas entre {data_inicial} e {data_final}...")
     os_processados = criar_dataframe_os(data_inicial, data_final)
-    os_processados["deletar"] = "Sim"
+    os_processados["deletar"] = True
 
     st.data_editor(
         os_processados,
         column_config={
-            "id_os": st.column_config.TextColumn("Id OS"),
-            "data_faturamento": st.column_config.TextColumn("Data de Faturamento"),
+            "id_os": st.column_config.Column("Id OS"),
+            "data_faturamento": st.column_config.Column("Data de Faturamento"),
             "valor_total": st.column_config.NumberColumn("Valor", format="R$ %.2f"),
-            "unidade": st.column_config.TextColumn("Unidade"),
-            "Deletar": st.column_config.SelectboxColumn("Deletar OS", options=["Sim", "Não"], default="Sim"),
+            "unidade": st.column_config.Column("Unidade"),
+            "Deletar": st.column_config.CheckboxColumn("Deletar OS", default=True),
         },
         hide_index=True,
         use_container_width=True,
