@@ -474,7 +474,6 @@ def deletar_os(codigo_os, api_secret, api_key):
 def deletar_os_processadas(os_processadas):
     # Deleta as OS processadas do Omie
     dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
-    st.write(dados_unidade)
     resultado = []
 
     if os_processadas.empty:
@@ -483,6 +482,7 @@ def deletar_os_processadas(os_processadas):
 
     for index, row in os_processadas.iterrows():
         unidade_crm = row["unidade"]
+        st.write(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_crm,"API Secret"])
         api_secret = str(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_crm,"API Secret"].iloc[0])
         api_key = str(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_crm,"API KEY"].iloc[0])
         
