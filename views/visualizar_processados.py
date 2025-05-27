@@ -9,7 +9,7 @@ st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 st.title("OS Processadas")
 
 today = datetime.now()
-trinta_dias = today - timedelta(days=30)
+trinta_dias = today - timedelta(days=3)
 
 data_seletor = st.date_input(
     "Selecione a data do pagamento",
@@ -33,7 +33,7 @@ if pegar_os_botao:
         os_processados,
         column_config={
             "id_os": st.column_config.NumberColumn("Id OS", format="%d"),
-            "data_faturamento": st.column_config.DateColumn("Data de Faturamento"),
+            "data_faturamento": st.column_config.TextColumn("Data de Faturamento"),
             "valor_total": st.column_config.NumberColumn("Valor", format="R$ %.2f"),
             "unidade": st.column_config.TextColumn("Unidade"),
             "Deletar": st.column_config.SelectboxColumn("Deletar OS", options=["True", "False"], default="False"),
