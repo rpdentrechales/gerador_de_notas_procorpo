@@ -397,6 +397,64 @@ def pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max):
 
     return os_list
 
+def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    os_list = []
+
+    for index, row in dados_unidade.iterrows():
+        api_secret = row["API Secret"]
+        api_key = row["API KEY"]
+        unidade_crm = row["Unidades CRM"]
+        
+        pagina_atual = 1
+        os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)
+
+        id_os = []
+        data_faturmaento = []
+        valor_total = []
+        unidade = []
+
+        if 'faultstring' in os_data:
+            print(f"Erro: {os_data['faultstring']}")
+            continue
+
+        pagina_total = os_data["total_de_paginas"]
+        
+        while pagina_atual <= pagina_total:
+            print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
+            todos_os = os_data["osCadastro"]
+
+            for os in todos_os:
+                cCodIntOS = os["Cabecalho"]["cCodIntOS"]
+                dDtPrevisao = os["Cabecalho"]["dDtPrevisao"]
+                nValorTotal = os["Cabecalho"]["nValorTotal"]
+                
+                id_os.append(cCodIntOS)
+                data_faturmaento.append(dDtPrevisao)
+                valor_total.append(nValorTotal)
+                unidade.append(unidade_crm)
+                
+                if cCodIntOS != "":
+
+                    os_list.append(cCodIntOS)
+
+            pagina_atual += 1
+
+            if pagina_atual <= pagina_total:
+                os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)
+
+        # Cria um DataFrame com os dados coletados 
+        os_df = pd.DataFrame({
+            "id_os": id_os,
+            "data_faturamento": data_faturmaento,
+            "valor_total": valor_total,
+            "unidade": unidade
+        })            
+
+    return os_df
+
+
+
 def deletar_os(codigo_os, api_secret, api_key):
     request_data = {
         "call": "ExcluirOS",
