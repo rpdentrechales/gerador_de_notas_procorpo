@@ -8,6 +8,7 @@ st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
 st.title("OS Processadas")
 
+
 today = datetime.now()
 trinta_dias = today - timedelta(days=3)
 
@@ -27,9 +28,16 @@ else:
 pegar_os_botao = st.button("Pegar OS Processadas", type="primary")
 
 if pegar_os_botao:
+
     st.write(f"Buscando OS processadas entre {data_inicial} e {data_final}...")
     os_processados = criar_dataframe_os(data_inicial, data_final)
     os_processados["deletar"] = True
+
+    st.session_state["os_processados_df"] = os_processados
+
+
+if "os_processados_df" in st.session_state:
+    os_processados = st.session_state["os_processados_df"]
 
     st.data_editor(
         os_processados,
