@@ -8,7 +8,6 @@ st.set_page_config(page_title="OS Processadas", page_icon="💎",layout="wide")
 
 st.title("OS Processadas")
 
-
 today = datetime.now()
 trinta_dias = today - timedelta(days=3)
 
@@ -39,15 +38,20 @@ if pegar_os_botao:
 if "os_processados_df" in st.session_state:
     os_processados = st.session_state["os_processados_df"]
 
-    st.data_editor(
+    os_selecionadas = st.data_editor(
         os_processados,
         column_config={
             "id_os": st.column_config.Column("Id OS"),
             "data_faturamento": st.column_config.Column("Data de Faturamento"),
             "valor_total": st.column_config.NumberColumn("Valor", format="R$ %.2f"),
             "unidade": st.column_config.Column("Unidade"),
-            "Deletar": st.column_config.CheckboxColumn("Deletar OS", default=True),
+            "deletar": st.column_config.CheckboxColumn("Deletar OS", default=True),
         },
         hide_index=True,
         use_container_width=True,
     )
+
+    if st.button("Deletar OS Selecionadas", type="primary"):
+        os_selecionadas = os_selecionadas[os_selecionadas["deletar"] == True]
+        resultado_deletar = deletar_os_processadas(os_selecionadas)
+        st.write(resultado_deletar)

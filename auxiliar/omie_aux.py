@@ -474,6 +474,33 @@ def deletar_os(codigo_os, api_secret, api_key):
         
     return response.json()
 
+def deletar_os_processadas(os_processadas):
+    # Deleta as OS processadas do Omie
+    dados_unidade = load_dataframe("Auxiliar - Chave das APIs por Unidade")
+    resultado = []
+
+    if os_processadas.empty:
+        print("Nenhuma OS selecionada para deletar.")
+        return ["Nenhuma OS selecionada para deletar."]
+
+    for index, row in os_processadas.iterrows():
+        unidade_crm = row["unidade"]
+        api_secret = dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_crm,"API Secret"].iloc[0]
+        api_key = str(dados_unidade.loc[dados_unidade["Unidades Omie"] == unidade_crm,"API KEY"].iloc[0])
+        
+        cCodIntOS = row["id_os"]
+        
+        response = deletar_os(cCodIntOS, api_secret, api_key)
+        
+        if 'faultstring' in response:
+            print(f"Erro ao deletar OS {cCodIntOS}: {response['faultstring']}")
+            resultado.append(f"Erro ao deletar OS {cCodIntOS}: {response['faultstring']}")
+        else:
+            print(f"OS {cCodIntOS} deletada com sucesso.")
+            resultado.append(f"OS {cCodIntOS} deletada com sucesso.")
+    return resultado
+        
+
 
 def pegar_os_backoffice():
     print("Pegando OS Backoffice")
