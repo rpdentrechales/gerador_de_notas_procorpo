@@ -31,6 +31,8 @@ if pegar_os_botao:
     st.write(f"Buscando OS processadas entre {data_inicial} e {data_final}...")
     os_processados = criar_dataframe_os(data_inicial, data_final)
 
+    st.write(os_processados)
+
     if os_processados.empty:
         st.warning("Nenhuma OS processada encontrada nesse período.")
 
