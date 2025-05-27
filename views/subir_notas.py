@@ -206,9 +206,8 @@ if "dados_crm_df" in st.session_state:
       
       st.write("Criando Clientes...")
       clientes_subidos = criar_clientes_selecionados(base_compilada)
-      clientes_subidos = clientes_subidos.to_dict(orient='records')
-      st.write(f"{len(clientes_subidos)} clientes novos criados")
-      subir_dados_mongodb("log_clientes",clientes_subidos)
+      st.write("Clientes criados")
+      st.write(f"Relatório de erros: {clientes_subidos}")
 
       st.write("Criando Ordens de Serviço...")
       os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
