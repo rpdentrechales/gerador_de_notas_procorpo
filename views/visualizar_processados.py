@@ -12,10 +12,12 @@ today = datetime.now()
 trinta_dias = today - timedelta(days=3)
 
 data_seletor = st.date_input(
-    "Selecione a data do pagamento",
+    "Selecione a data de conciliação",
     (trinta_dias, today),
     format="DD/MM/YYYY",
 )
+
+st.caption("Note que a data de conciliação é a data em que o pagamento foi feito e não a data de criação da OS.")
 
 if len(data_seletor) == 2:
     data_inicial = pd.to_datetime(data_seletor[0]).strftime("%d/%m/%Y")
