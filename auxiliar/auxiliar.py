@@ -316,27 +316,27 @@ def paste_billcharges_with_json(start_date, end_date):
                 pass
 
             else:
-                print(f"Erro Cliente: {customer_id} - Sem Endereço")
+                # print(f"Erro Cliente: {customer_id} - Sem Endereço")
                 customer_address = enderecos_obj[store_name]
                         
             cidade_usuario = unidecode.unidecode(customer_address["city"]).upper().strip()
             city_check = cidade_usuario in cidades_validas    
             
             if not city_check:
-                print(f"Erro Cliente: {customer_id} - Cidade Inválida")
+                # print(f"Erro Cliente: {customer_id} - Cidade Inválida")
                 customer_address = enderecos_obj[store_name]
 
             if len(customer_address['street'])> 60:
                 customer_address['street'] = customer_address['street'][:60]
-                print(f"Erro Cliente: {customer_id} - Endereço muito longo, cortando para 60 caracteres")
+                # print(f"Erro Cliente: {customer_id} - Endereço muito longo, cortando para 60 caracteres")
 
             if len(customer_address['postcode'])> 8:
                 customer_address['postcode'] = customer_address['postcode'][:8]
-                print(f"Erro Cliente: {customer_id} - CEP muito longo, cortando para 10 caracteres")
+                # print(f"Erro Cliente: {customer_id} - CEP muito longo, cortando para 10 caracteres")
 
             if len(customer_address['postcode']) < 8:
                 customer_address['postcode'] = customer_address['postcode'].zfill(8)
-                print(f"Erro Cliente: {customer_id} - CEP muito curto, completando com zeros à esquerda")
+                # print(f"Erro Cliente: {customer_id} - CEP muito curto, completando com zeros à esquerda")
 
             if document_check:
 
@@ -359,14 +359,14 @@ def paste_billcharges_with_json(start_date, end_date):
 
                 dados_cliente = "Cadastro invalido - Sem CPF"
                 linha_com_erros = True
-                print(f"Erro Cliente: {customer_id} - CPF invalido")
+                # print(f"Erro Cliente: {customer_id} - CPF invalido")
 
             email_cliente = data_row['quote']['customer']['email'].strip()
             email_check = is_valid_email(email_cliente)
 
             if not email_check:
                 if isinstance(dados_cliente, dict):
-                    print(f"Erro Cliente: {customer_id} - E-mail invalido")
+                    # print(f"Erro Cliente: {customer_id} - E-mail invalido")
                     dados_cliente["email"] = "email@invalido.com.br"
             
             dados_cliente = json.dumps(dados_cliente)
@@ -468,17 +468,17 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
         id_os = linha["os_id"]
 
         if id_os in os_na_base:
-            print(f"Ordem de Serviço já existe: {id_os}")
+            # print(f"Ordem de Serviço já existe: {id_os}")
             continue
 
         linha_com_erro = linha["linha_com_erros"]
         
         if linha_com_erro:
-            print(f"Pulando Linha com erro: {linha}")
+            # print(f"Pulando Linha com erro: {linha}")
             continue
 
         resposta = subir_linha(linha,chaves_api)
-        print(f"Resposta do subir linhas: {resposta}")
+        # print(f"Resposta do subir linhas: {resposta}")
 
         quote_id = linha["quote_id"]
         unidade = linha["store_name"]
@@ -541,7 +541,7 @@ def subir_linha(dados_da_linha,chaves_api):
 
     # Envia a requisição para criar a OS
     response = criar_os(api_secret, api_key, dados_os)
-    print(f"Código de integração: {codigo_cliente_integracao} - Resposta da API: {response}")
+    # print(f"Código de integração: {codigo_cliente_integracao} - Resposta da API: {response}")
     return response
 
 def criar_clientes_selecionados(base_df):
@@ -591,7 +591,7 @@ def criar_clientes_selecionados(base_df):
             # cai aqui tanto para JSON mal-formado quanto para tipo inesperado
             result_status = "Erro ao converter JSON do cliente"
             full_response = str(err)
-            print(f"{id_do_cliente} - {dados_cliente} - {full_response}")
+            # print(f"{id_do_cliente} - {dados_cliente} - {full_response}")
             resultados.append([id_do_cliente, result_status, full_response, timestamp])
             continue  # vai para a próxima iteração do loop
         
@@ -607,7 +607,7 @@ def criar_clientes_selecionados(base_df):
             if (mesmo_cpf & mesma_unidade).any():
                 log_erro = {"id_cliente": id_do_cliente,
                 "mensagem de erro": "Cliente já existe na base com o mesmo CPF."}
-                print(log_erro)
+                # print(log_erro)
                 relatorio_de_erros.append(log_erro)
                 resultados.append([id_do_cliente, result_status, log_erro, timestamp])
                 # print(f"{id_do_cliente} - Cliente já existe na base")
@@ -627,7 +627,7 @@ def criar_clientes_selecionados(base_df):
             contar_erros += 1
             log_erro = {"id_cliente": id_do_cliente,
                          "mensagem de erro": message}
-            print(log_erro)
+            # print(log_erro)
             relatorio_de_erros.append(log_erro)
             resultados.append([id_do_cliente, result_status, log_erro, timestamp])
             
@@ -667,7 +667,7 @@ def criar_clientes_selecionados(base_df):
                     result_status = "Erro ao Associar Id do Cliente"
                     log_erro = {"id_cliente": id_do_cliente,
                                 "mensagem de erro": "Erro ao Associar Id do Cliente"}
-                    print(log_erro)
+                    # print(log_erro)
                     relatorio_de_erros.append(log_erro)
                     result_status = log_erro
             
@@ -691,7 +691,7 @@ def criar_clientes_selecionados(base_df):
         print(f"id_cliente: {id_do_cliente} - Resultado: {result_status} - Resposta: {full_response}") ## Print para debug!!!!!!!!!!
         resultados.append([id_do_cliente,result_status,full_response,timestamp])
 
-    print(relatorio_de_erros)
+    # print(relatorio_de_erros)
     resultados_df = pd.DataFrame(resultados[1:], columns=resultados[0])
     clientes_subidos = resultados_df.to_dict(orient='records')
     st.write(f"{len(clientes_subidos)} clientes novos criados")
