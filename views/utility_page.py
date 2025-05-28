@@ -96,4 +96,4 @@ if atualizar_clientes_button:
     st.write(f"{len(clientes_omie)} clientes novos criados")
     st.write(f"{clientes_omie})")
 
-st.write("Last Update - 27/03/2025")
+st.write("Last Update - 28/05/2025")
