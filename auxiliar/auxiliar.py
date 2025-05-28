@@ -479,6 +479,7 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
             continue
 
         resposta = subir_linha(linha,chaves_api)
+        print(f"Resposta do subir linhas: {resposta}")
         contar_os += 1
         
         if  contar_os >= 2:
