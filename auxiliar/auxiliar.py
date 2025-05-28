@@ -462,7 +462,6 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
     data_de_faturamento_min = data_de_faturamento.min().strftime("%d/%m/%Y")
 
     os_na_base = pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max)
-    contar_os = 0
 
     for index, linha in linhas_selecionadas.iterrows():
 
@@ -480,10 +479,6 @@ def criar_ordens_de_servico_da_planilha(linhas_selecionadas):
 
         resposta = subir_linha(linha,chaves_api)
         print(f"Resposta do subir linhas: {resposta}")
-        contar_os += 1
-        
-        if  contar_os >= 2:
-            break
 
         quote_id = linha["quote_id"]
         unidade = linha["store_name"]
