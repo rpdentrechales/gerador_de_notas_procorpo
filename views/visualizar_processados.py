@@ -67,7 +67,7 @@ if "os_processados_df" in st.session_state:
         else:
             st.write(f"Deletando {len(os_selecionadas)} OS selecionadas...")
             resultado_deletar = deletar_os_processadas(os_selecionadas)
-            st.write(resultado_deletar)
+            st.write(f"Os_deletadas: {resultado_deletar}")
             remover_df = st.session_state.pop("os_processadas_df", None)
             st.rerun()
             
