@@ -380,7 +380,7 @@ def pegar_todos_os(data_de_faturamento_min,data_de_faturamento_max):
         pagina_total = os_data["total_de_paginas"]
         
         while pagina_atual <= pagina_total:
-            print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
+            # print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
             todos_os = os_data["osCadastro"]
 
             for os in todos_os:
@@ -414,13 +414,13 @@ def criar_dataframe_os(data_de_faturamento_min,data_de_faturamento_max):
         os_data = pegar_os(pagina_atual, api_secret, api_key,data_de_faturamento_min,data_de_faturamento_max)
 
         if 'faultstring' in os_data:
-            print(f"Erro: {os_data['faultstring']}")
+            # print(f"Erro: {os_data['faultstring']}")
             continue
 
         pagina_total = os_data["total_de_paginas"]
         
         while pagina_atual <= pagina_total:
-            print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
+            # print(f"{unidade_crm} - {pagina_atual}/{pagina_total}")
             todos_os = os_data["osCadastro"]
 
             for os in todos_os:
@@ -477,7 +477,7 @@ def deletar_os_processadas(os_processadas):
     resultado = []
 
     if os_processadas.empty:
-        print("Nenhuma OS selecionada para deletar.")
+        # print("Nenhuma OS selecionada para deletar.")
         return ["Nenhuma OS selecionada para deletar."]
 
     for index, row in os_processadas.iterrows():
@@ -490,10 +490,10 @@ def deletar_os_processadas(os_processadas):
         response = deletar_os(cCodIntOS, api_secret, api_key)
         
         if 'faultstring' in response:
-            print(f"Erro ao deletar OS {cCodIntOS}: {response['faultstring']}")
+            # print(f"Erro ao deletar OS {cCodIntOS}: {response['faultstring']}")
             resultado.append(f"Erro ao deletar OS {cCodIntOS}: {response['faultstring']}")
         else:
-            print(f"OS {cCodIntOS} deletada com sucesso.")
+            # print(f"OS {cCodIntOS} deletada com sucesso.")
             resultado.append(f"OS {cCodIntOS} deletada com sucesso.")
     return resultado
         

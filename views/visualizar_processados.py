@@ -31,7 +31,7 @@ pegar_os_botao = st.button("Pegar OS Processadas", type="primary")
 if pegar_os_botao:
 
     if "os_processadas_df" in st.session_state:
-        st.session_state.pop("os_processadas_df", None)
+        remover_df = st.session_state.pop("os_processadas_df", None)
 
     st.write(f"Buscando OS processadas entre {data_inicial} e {data_final}...")
     os_processados = criar_dataframe_os(data_inicial, data_final)
