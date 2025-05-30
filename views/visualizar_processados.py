@@ -41,11 +41,11 @@ if pegar_os_botao:
 
     else:
         os_processados["deletar"] = True
-        st.session_state["os_processados_df"] = os_processados
+        st.session_state["os_processadas_df"] = os_processados
 
 
-if "os_processados_df" in st.session_state:
-    os_processados = st.session_state["os_processados_df"]
+if "os_processadas_df" in st.session_state:
+    os_processados = st.session_state["os_processadas_df"]
 
     os_selecionadas = st.data_editor(
         os_processados,
