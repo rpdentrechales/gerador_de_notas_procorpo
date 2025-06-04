@@ -37,8 +37,9 @@ with col_data_1:
     data_final_br = data_inicial_br
 
 with col_data_2:
-  for _ in range(10):
-    st.empty()  # push content down
+  for _ in range(100):
+    
+    st.empty()
   pegar_dados = st.button("Pegar dados do CRM",type="primary")
 
   
