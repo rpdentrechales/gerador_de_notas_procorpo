@@ -35,9 +35,9 @@ with col_data_1:
     data_final_br = data_inicial_br
 
 with col_data_2:
-  pegar_dados = st.button("Executar",type="primary")
   st.caption("**Pegar dados do CRM**")
-
+  pegar_dados = st.button("Executar",type="primary")
+  
   
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
