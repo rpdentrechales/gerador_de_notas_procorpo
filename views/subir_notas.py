@@ -14,7 +14,7 @@ three_days_ago = today - timedelta(days=3)
 
 col_data_1, col_data_2, col_data_3 = st.columns([1,1,2])
 
-st.caption("**Pegar dados do CRM**")
+
 with col_data_1:
   
   data_seletor = st.date_input(
@@ -37,7 +37,7 @@ with col_data_1:
     data_final_br = data_inicial_br
 
 with col_data_2:
-  
+  st.caption("**Pegar dados do CRM**")
   pegar_dados = st.button("Pegar dados do CRM",type="primary")
   
   
