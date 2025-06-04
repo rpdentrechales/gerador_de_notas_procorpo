@@ -35,8 +35,8 @@ with col_data_1:
     data_final_br = data_inicial_br
 
 with col_data_2:
-  st.caption("**Pegar dados do CRM**")
   pegar_dados = st.button("Executar",type="primary")
+  st.caption("**Pegar dados do CRM**")
 
   
 if (pegar_dados):
