@@ -16,6 +16,9 @@ col_data_1, col_data_2, col_data_3 = st.columns([1,1,2])
 
 
 with col_data_1:
+  pegar_dados = st.button("Pegar dados do CRM",type="primary")
+
+with col_data_2:
   
   data_seletor = st.date_input(
       "Selecione a data",
@@ -36,9 +39,7 @@ with col_data_1:
     data_final = data_inicial
     data_final_br = data_inicial_br
 
-with col_data_2:
-  st.caption("**Pegar dados do CRM**")
-  pegar_dados = st.button("Pegar dados do CRM",type="primary")
+
   
   
 if (pegar_dados):
