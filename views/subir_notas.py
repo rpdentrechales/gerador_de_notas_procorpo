@@ -35,7 +35,7 @@ with col_data_1:
     data_final_br = data_inicial_br
 
 with col_data_2:
-  st.write()
+  st.write("")
   pegar_dados = st.button("Executar",type="primary")
 
 with col_data_3:
