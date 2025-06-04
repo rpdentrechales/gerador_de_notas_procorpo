@@ -12,7 +12,7 @@ st.title("Subir Notas")
 today = datetime.datetime.now()
 three_days_ago = today - timedelta(days=3)
 
-col_data_1, col_data_2, blank_3 = st.columns([1,1,2])
+col_data_1, col_data_2, col_data_3 = st.columns([1,1,2])
 
 with col_data_1:
   data_seletor = st.date_input(
@@ -35,9 +35,12 @@ with col_data_1:
     data_final_br = data_inicial_br
 
 with col_data_2:
-  st.write("**Pegar dados do CRM**")
+  
   pegar_dados = st.button("Executar",type="primary")
 
+with col_data_3:
+  st.caption("**Pegar dados do CRM**")
+  
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
   ids_os_subidos = pegar_todos_os(data_inicial_br,data_final_br)
