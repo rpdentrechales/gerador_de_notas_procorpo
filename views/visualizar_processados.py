@@ -74,8 +74,8 @@ if "os_processadas_df" in st.session_state:
             remover_df = st.session_state.pop("os_processadas_df", None)
             st.rerun()
     
-    if "resultados_deletar" in st.session_state:
-        resultados_deletar = st.session_state["resultados_deletar"]
-        st.success(f"{len(resultados_deletar)} OS deletadas com sucesso.")
-        st.write(f"Resultados: {resultados_deletar}")
+if "resultados_deletar" in st.session_state:
+    resultados_deletar = st.session_state["resultados_deletar"]
+    st.success(f"{len(resultados_deletar)} OS deletadas com sucesso.")
+    st.write(f"Resultados: {resultados_deletar}")
             
