@@ -53,6 +53,12 @@ if (pegar_dados):
 
   st.session_state["dados_crm_df"] = dados_crm_df
 
+if "mostrar botão Resultados" in st.session_state:
+  pass
+
+else:
+  st.session_state["mostrar botão Resultados"] = False
+
 if "dados_crm_df" in st.session_state:
 
   dados_crm_df = st.session_state["dados_crm_df"]
