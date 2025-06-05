@@ -108,7 +108,7 @@ if "dados_crm_df" in st.session_state:
   visualisar_clientes_sem_cadastro = clientes_sem_cadastro_df[colunas_cliente_sem_cadastro].drop_duplicates()
   quantidade_clientes_sem_cadastro = len(visualisar_clientes_sem_cadastro)
 
-  @st.dialog("Clientes Sem Cadastro", width="large")
+  @st.dialog("Resultados", width="large")
   def abrir_dialog(df,dialog):
     st.write(dialog)
     st.dataframe(df,use_container_width=True,hide_index=True)
