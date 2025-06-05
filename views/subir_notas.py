@@ -232,3 +232,5 @@ if "dados_crm_df" in st.session_state:
 
     if visualizar_resultados_botao:
       abrir_dialog(base_para_subir,"Resultados da Criação de Notas:")
+    
+    st.write(f"Total de Notas Processadas: {len(base_para_subir)}")
