@@ -59,8 +59,6 @@ if "mostrar botão Resultados" in st.session_state:
 else:
   st.session_state["mostrar botão Resultados"] = False
 
-print(f"Mostrar botão Resultados: {st.session_state['mostrar botão Resultados']}")
-
 if "dados_crm_df" in st.session_state:
 
   dados_crm_df = st.session_state["dados_crm_df"]
@@ -223,7 +221,11 @@ if "dados_crm_df" in st.session_state:
       st.write("Criando Ordens de Serviço...")
       os_subidos = criar_ordens_de_servico_da_planilha(base_compilada)
       os_subidos_dic = os_subidos.to_dict(orient='records')
+
+      st.session_state["mostrar botão Resultados"] = os_subidos
       subir_dados_mongodb("log_os",os_subidos_dic)
+
+
 
       erros_mask = os_subidos["resposta"].astype(str).str.contains("ERROR", case=False, na=False)
       ids_para_subir = os_subidos.loc[~erros_mask,"os_id"]
@@ -239,6 +241,7 @@ if "dados_crm_df" in st.session_state:
 
   if st.session_state["mostrar botão Resultados"]:
     try:
+      os_subidos = st.session_state["mostrar botão Resultados"]
       visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(os_subidos,"Resultados da Criação de Notas:"))
     except:
       pass
