@@ -227,5 +227,7 @@ if "dados_crm_df" in st.session_state:
       status.update(
           label="Notas Criadas!", state="complete", expanded=False
       )
+      st.session_state["mostrar botão Resultados"] = True
 
-    visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(base_para_subir,"Resultados da Criação de Notas:"))
+    if st.session_state["mostrar botão Resultados"]:
+      visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(base_para_subir,"Resultados da Criação de Notas:"))
