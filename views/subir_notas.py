@@ -59,6 +59,8 @@ if "mostrar botão Resultados" in st.session_state:
 else:
   st.session_state["mostrar botão Resultados"] = False
 
+print(f"Mostrar botão Resultados: {st.session_state['mostrar botão Resultados']}")
+
 if "dados_crm_df" in st.session_state:
 
   dados_crm_df = st.session_state["dados_crm_df"]
