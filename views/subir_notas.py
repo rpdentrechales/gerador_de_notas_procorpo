@@ -44,7 +44,6 @@ with col_data_2:
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
   ids_os_subidos = pegar_todos_os(data_inicial_br,data_final_br)
-  st.session_state["mostrar botão Resultados"] = False
   
   if len(ids_os_subidos) == 0:
     dados_crm_df['os_na_base'] = False
@@ -231,4 +230,4 @@ if "dados_crm_df" in st.session_state:
       st.session_state["mostrar botão Resultados"] = True
 
     if st.session_state["mostrar botão Resultados"]:
-      visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(base_para_subir,"Resultados da Criação de Notas:"))
+      visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(os_subidos,"Resultados da Criação de Notas:"))
