@@ -44,6 +44,7 @@ with col_data_2:
 if (pegar_dados):
   dados_crm_df = paste_billcharges_with_json(data_inicial,data_final)
   ids_os_subidos = pegar_todos_os(data_inicial_br,data_final_br)
+  st.session_state["mostrar botão Resultados"] = False
   
   if len(ids_os_subidos) == 0:
     dados_crm_df['os_na_base'] = False
