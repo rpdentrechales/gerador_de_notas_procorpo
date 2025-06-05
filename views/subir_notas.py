@@ -230,4 +230,7 @@ if "dados_crm_df" in st.session_state:
       st.session_state["mostrar botão Resultados"] = True
 
   if st.session_state["mostrar botão Resultados"]:
-    visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(os_subidos,"Resultados da Criação de Notas:"))
+    try:
+      visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(os_subidos,"Resultados da Criação de Notas:"))
+    except:
+      pass
