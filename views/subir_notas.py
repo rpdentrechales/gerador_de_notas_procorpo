@@ -228,9 +228,4 @@ if "dados_crm_df" in st.session_state:
           label="Notas Criadas!", state="complete", expanded=False
       )
 
-    visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary")
-
-    if visualizar_resultados_botao:
-      abrir_dialog(base_para_subir,"Resultados da Criação de Notas:")
-    
-    st.write(f"Total de Notas Processadas: {len(base_para_subir)}")
+    visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary",on_click=abrir_dialog, args=(base_para_subir,"Resultados da Criação de Notas:"))
