@@ -109,14 +109,14 @@ if "dados_crm_df" in st.session_state:
   quantidade_clientes_sem_cadastro = len(visualisar_clientes_sem_cadastro)
 
   @st.dialog("Clientes Sem Cadastro", width="large")
-  def abrir_clientes_sem_cadastro():
-    st.write("Lista de clientes sem Cadastro:")
-    st.dataframe(visualisar_clientes_sem_cadastro,use_container_width=True,hide_index=True)
+  def abrir_dialog(df,dialog):
+    st.write(dialog)
+    st.dataframe(df,use_container_width=True,hide_index=True)
 
   clientes_sem_cadastro_botao = st.button(f"{quantidade_clientes_sem_cadastro} Clientes Sem Cadastro",type="secondary")
 
   if clientes_sem_cadastro_botao:
-    abrir_clientes_sem_cadastro()
+    abrir_dialog(visualisar_clientes_sem_cadastro,"Lista de clientes sem Cadastro:")
 
   dados_crm_df = dados_crm_df.loc[~dados_crm_df["dados_cliente"].str.contains("Cadastro inválido", na=False)]
 
@@ -227,3 +227,8 @@ if "dados_crm_df" in st.session_state:
       status.update(
           label="Notas Criadas!", state="complete", expanded=False
       )
+
+    visualizar_resultados_botao = st.button("Visualizar Resultados",type="secondary")
+
+    if visualizar_resultados_botao:
+      abrir_dialog(base_para_subir,"Resultados da Criação de Notas:")
