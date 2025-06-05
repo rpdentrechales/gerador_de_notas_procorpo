@@ -32,6 +32,9 @@ if pegar_os_botao:
 
     if "os_processadas_df" in st.session_state:
         remover_df = st.session_state.pop("os_processadas_df", None)
+    
+    if "resultados_deletar" in st.session_state:
+        remover_resultados_deletar = st.session_state.pop("resultados_deletar", None)
 
     st.write(f"Buscando OS processadas entre {data_inicial} e {data_final}...")
     os_processados = criar_dataframe_os(data_inicial, data_final)
@@ -67,7 +70,11 @@ if "os_processadas_df" in st.session_state:
         else:
             st.write(f"Deletando {len(os_selecionadas)} OS selecionadas...")
             resultado_deletar = deletar_os_processadas(os_selecionadas)
-            st.write(f"Os_deletadas: {resultado_deletar}")
+            st.session_state["resultados_deletar"] = resultado_deletar
             remover_df = st.session_state.pop("os_processadas_df", None)
-
+    
+    if "resultados_deletar" in st.session_state:
+        resultados_deletar = st.session_state["resultados_deletar"]
+        st.success(f"{len(resultados_deletar)} OS deletadas com sucesso.")
+        st.write(f"Resultados: {resultados_deletar}")
             
